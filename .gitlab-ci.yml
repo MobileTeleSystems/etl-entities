@@ -1,0 +1,111 @@
+### --------------- List of tags that are used to select a runner. --------------- ### 
+## Обязательный блок для запуска gitlab-ci. Определяет, на каких runner-ах будет запущен CI/CD путем выбора его с помощью tag'а. ##
+
+default:
+    tags:
+      - bigdata
+      - dmz
+      - docker
+
+### --------------- Defines a job stage. --------------- ### 
+## Stage .pre выполняется перед всем остальным кодом. stage .post выполняется после всего остального кода. ##
+## Так же можо задать порядок выполнения stage-ов, указав их по порядку в этом блоке. ##
+
+stages:
+  - .pre
+  - flake8
+  - build
+  - unit_tests
+  - push_pip
+  - build_and_publish_docs
+  - .post
+
+### --------------- Include gitlab-ci-templates --------------- ### 
+## Добавляет в текущую конфигурацию CI\CD template's из DevOps репозитория для переиспользования. ##
+
+include:
+# VAULT
+  - project: 'DevOps/cicd-store/gitlabci/vault'
+    ref: v3
+    file: '.base_devops_get_cicd_secrets.yml'
+
+# DOCKER
+  - project: 'DevOps/cicd-store/gitlabci/docker'
+    ref: v4
+    file: '.base_docker_build.yml'
+  - project: 'DevOps/cicd-store/gitlabci/docker'
+    ref: v4
+    file: '.base_docker_cleaner.yml'
+
+### --------------- Get VAULT SECRET --------------- ### 
+## Переиспользование добавленного template'а по добавлению SSH-ключа пользователя ansible. ##
+devops_get_cicd_secrets:
+  extends: .base_devops_get_cicd_secrets
+
+flake8:
+  image: "$CI_REGISTRY/platform/python:${PYTHON_VERSION}"
+  variables:
+    PYTHON_VERSION: "3.7"
+  stage: flake8
+  script:
+    - pip install wemake-python-styleguide
+    - python3 -m flake8 ./
+
+build_docker_image:
+  extends: .base_docker_build
+  variables:
+    DOCKER_BUILD_EXTRA_ARGS: "--build-arg BUILD_NUMBER=$CI_PIPELINE_ID --build-arg BRANCH_NAME=$CI_COMMIT_BRANCH"
+    DOCKER_IMAGE_TAG: "$CI_PIPELINE_ID"
+  dependencies:
+    - devops_get_cicd_secrets
+
+run_unit_tests:
+  image: ${CI_REGISTRY}/${CI_PROJECT_PATH}:${CI_PIPELINE_ID}
+  stage: unit_tests
+  variables:
+    JUNIT_FILE: "${CI_PROJECT_DIR}/junitxml.xml"
+    COVERAGE_FILE: "${CI_PROJECT_DIR}/coverage.xml"
+  script:
+    - cd /opt/project/ && pytest --verbose -s --cov-append --cov=hwmlib --cov-config=tests/.coveragerc --cov-report=xml:$COVERAGE_FILE --junitxml=$JUNIT_FILE
+  artifacts:
+    when: always
+    reports:
+      junit:
+       - junitxml.xml
+      cobertura:
+       - coverage.xml
+
+push_pip_repository:
+  image: ${CI_REGISTRY}/${CI_PROJECT_PATH}:${CI_PIPELINE_ID}
+  stage: push_pip
+  only:
+    - master
+    - develop
+  variables:
+    ARTIFACTORY_PYPI_REP: "http://rep.msk.mts.ru/artifactory/api/pypi/pypi-local/"
+    TWINE_PASSWORD: ${USER_ARTIFACTORY_DOCKER_TOKEN}
+    TWINE_USERNAME: ${USER_ARTIFACTORY_DOCKER_LOGIN}
+  before_script:
+    - pip install twine
+  script:
+    - python3 -m twine upload /opt/project/dist/*.whl --repository-url ${ARTIFACTORY_PYPI_REP}
+
+build_and_publish_docs:
+  image: "$CI_REGISTRY/platform/python:${PYTHON_VERSION}"
+  variables:
+    PYTHON_VERSION: "3.7"
+  stage: build_and_publish_docs
+  only:
+    - master
+    - develop
+  script:
+    - pip install -r requirements-docs.txt && cd docs && make html && tar cvzf html-hwmlib-master.tar.gz -C _build/html .
+    - curl -u "${USER_ARTIFACTORY_DOCKER_LOGIN}":"${USER_ARTIFACTORY_DOCKER_TOKEN}" -X PUT "${ARTIFACTORY_URL}/artifactory/files/onetools/hwmlib/docs/" -T html-hwmlib-master.tar.gz
+
+clean_docker_repo:
+  extends: .base_docker_cleaner
+  stage: .post
+  when: always
+  variables:
+    DOCKER_IMAGE_NAME: $CI_PROJECT_PATH
+    DOCKER_IMAGE_TAGS: $CI_PIPELINE_ID
