@@ -21,7 +21,9 @@
     :caption: Contents
     :name: mastertoc
 
-    hwmlib.HWM
+    hwm/index
+    source/index
+    process/index
 
 .. toctree::
     :maxdepth: 2
