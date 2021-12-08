@@ -1,0 +1,18 @@
+[tool.isort]
+profile = "black"
+multi_line_output = 3
+
+[tool.black]
+line-length = 120
+target-version = ['py37', 'py38', 'py39', 'py310']
+include = '\.pyi?$'
+exclude = '''(\.eggs|\.git|\.mypy_cache|\.tox|\.venv|_build|buck-out|build|dist)'''
+
+[tool.mypy]
+plugins = 'pydantic.mypy'
+python_version = 3.7
+follow_imports = "silent"
+ignore_missing_imports = true
+pretty = true
+show_error_codes = true
+strict_optional = true
