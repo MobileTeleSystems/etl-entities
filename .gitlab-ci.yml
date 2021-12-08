@@ -136,7 +136,7 @@ push_pip_repository:
   before_script:
   - pip install twine
   script:
-  - python3 -m twine upload /opt/project/dist/*.whl --repository-url ${ARTIFACTORY_PYPI_REP}
+  - python3 -m twine upload /app/dist/*.whl --repository-url ${ARTIFACTORY_PYPI_REP}
 
 build_and_publish_docs:
   image: $CI_REGISTRY/platform/python:${PYTHON_VERSION}
