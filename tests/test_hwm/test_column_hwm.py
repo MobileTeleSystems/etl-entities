@@ -2,9 +2,9 @@ from datetime import date, datetime, timedelta
 
 import pytest
 
-from hwmlib.hwm import DateHWM, DateTimeHWM, IntHWM
-from hwmlib.process import Process
-from hwmlib.source import Column, Table
+from etl_entities.hwm import DateHWM, DateTimeHWM, IntHWM
+from etl_entities.process import Process
+from etl_entities.source import Column, Table
 
 
 @pytest.mark.parametrize(

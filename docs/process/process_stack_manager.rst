@@ -1,6 +1,6 @@
 ProcessStackManager
 =================================================================
-.. currentmodule:: hwmlib.process.process_stack_manager
+.. currentmodule:: etl_entities.process.process_stack_manager
 
 
 .. autoclass:: ProcessStackManager

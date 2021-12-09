@@ -2,10 +2,10 @@ from pathlib import PosixPath
 
 import pytest
 
-from hwmlib.hwm import FileListHWM
-from hwmlib.location import AbsolutePath, RelativePath
-from hwmlib.process import Process
-from hwmlib.source import RemoteFolder
+from etl_entities.hwm import FileListHWM
+from etl_entities.location import AbsolutePath, RelativePath
+from etl_entities.process import Process
+from etl_entities.source import RemoteFolder
 
 
 @pytest.mark.parametrize(

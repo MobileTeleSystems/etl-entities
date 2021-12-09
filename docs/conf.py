@@ -17,7 +17,7 @@ sys.path.insert(0, str(Path(__file__).parent.parent.absolute() / "src"))
 
 # -- Project information -----------------------------------------------------
 
-project = "hwmlib"
+project = "etl-entities"
 copyright = "2021, dvvolk15"
 author = "dvvolk15"
 
@@ -75,7 +75,7 @@ htmlhelp_basename = "my-project-doc"
 context = {
     "gitlab_host": "gitlab.services.mts.ru",
     "gitlab_user": "bigdata/platform/onetools",
-    "gitlab_repo": "hwmlib",
+    "gitlab_repo": "etl-entities",
     "gitlab_version": "master",  # название ветки или тега, ниже есть пример для мультиверсионности
     "conf_py_path": "/docs/",  # префикс для путей к файлам
     "display_gitlab": True,

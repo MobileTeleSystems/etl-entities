@@ -4,7 +4,7 @@
 .. toctree::
     :maxdepth: 2
     :caption: HWM lib
-    :name: hwmlib
+    :name: etl_entities
     :hidden:
 
     self

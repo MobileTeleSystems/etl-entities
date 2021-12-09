@@ -9,8 +9,8 @@ ENV LANGUAGE=en_US.UTF-8 \
 
 WORKDIR /app
 
-RUN useradd -ms /bin/bash -d /app hwmlib \
-    && chown -R hwmlib:hwmlib /app
+RUN useradd -ms /bin/bash -d /app etl-entities \
+    && chown -R etl-entities:etl-entities /app
 
 COPY requirements.txt requirements-test.txt /app/
 
@@ -19,8 +19,8 @@ ARG BRANCH_NAME
 
 RUN pip3 install -r requirements.txt -r requirements-test.txt
 
-USER hwmlib
-COPY --chown=hwmlib:hwmlib ./ /app/
+USER etl-entities
+COPY --chown=etl-entities:etl-entities ./ /app/
 
-# Build /app/dist/hwmlib*.whl
+# Build /app/dist/etl-entities*.whl
 RUN python3 setup.py bdist_wheel

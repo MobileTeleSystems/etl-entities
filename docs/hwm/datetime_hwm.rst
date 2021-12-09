@@ -1,6 +1,6 @@
 Datetime HWM
 =================================================================
-.. currentmodule:: hwmlib.hwm.datetime_hwm
+.. currentmodule:: etl_entities.hwm.datetime_hwm
 
 
 .. autoclass:: DateTimeHWM

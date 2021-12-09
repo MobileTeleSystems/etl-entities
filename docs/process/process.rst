@@ -1,6 +1,6 @@
 Process
 =================================================================
-.. currentmodule:: hwmlib.process.process
+.. currentmodule:: etl_entities.process.process
 
 
 .. autoclass:: Process
