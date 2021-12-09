@@ -14,13 +14,13 @@ with open(os.path.join(here, "README.rst")) as f:
     long_description = f.read()
 
 setup(
-    name="hwmlib",
+    name="etl-entities",
     version="1.0.0",
     author="Volkov Dmitrii",
-    description="HWM lib",
+    description="ETL Entities lib",
     long_description=long_description,
     long_description_content_type="text/x-rst",
-    url="https://gitlab.services.mts.ru/bigdata/platform/onetools/hwmlib",
+    url="https://gitlab.services.mts.ru/bigdata/platform/onetools/etl-entities",
     packages=find_packages(exclude=["docs", "docs.*", "tests", "tests.*"]),
     classifiers=[
         "Topic :: Software Development :: HWM lib",

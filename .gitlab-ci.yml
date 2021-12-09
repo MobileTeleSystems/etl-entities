@@ -55,7 +55,7 @@ mypy:
   stage: static analysis
   script:
   - pip install mypy pydantic
-  - python3 -m mypy hwmlib
+  - python3 -m mypy etl_entities
 
 flake8:
   image: $CI_REGISTRY/platform/python:${PYTHON_VERSION}
@@ -104,9 +104,9 @@ run_unit_tests:
     JUNIT_FILE: ${CI_PROJECT_DIR}/junitxml.xml
     COVERAGE_FILE: ${CI_PROJECT_DIR}/coverage.xml
   script:
-  - pytest --verbose -s tests --cov-append --cov=hwmlib --cov-config=tests/.coveragerc --cov-report=xml:${COVERAGE_FILE} --junitxml=${JUNIT_FILE}
+  - pytest --verbose -s tests --cov-append --cov=etl_entities --cov-config=tests/.coveragerc --cov-report=xml:${COVERAGE_FILE} --junitxml=${JUNIT_FILE}
   after_script:
-  - sed -i s/'\/app\/hwmlib'/'hwmlib'/ ${COVERAGE_FILE}
+  - sed -i s/'\/app\/etl_entities'/'etl_entities'/ ${COVERAGE_FILE}
   artifacts:
     when: always
     paths:
@@ -121,7 +121,7 @@ sonarqube_check:
   extends: .base_check_sonarqube
   stage: sonarqube_check
   variables:
-    SONAR_SOURCES: hwmlib
+    SONAR_SOURCES: etl_entities
 
 push_pip_repository:
   image: ${CI_REGISTRY}/${CI_PROJECT_PATH}:${CI_PIPELINE_ID}
@@ -147,8 +147,8 @@ build_and_publish_docs:
   - master
   - develop
   script:
-  - pip install -r requirements-docs.txt && cd docs && make html && tar cvzf html-hwmlib-master.tar.gz -C _build/html .
-  - curl -u "${USER_ARTIFACTORY_DOCKER_LOGIN}":"${USER_ARTIFACTORY_DOCKER_TOKEN}" -X PUT "${ARTIFACTORY_URL}/artifactory/files/onetools/hwmlib/docs/" -T html-hwmlib-master.tar.gz
+  - pip install -r requirements-docs.txt && cd docs && make html && tar cvzf html-etl-entities-master.tar.gz -C _build/html .
+  - curl -u "${USER_ARTIFACTORY_DOCKER_LOGIN}":"${USER_ARTIFACTORY_DOCKER_TOKEN}" -X PUT "${ARTIFACTORY_URL}/artifactory/files/onetools/etl-entities/docs/" -T html-etl-entities-master.tar.gz
 
 clean_docker_repo:
   extends: .base_docker_cleaner

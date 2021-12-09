@@ -1,6 +1,6 @@
 import pytest
 
-from hwmlib.source import Table
+from etl_entities.source import Table
 
 
 @pytest.mark.parametrize("instance", ["proto://url", "proto://url/path", "cluster-name"])

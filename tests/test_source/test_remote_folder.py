@@ -2,7 +2,7 @@ from pathlib import PosixPath
 
 import pytest
 
-from hwmlib.source import RemoteFolder
+from etl_entities.source import RemoteFolder
 
 
 @pytest.mark.parametrize(

@@ -1,6 +1,6 @@
 import pytest
 
-from hwmlib.source import Column
+from etl_entities.source import Column
 
 
 def test_column_valid_input():

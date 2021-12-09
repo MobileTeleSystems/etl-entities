@@ -1,6 +1,6 @@
 Table
 =================================================================
-.. currentmodule:: hwmlib.source.db.table
+.. currentmodule:: etl_entities.source.db.table
 
 
 .. autoclass:: Table

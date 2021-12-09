@@ -1,6 +1,6 @@
 RemoteFolder
 =================================================================
-.. currentmodule:: hwmlib.source.file.remote_folder
+.. currentmodule:: etl_entities.source.file.remote_folder
 
 
 .. autoclass:: RemoteFolder

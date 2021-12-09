@@ -2,7 +2,7 @@ from pathlib import PosixPath
 
 import pytest
 
-from hwmlib.process import Process
+from etl_entities.process import Process
 
 
 @pytest.mark.parametrize("valid_name", ["some", "some process name"])

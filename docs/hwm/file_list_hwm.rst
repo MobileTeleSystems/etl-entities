@@ -1,6 +1,6 @@
 File List HWM
 =================================================================
-.. currentmodule:: hwmlib.hwm.file_list_hwm
+.. currentmodule:: etl_entities.hwm.file_list_hwm
 
 .. autoclass:: FileListHWM
     :members: name, qualified_name, with_value, dict, json, copy

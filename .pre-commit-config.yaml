@@ -45,7 +45,7 @@ repos:
   rev: 5.10.1
   hooks:
   - id: isort
-    files: hwmlib/.*
+    files: etl_entities/.*
   - id: isort
     files: tests/.*
 - repo: https://github.com/pre-commit/pygrep-hooks

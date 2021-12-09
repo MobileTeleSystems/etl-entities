@@ -1,6 +1,6 @@
 Integer HWM
 =================================================================
-.. currentmodule:: hwmlib.hwm.int_hwm
+.. currentmodule:: etl_entities.hwm.int_hwm
 
 
 .. autoclass:: IntHWM

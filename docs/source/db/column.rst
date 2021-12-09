@@ -1,6 +1,6 @@
 Column
 =================================================================
-.. currentmodule:: hwmlib.source.db.column
+.. currentmodule:: etl_entities.source.db.column
 
 
 .. autoclass:: Column

@@ -1,4 +1,4 @@
-from hwmlib.process import Process, ProcessStackManager
+from etl_entities.process import Process, ProcessStackManager
 
 
 def test_process_stack_manager():
