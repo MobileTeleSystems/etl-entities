@@ -6,7 +6,7 @@ from typing import Union
 from pydantic import ConstrainedStr
 
 from etl_entities.entity import BaseModel, Entity
-from etl_entities.location import Cluster, RemoteURL
+from etl_entities.location import Cluster, GenericURL
 
 
 # table or db name cannot have delimiters used in qualified_name
@@ -35,7 +35,7 @@ class Table(BaseModel, Entity):
 
             Cannot contain dot symbol ``.``, ``@`` and ``#``
 
-    instance : :obj:`etl_entities.location.url.remote_url.RemoteURL`
+    instance : :obj:`etl_entities.location.url.generic_url.GenericURL`
                 or :obj:`etl_entities.location.cluster.cluster.Cluster`
 
         Cluster name in format ``my-cluster`` or instance URL in format ``"protocol://some.domain[:port]"``
@@ -53,7 +53,7 @@ class Table(BaseModel, Entity):
 
     name: TableDBName
     db: TableDBName
-    instance: Union[RemoteURL, Cluster]
+    instance: Union[GenericURL, Cluster]
 
     def __str__(self):
         """

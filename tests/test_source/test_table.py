@@ -35,15 +35,6 @@ def test_table_valid_input(instance):
         "001some",
         "001-some",
         "001_some",
-        "localhost",
-        "localhost",
-        "0.0.0.0",  # noqa: S104
-        "127.0.0.1",
-        "127.1.1.1",
-        "240.0.0.0",
-        "255.255.255.255",
-        "::1",
-        "0:0:0:0:0:0:0:1",
         "http:/",
         "http://",
         "http:///",
@@ -54,11 +45,6 @@ def test_table_valid_input(instance):
         "http://user:password@some:1234",
         "http://some/path?query",
         "http://some/path#fragment",
-        "http://localhost",
-        "http://127.0.0.1",
-        "http://127.1.1.1",
-        "http://::1",
-        "http://0:0:0:0:0:0:0:1",
     ],
 )
 def test_table_wrong_input(invalid_name, invalid_db, invalid_instance):

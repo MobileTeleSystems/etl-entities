@@ -16,8 +16,6 @@ class Cluster(StrictStr):
 
         Name cannot be just a numeric value, prefer ``somecluster-001``.
 
-        Name cannot be ``localhost``
-
     Examples
     ----------
 
@@ -28,4 +26,4 @@ class Cluster(StrictStr):
         cluster = Cluster("some-cluster")
     """
 
-    regex = re.compile("^(?!localhost)[a-zA-Z]+([a-zA-Z-_]*[a-zA-Z0-9])*$")
+    regex = re.compile("^[a-zA-Z]+([a-zA-Z-_]*[a-zA-Z0-9])*$")

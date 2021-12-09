@@ -3,7 +3,7 @@ from __future__ import annotations
 from pydantic import validator
 
 from etl_entities.entity import BaseModel, Entity
-from etl_entities.location import AbsolutePath, RemoteURL
+from etl_entities.location import AbsolutePath, GenericURL
 
 # root path cannot have delimiters used in qualified_name
 PROHIBITED_ROOT_SYMBOLS = "@#"
@@ -22,7 +22,7 @@ class RemoteFolder(BaseModel, Entity):
 
             Only absolute path without ``..`` are allowed
 
-    instance : :obj:`etl_entities.location.url.remote_url.RemoteURL`
+    instance : :obj:`etl_entities.location.url.generic_url.GenericURL`
 
         Instance URL in format ``"protocol://some.domain[:port]"``
 
@@ -37,7 +37,7 @@ class RemoteFolder(BaseModel, Entity):
     """
 
     root: AbsolutePath
-    location: RemoteURL
+    location: GenericURL
 
     @validator("root", pre=True)
     def check_absolute_path(cls, value):  # noqa: N805

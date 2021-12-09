@@ -61,14 +61,6 @@ def test_remote_folder_valid_input(valid_root, name, valid_location):
         "http://user:password@some:1234",
         "http://some/path?query",
         "http://some/path#fragment",
-        "http://localhost",
-        "http://0.0.0.0",
-        "http://127.0.0.1",
-        "http://127.1.1.1",
-        "http://240.0.0.0",
-        "http://255.255.255.255",
-        "http://::1",
-        "http://0:0:0:0:0:0:0:1",
     ],
 )
 def test_remote_folder_wrong_input(invalid_root, invalid_location):

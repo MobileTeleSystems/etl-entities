@@ -5,11 +5,10 @@ import os
 from socket import getfqdn
 
 import psutil
-from pydantic import Field, parse_obj_as, validator
+from pydantic import Field, parse_obj_as, validator, AnyUrl
 from pydantic.validators import str_validator
 
 from etl_entities.entity import BaseModel, Entity
-from etl_entities.location.url.remote_url import RemoteURL
 
 log = logging.getLogger(__name__)
 
@@ -26,10 +25,6 @@ class Process(BaseModel, Entity):
     host : :obj:`str`, default: current host FQDN
 
         Host name. Could be hostname, FQDN or IPv4/IPv6 address
-
-        .. warning::
-
-            ``localhost``, ``127.0.0.1`` and ``:::1`` are prohibited
 
     Examples
     ----------
@@ -52,8 +47,11 @@ class Process(BaseModel, Entity):
         if not value:
             raise ValueError("Empty hostname")
 
-        url = parse_obj_as(RemoteURL, f"http://{value}")
-        return url.host
+        url = parse_obj_as(AnyUrl, f"http://{value}")
+        if url.host != value:
+            raise ValueError("Invalid host")
+
+        return value
 
     def __str__(self):
         """

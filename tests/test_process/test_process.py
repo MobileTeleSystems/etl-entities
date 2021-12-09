@@ -31,7 +31,7 @@ def test_process_valid_input(valid_name, valid_host):
 
 @pytest.mark.parametrize(
     "invalid_host",
-    [None, "", "some.*", "localhost", "127.0.0.1", "127.1.1.1", "::1", "0:0:0:0:0:0:0:1", []],
+    [None, "", "abc.*", "@abc", "/abc", ":abc", []],
 )
 def test_process_wrong_input(invalid_host):
     name = "some"
