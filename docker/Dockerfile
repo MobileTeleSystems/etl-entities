@@ -1,5 +1,14 @@
-FROM docker.rep.msk.mts.ru/platform/python:3.7.7
+ARG PYTHON_VERSION=3.7
+FROM docker.rep.msk.mts.ru/platform/python:${PYTHON_VERSION} as base
 LABEL maintainer="ONEtools"
+
+ENV REQUESTS_CA_BUNDLE=/etc/pki/ca-trust/extracted/pem/tls-ca-bundle.pem
+ENV CURL_CA_BUNDLE=$REQUESTS_CA_BUNDLE \
+    SSL_CERT_FILE=$REQUESTS_CA_BUNDLE
+
+RUN yum -y install autoconf zlib-devel perl-devel gcc g++ make && \
+    yum -y remove pyparsing && \
+    yum clean all
 
 RUN set -ex; \
     cd /tmp; \
