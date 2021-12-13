@@ -139,7 +139,7 @@ push_pip_repository:
   script:
   # Build /app/dist/etl-entities*.whl
   - python3 setup.py bdist_wheel
-  - python3 -m twine upload /app/dist/*.whl --repository-url ${ARTIFACTORY_PYPI_REP}
+  - python3 -m twine upload ./dist/*.whl --repository-url ${ARTIFACTORY_PYPI_REP}
 
 build_and_publish_docs:
   image: $CI_REGISTRY/platform/python:${PYTHON_VERSION}
