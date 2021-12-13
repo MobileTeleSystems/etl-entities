@@ -54,7 +54,7 @@ mypy:
     PYTHON_VERSION: '3.7'
   stage: static analysis
   script:
-  - pip install mypy pydantic
+  - pip3 install mypy pydantic
   - python3 -m mypy etl_entities
 
 flake8:
@@ -63,7 +63,7 @@ flake8:
     PYTHON_VERSION: '3.7'
   stage: static analysis
   script:
-  - pip install wemake-python-styleguide
+  - pip3 install wemake-python-styleguide
   - python3 -m flake8 --format=default . 2>&1 | tee flake8.txt
   artifacts:
     when: always
@@ -75,7 +75,7 @@ black:
     PYTHON_VERSION: '3.7'
   stage: static analysis
   script:
-  - pip install black
+  - pip3 install black
   - python3 -m black . --check
 
 build_docker_image:
@@ -134,7 +134,7 @@ push_pip_repository:
     TWINE_PASSWORD: ${USER_ARTIFACTORY_DOCKER_TOKEN}
     TWINE_USERNAME: ${USER_ARTIFACTORY_DOCKER_LOGIN}
   before_script:
-  - pip install twine
+  - pip3 install twine
   script:
   - python3 -m twine upload /app/dist/*.whl --repository-url ${ARTIFACTORY_PYPI_REP}
 
@@ -147,7 +147,7 @@ build_and_publish_docs:
   - master
   - develop
   script:
-  - pip install -r requirements-docs.txt && cd docs && make html && tar cvzf html-etl-entities-master.tar.gz -C _build/html .
+  - pip3 install -r requirements-docs.txt && cd docs && make html && tar cvzf html-etl-entities-master.tar.gz -C _build/html .
   - curl -u "${USER_ARTIFACTORY_DOCKER_LOGIN}":"${USER_ARTIFACTORY_DOCKER_TOKEN}" -X PUT "${ARTIFACTORY_URL}/artifactory/files/onetools/etl-entities/docs/" -T html-etl-entities-master.tar.gz
 
 clean_docker_repo:

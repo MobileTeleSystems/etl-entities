@@ -5,7 +5,7 @@ import os
 from socket import getfqdn
 
 import psutil
-from pydantic import Field, parse_obj_as, validator, AnyUrl
+from pydantic import AnyUrl, Field, parse_obj_as, validator
 from pydantic.validators import str_validator
 
 from etl_entities.entity import BaseModel, Entity

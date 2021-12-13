@@ -15,7 +15,13 @@ with open(os.path.join(here, "README.rst")) as f:
 
 setup(
     name="etl-entities",
-    version="1.0.0",
+    version_config={
+        "template": "{tag}",
+        "dev_template": "{tag}.dev{env:BUILD_ID:{ccount}}",
+        "dirty_template": "{tag}",
+        "version_file": here / "etl_entities" / "VERSION",
+        "count_commits_from_version_file": True,
+    },
     author="Volkov Dmitrii",
     description="ETL Entities lib",
     long_description=long_description,
