@@ -138,7 +138,9 @@ push_pip_repository:
   - pip3 install twine
   script:
   # Build /app/dist/etl-entities*.whl
-  - python3 setup.py bdist_wheel
+  - git status
+  - git log
+  - python3 setup.py sdist bdist_wheel
   - python3 -m twine upload ./dist/*.whl --repository-url ${ARTIFACTORY_PYPI_REP}
 
 build_and_publish_docs:
