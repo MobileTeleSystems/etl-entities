@@ -47,7 +47,7 @@ setup(
         "Tracker": "https://jira.bd.msk.mts.ru/projects/ONE/issues",
     },
     python_requires=">=3.7",
-    install_require=requirements,
+    install_requires=requirements,
     tests_require=test_requirements,
     extras_require={"test": test_requirements},
     setup_requires=["setuptools-git-versioning"],
