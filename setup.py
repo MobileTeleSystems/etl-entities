@@ -20,7 +20,7 @@ setup(
     name="etl-entities",
     version_config={
         "template": "{tag}",
-        "dev_template": "{tag}.dev{env:BUILD_ID:{ccount}}",
+        "dev_template": "{tag}.dev{env:CI_PIPELINE_ID:{ccount}}",
         "dirty_template": "{tag}",
         "version_file": here / "etl_entities" / "VERSION",
         "count_commits_from_version_file": True,

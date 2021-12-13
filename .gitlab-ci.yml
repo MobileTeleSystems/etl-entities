@@ -130,12 +130,15 @@ push_pip_repository:
   - master
   - develop
   variables:
+    GIT_STRATEGY: clone
     ARTIFACTORY_PYPI_REP: http://rep.msk.mts.ru/artifactory/api/pypi/pypi-local/
     TWINE_PASSWORD: ${USER_ARTIFACTORY_DOCKER_TOKEN}
     TWINE_USERNAME: ${USER_ARTIFACTORY_DOCKER_LOGIN}
   before_script:
   - pip3 install twine
   script:
+  # Build /app/dist/etl-entities*.whl
+  - python3 setup.py bdist_wheel
   - python3 -m twine upload /app/dist/*.whl --repository-url ${ARTIFACTORY_PYPI_REP}
 
 build_and_publish_docs:
