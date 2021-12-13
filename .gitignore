@@ -48,6 +48,7 @@ ENV/
 MANIFEST
 __pycache__/
 __pypackages__/
+ansible/
 build/
 celerybeat-schedule
 celerybeat.pid
@@ -65,6 +66,7 @@ downloads/
 eggs/
 env.bak/
 env/
+flake8.txt
 htmlcov/
 instance/
 ipython_config.py
