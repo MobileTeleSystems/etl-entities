@@ -1,17 +1,20 @@
-import os
+from __future__ import annotations
+
+from pathlib import Path
 
 from setuptools import setup, find_packages
 
-here = os.path.abspath(os.path.dirname(__file__))
 
-with open(os.path.join(here, "requirements.txt")) as f:
-    requirements = f.readlines()
+def parse_requirements(file: Path) -> list[str]:
+    lines = file.read_text().splitlines()
+    return [line.rstrip() for line in lines if line and not line.startswith("#")]
 
-with open(os.path.join(here, "requirements-test.txt")) as f:
-    test_requirements = f.readlines()
 
-with open(os.path.join(here, "README.rst")) as f:
-    long_description = f.read()
+here = Path(__file__).parent.absolute()
+
+requirements = parse_requirements(here / "requirements.txt")
+test_requirements = parse_requirements(here / "requirements-test.txt")
+long_description = (here / "README.rst").read_text()
 
 setup(
     name="etl-entities",
