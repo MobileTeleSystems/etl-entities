@@ -15,41 +15,110 @@ from etl_entities.process import Process
         "1.2.3.4",
     ],
 )
-def test_process_valid_input(valid_name, valid_host):
-    process1 = Process(name=valid_name, host=valid_host)
+@pytest.mark.parametrize(
+    "valid_task",
+    [
+        "abc",
+        "a_b_c",
+        "some123",
+        "some_123",
+    ],
+)
+@pytest.mark.parametrize(
+    "valid_dag",
+    [
+        "abc",
+        "a_b_c",
+        "some123",
+        "some_123",
+    ],
+)
+def test_process_valid_input(valid_name, valid_host, valid_task, valid_dag):
+    process1 = Process(name=valid_name, host=valid_host, task=valid_task, dag=valid_dag)
     assert process1.name == valid_name
     assert process1.host == valid_host
+    assert process1.task == valid_task
+    assert process1.dag == valid_dag
 
-    process2 = Process(name=valid_name)
+    process2 = Process(name=valid_name, host=valid_host)
     assert process2.name == valid_name
-    assert process2.host
-
-    process2 = Process(host=valid_host)
-    assert process2.name
     assert process2.host == valid_host
+    assert not process2.task
+    assert not process2.dag
+
+    process3 = Process(name=valid_name)
+    assert process3.name == valid_name
+    assert process3.host
+    assert not process3.task
+    assert not process3.dag
+
+    process4 = Process(host=valid_host)
+    assert process4.name
+    assert process4.host == valid_host
+    assert not process3.task
+    assert not process3.dag
 
 
 @pytest.mark.parametrize(
     "invalid_host",
     [None, "", "abc.*", "@abc", "/abc", ":abc", []],
 )
-def test_process_wrong_input(invalid_host):
+@pytest.mark.parametrize(
+    "invalid_task",
+    [
+        "ab.c",
+        "a_b.c",
+        "some.123",
+    ],
+)
+@pytest.mark.parametrize(
+    "invalid_dag",
+    [
+        "ab.c",
+        "a_b.c",
+        "some.123",
+    ],
+)
+def test_process_wrong_input(invalid_host, invalid_task, invalid_dag):
     name = "some"
+    host = "current"
+    task = "abc"
+    dag = "cde"
 
     with pytest.raises(ValueError):
         Process(host=invalid_host)
 
     with pytest.raises(ValueError):
+        Process(task=task)
+
+    with pytest.raises(ValueError):
+        Process(dag=dag)
+
+    with pytest.raises(ValueError):
         Process(name=name, host=invalid_host)
+
+    with pytest.raises(ValueError):
+        Process(name=name, host=host, task=task)
+
+    with pytest.raises(ValueError):
+        Process(name=name, host=host, dag=dag)
+
+    with pytest.raises(ValueError):
+        Process(name=name, host=host, task=invalid_task, dag=dag)
+
+    with pytest.raises(ValueError):
+        Process(name=name, host=host, task=task, dag=invalid_dag)
 
 
 def test_process_frozen():
     name = "some"
     host = "domain"
+    task = "abc"
+    dag = "cde"
 
-    process = Process(name=name, host=host)
+    process = Process(name=name, host=host, task=task, dag=dag)
 
-    for attr in ("name", "host"):
+    for attr in ("name", "host", "task", "dag"):
         for value in (1, ".", "/abc", None, PosixPath()):
 
             with pytest.raises(TypeError):
@@ -63,6 +132,12 @@ def test_process_compare():
     host1 = "domain1"
     host2 = "domain2"
 
+    task1 = "task1"
+    task2 = "task2"
+
+    dag1 = "dag1"
+    dag2 = "dag2"
+
     process = Process(name=name1, host=host1)
 
     process1 = Process(name=name1, host=host1)
@@ -70,9 +145,14 @@ def test_process_compare():
     process3 = Process(name=name1, host=host2)
     process4 = Process(name=name2, host=host2)
 
+    process5 = Process(name=name1, host=host1, task=task1, dag=dag1)
+    process6 = Process(name=name2, host=host1, task=task2, dag=dag1)
+    process7 = Process(name=name1, host=host2, task=task1, dag=dag2)
+    process8 = Process(name=name2, host=host2, task=task2, dag=dag2)
+
     assert process == process1
 
-    items = (process1, process2, process3, process4)
+    items = (process1, process2, process3, process4, process5, process6, process7, process8)
 
     for item1 in items:
         for item2 in items:
@@ -80,12 +160,21 @@ def test_process_compare():
                 assert item1 != item2
 
 
-def test_process_qualified_name():
+@pytest.mark.parametrize(
+    "task, dag, prefix",
+    [
+        ("", "", ""),
+        ("abc", "cde", "abc.cde."),
+    ],
+)
+def test_process_qualified_name(task, dag, prefix):
     name = "some process name"
     host = "some.domain"
 
     process = Process(
         name=name,
         host=host,
+        task=task,
+        dag=dag,
     )
-    assert process.qualified_name == f"{name}@{host}"
+    assert process.qualified_name == f"{prefix}{name}@{host}"
