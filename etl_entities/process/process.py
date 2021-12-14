@@ -2,15 +2,21 @@ from __future__ import annotations
 
 import logging
 import os
+import re
 from socket import getfqdn
 
 import psutil
-from pydantic import AnyUrl, Field, parse_obj_as, validator
-from pydantic.validators import str_validator
+from pydantic import ConstrainedStr, Field, validator
 
 from etl_entities.entity import BaseModel, Entity
+from etl_entities.location import Host
 
 log = logging.getLogger(__name__)
+
+
+# dag or task name cannot have delimiters used in qualified_name
+class DagTaskName(ConstrainedStr):
+    regex = re.compile("^[^.]*$")
 
 
 class Process(BaseModel, Entity):
@@ -26,6 +32,22 @@ class Process(BaseModel, Entity):
 
         Host name. Could be hostname, FQDN or IPv4/IPv6 address
 
+    task : :obj:`str`, default: empty string
+
+        Task name
+
+        .. warning::
+
+            Can be set only if ``dag`` set too
+
+    dag : :obj:`str`, default: empty string
+
+        DAG name
+
+        .. warning::
+
+            Can be set only if ``task`` is set too
+
     Examples
     ----------
 
@@ -36,29 +58,33 @@ class Process(BaseModel, Entity):
         process = Process()
         process1 = Process(name="mycolumn")
         process2 = Process(name="mycolumn", host="myhost")
+        process3 = Process(name="mycolumn", task="abc", dag="cde", host="myhost")
     """
 
     name: str = Field(default_factory=lambda: psutil.Process(os.getpid()).name())
-    host: str = Field(default_factory=getfqdn)
+    host: Host = Field(default_factory=getfqdn)
+    dag: DagTaskName = DagTaskName()
+    task: DagTaskName = DagTaskName()
 
-    @validator("host", pre=True)
-    def validate_host(cls, value):  # noqa: N805
-        value = str_validator(value).strip()
-        if not value:
-            raise ValueError("Empty hostname")
+    @validator("task", always=True)
+    def task_and_dag_should_be_both_set(cls, task, values):  # noqa: N805
+        dag = values.get("dag")
 
-        url = parse_obj_as(AnyUrl, f"http://{value}")
-        if url.host != value:
-            raise ValueError("Invalid host")
+        if bool(task) ^ bool(dag):
+            raise ValueError("task and dag should be both set or both empty")
 
-        return value
+        return task
+
+    @property
+    def full_name(self) -> str:
+        return ".".join(filter(None, (self.task, self.dag, self.name)))
 
     def __str__(self):
         """
         Returns process name
         """
 
-        return self.name
+        return self.full_name
 
     @property
     def qualified_name(self) -> str:
@@ -78,12 +104,14 @@ class Process(BaseModel, Entity):
 
             from etl_entities import Process
 
-            process = Process(name="mycolumn", host="myhost")
+            process1 = Process(name="mycolumn", host="myhost")
+            assert process1.qualified_name == "currentapp@somehost"
 
-            assert process.qualified_name == "currentapp@somehost"
+            process2 = Process(name="mycolumn", task="abc", dag="cde", host="myhost")
+            assert process2.qualified_name == "abc.cde.currentapp@somehost"
         """
 
-        return "@".join([self.name, self.host])
+        return "@".join([self.full_name, self.host])
 
     def __enter__(self):
         """

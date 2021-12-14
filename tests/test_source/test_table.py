@@ -7,7 +7,6 @@ from etl_entities.source import Table
 def test_table_valid_input(instance):
     name = "some"
     db = "another"
-    instance = "proto://url"
 
     table1 = Table(name=name, db=db, instance=instance)
     assert table1.name == name
