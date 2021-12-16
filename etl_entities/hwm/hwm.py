@@ -3,7 +3,7 @@ from __future__ import annotations
 from typing import Generic, TypeVar, cast
 
 from pydantic import Field, validator
-from pydantic.validators import str_validator
+from pydantic.validators import strict_str_validator
 
 from etl_entities.entity import Entity, GenericModel
 from etl_entities.process import Process, ProcessStackManager
@@ -83,7 +83,7 @@ class HWM(Entity, GenericModel, Generic[T]):
             assert IntHWM.deserialize("123") == 123
         """
 
-        return cast(T, str_validator(value).strip())
+        return cast(T, strict_str_validator(value).strip())
 
     def with_value(self, value: T) -> HWM:
         """Create copy of HWM object with specified value
