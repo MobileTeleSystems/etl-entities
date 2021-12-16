@@ -54,14 +54,14 @@ def test_column_hwm_valid_input(hwm_class, value):
 
 
 @pytest.mark.parametrize(
-    "hwm_class, value",
+    "hwm_class, value, wrong_values",
     [
-        (DateHWM, date.today()),
-        (DateTimeHWM, datetime.now()),
-        (IntHWM, 1),
+        (DateHWM, date.today(), ["1.1", "1", "2021-01-01T11:22:33"]),
+        (DateTimeHWM, datetime.now(), ["1.1", "1"]),
+        (IntHWM, 1, [1.1, "1.1"]),
     ],
 )
-def test_column_hwm_wrong_input(hwm_class, value):
+def test_column_hwm_wrong_input(hwm_class, value, wrong_values):
     column = Column(name="some")
     table = Table(name="another", db="abc", instance="proto://url")
 
@@ -82,6 +82,10 @@ def test_column_hwm_wrong_input(hwm_class, value):
 
     with pytest.raises(ValueError):
         hwm_class(column=column, table=table, value=[])
+
+    for wrong_value in wrong_values:
+        with pytest.raises(ValueError):
+            hwm_class(column=column, table=table, value=wrong_value)
 
     with pytest.raises(ValueError):
         hwm_class(column=column, table=table, process=1)
@@ -110,7 +114,7 @@ def test_column_hwm_with_value(hwm_class, value):
     hwm2 = hwm1.with_value(None)
     assert hwm2.value == value
 
-    with pytest.raises(ValueError):
+    with pytest.raises((TypeError, ValueError)):
         hwm.with_value("unknown")
 
     with pytest.raises((TypeError, ValueError)):

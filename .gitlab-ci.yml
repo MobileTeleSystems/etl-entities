@@ -54,7 +54,8 @@ mypy:
     PYTHON_VERSION: '3.7'
   stage: static analysis
   script:
-  - pip3 install mypy pydantic
+  # remove fixed mypy version after https://github.com/samuelcolvin/pydantic/issues/3528
+  - pip3 install "mypy<0.920" pydantic
   - python3 -m mypy etl_entities
 
 flake8:

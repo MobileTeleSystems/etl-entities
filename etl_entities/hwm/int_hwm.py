@@ -3,6 +3,9 @@ from __future__ import annotations
 from functools import total_ordering
 from typing import Optional
 
+from pydantic.types import StrictInt
+from pydantic.validators import int_validator
+
 from etl_entities.hwm.column_hwm import ColumnHWM
 from etl_entities.hwm.hwm import HWM
 
@@ -42,32 +45,7 @@ class IntHWM(ColumnHWM[int]):
         hwm = IntHWM(column=column, table=table, value=1)
     """
 
-    value: Optional[int] = None
-
-    def serialize(self) -> str:  # noqa: WPS612
-        """Return string representation of HWM value
-
-        Returns
-        -------
-        result : str
-
-            Serialized value
-
-        Examples
-        ----------
-
-        .. code:: python
-
-            from etl_entities import IntHWM
-
-            hwm = IntHWM(value=1, ...)
-            assert hwm.serialize() == "1"
-
-            hwm = IntHWM(value=None, ...)
-            assert hwm.serialize() == "null"
-        """
-
-        return super().serialize()
+    value: Optional[StrictInt] = None
 
     @classmethod
     def deserialize(cls, value: str) -> int | None:
@@ -102,42 +80,7 @@ class IntHWM(ColumnHWM[int]):
         if value.lower() == "null":
             return None
 
-        return int(value)
-
-    def with_value(self, value: int | None) -> ColumnHWM:
-        """Create copy of HWM object with specified value
-
-        Parameters
-        ----------
-        value : Any
-
-            New HWM value
-
-        Returns
-        -------
-        result : HWM
-
-            Copy of HWM
-
-        Examples
-        ----------
-
-        .. code:: python
-
-            from etl_entities import IntHWM
-
-            hwm = IntHWM(value=1, ...)
-            new_hwm = hwm.with_value(2)
-
-            assert new_hwm.value == 2
-        """
-
-        if value is not None:
-            dct = self.dict()
-            dct["value"] = int(value)
-            return self.parse_obj(dct)
-
-        return self
+        return int_validator(value)
 
     def __eq__(self, other):
         """Checks equality of two HWM instances
