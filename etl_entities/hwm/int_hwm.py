@@ -28,6 +28,10 @@ class IntHWM(ColumnHWM[int]):
 
         HWM value
 
+    modified_time : :obj:`datetime.datetime`, default: current datetime
+
+        HWM value modification time
+
     process : :obj:`etl_entities.process.process.Process`, default: current process
 
         Process instance
@@ -87,12 +91,13 @@ class IntHWM(ColumnHWM[int]):
 
         Params
         -------
-        other : ``IntHWM`` or :obj:`int`
+        other : :obj:`hwmlib.hwm.int_hwm.IntHWM` or :obj:`int`
 
             Should be comparable with ``value`` attribute type.
 
             You can compare two ``int`` values, but you cannot compare ``int`` with ``date`` value,
-            as well as different HWM types, like ``IntHWM`` and ``DateHWM``.
+            as well as different HWM types,
+            like :obj:`hwmlib.hwm.int_hwm.IntHWM` and :obj:`hwmlib.hwm.date_hwm.DateHWM`.
 
         Returns
         --------
@@ -115,7 +120,9 @@ class IntHWM(ColumnHWM[int]):
         """
 
         if isinstance(other, HWM):
-            return isinstance(other, IntHWM) and self.dict() == other.dict()
+            self_fields = self.dict(exclude={"modified_time"})
+            other_fields = other.dict(exclude={"modified_time"})
+            return isinstance(other, IntHWM) and self_fields == other_fields
 
         return self.value == other
 
@@ -124,12 +131,13 @@ class IntHWM(ColumnHWM[int]):
 
         Params
         -------
-        other : ``IntHWM`` or :obj:`int`
+        other : :obj:`hwmlib.hwm.int_hwm.IntHWM` or :obj:`int`
 
             Should be comparable with ``value`` attribute type.
 
             You can compare two ``int`` values, but you cannot compare ``int`` with ``date`` value,
-            as well as different HWM types, like ``IntHWM`` and ``DateHWM``.
+            as well as different HWM types,
+            like :obj:`hwmlib.hwm.int_hwm.IntHWM` and :obj:`hwmlib.hwm.date_hwm.DateHWM`.
 
             .. warning::
 
@@ -164,7 +172,9 @@ class IntHWM(ColumnHWM[int]):
 
         if isinstance(other, HWM):
             if isinstance(other, IntHWM):
-                if self.dict(exclude={"value"}) == other.dict(exclude={"value"}):
+                self_fields = self.dict(exclude={"value", "modified_time"})
+                other_fields = other.dict(exclude={"value", "modified_time"})
+                if self_fields == other_fields:
                     return self.value < other.value
 
                 raise NotImplementedError(  # NOSONAR

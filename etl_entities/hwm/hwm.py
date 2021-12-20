@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import datetime
 from typing import Generic, TypeVar, cast
 
 from pydantic import Field, validator
@@ -20,12 +21,17 @@ class HWM(Entity, GenericModel, Generic[T]):
 
         HWM value of any type
 
+    modified_time : :obj:`datetime.datetime`, default: current datetime
+
+        HWM value modification time
+
     process : :obj:`etl_entities.process.process.Process`, default: current process
 
         Process instance
     """
 
     value: T
+    modified_time: datetime = Field(default_factory=datetime.now)
     process: Process = Field(default_factory=ProcessStackManager.get_current)
 
     @validator("value", pre=True)
@@ -115,4 +121,5 @@ class HWM(Entity, GenericModel, Generic[T]):
 
         dct = self.dict()
         dct["value"] = value
+        dct["modified_time"] = datetime.now()
         return self.parse_obj(dct)

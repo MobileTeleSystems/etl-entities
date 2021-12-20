@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+from datetime import datetime
 from typing import Generic, Optional, TypeVar
 
 from etl_entities.entity import GenericModel
@@ -25,6 +26,10 @@ class ColumnHWM(HWM, GenericModel, Generic[T]):
     value : int or ``None``, default: ``None``
 
         HWM value
+
+    modified_time : :obj:`datetime.datetime`, default: current datetime
+
+        HWM value modification time
 
     process : :obj:`etl_entities.process.process.Process`, default: current process
 
@@ -110,6 +115,7 @@ class ColumnHWM(HWM, GenericModel, Generic[T]):
         if value is not None:
             dct = self.dict()
             dct["value"] = value
+            dct["modified_time"] = datetime.now()
             return self.parse_obj(dct)
 
         return self
