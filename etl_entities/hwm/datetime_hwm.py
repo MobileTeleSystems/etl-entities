@@ -26,6 +26,10 @@ class DateTimeHWM(ColumnHWM[datetime]):
 
         HWM value
 
+    modified_time : :obj:`datetime.datetime`, default: current datetime
+
+        HWM value modification time
+
     process : :obj:`etl_entities.process.process.Process`, default: current process
 
         Process instance
@@ -128,10 +132,11 @@ class DateTimeHWM(ColumnHWM[datetime]):
 
             Should be comparable with ``value`` attribute type.
 
-            You can compare two ``DateTimeHWM`` or ``datetime`` values.
+            You can compare two :obj:`hwmlib.hwm.datetime_hwm.DateTimeHWM` or ``datetime`` values.
 
             But you cannot compare ``datetime`` with ``int`` value,
-            as well as different HWM types, like ``DateTimeHWM`` and ``IntHWM``.
+            as well as different HWM types,
+            like :obj:`hwmlib.hwm.datetime_hwm.DateTimeHWM` and :obj:`hwmlib.hwm.int_hwm.IntHWM`.
 
         Returns
         --------
@@ -159,7 +164,9 @@ class DateTimeHWM(ColumnHWM[datetime]):
         """
 
         if isinstance(other, HWM):
-            return isinstance(other, DateTimeHWM) and self.dict() == other.dict()
+            self_fields = self.dict(exclude={"modified_time"})
+            other_fields = other.dict(exclude={"modified_time"})
+            return isinstance(other, DateTimeHWM) and self_fields == other_fields
 
         return self.value == other
 
@@ -172,10 +179,11 @@ class DateTimeHWM(ColumnHWM[datetime]):
 
             Should be comparable with ``value`` attribute type.
 
-            You can compare two ``DateTimeHWM`` or ``datetime`` values.
+            You can compare two :obj:`hwmlib.hwm.datetime_hwm.DateTimeHWM` or ``datetime`` values.
 
             But you cannot compare ``datetime`` with ``int`` value,
-            as well as different HWM types, like ``DateTimeHWM`` and ``IntHWM``.
+            as well as different HWM types,
+            like :obj:`hwmlib.hwm.datetime_hwm.DateTimeHWM` and :obj:`hwmlib.hwm.int_hwm.IntHWM`.
 
             .. warning::
 
@@ -215,7 +223,9 @@ class DateTimeHWM(ColumnHWM[datetime]):
 
         if isinstance(other, HWM):
             if isinstance(other, DateTimeHWM):
-                if self.dict(exclude={"value"}) == other.dict(exclude={"value"}):
+                self_fields = self.dict(exclude={"value", "modified_time"})
+                other_fields = other.dict(exclude={"value", "modified_time"})
+                if self_fields == other_fields:
                     return self.value < other
 
                 raise NotImplementedError(  # NOSONAR

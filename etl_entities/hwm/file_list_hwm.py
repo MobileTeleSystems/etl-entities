@@ -24,6 +24,10 @@ class FileListHWM(HWM):
 
         HWM value
 
+    modified_time : :obj:`datetime.datetime`, default: current datetime
+
+        HWM value modification time
+
     process : :obj:`etl_entities.process.process.Process`, default: current process
 
         Process instance
@@ -190,11 +194,14 @@ class FileListHWM(HWM):
 
         values: Iterable[RelativePath]
         if isinstance(value, Iterable):
-            values = (RelativePath(item) for item in value)
+            values = {RelativePath(item) for item in value}
         else:
-            values = [RelativePath(value)]
+            values = {RelativePath(value)}
 
-        return self.with_value(self.value.union(values))
+        if values:
+            return self.with_value(self.value.union(values))
+
+        return self
 
     def __abs__(self):
         """Returns list of files with absolute paths
@@ -245,3 +252,37 @@ class FileListHWM(HWM):
             item = PurePosixPath(item)
 
         return item in self.value or item in abs(self)
+
+    def __eq__(self, other):
+        """Checks equality of two HWM instances
+
+        Params
+        -------
+        other : :obj:`hwmlib.hwm.file_list_hwm.FileListHWM`
+
+
+
+        Returns
+        --------
+        result : bool
+
+            ``True`` if both inputs are the same, ``False`` otherwise.
+
+        Examples
+        ----------
+
+        .. code:: python
+
+            from etl_entities import FileListHWM
+
+            hwm1 = FileListHWM(value=["some"], ...)
+            hwm2 = FileListHWM(value=["another"], ...)
+
+            assert hwm1 == hwm1
+            assert hwm1 != hwm2
+        """
+
+        self_fields = self.dict(exclude={"modified_time"})
+        other_fields = other.dict(exclude={"modified_time"})
+
+        return isinstance(other, FileListHWM) and self_fields == other_fields
