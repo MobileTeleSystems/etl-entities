@@ -5,4 +5,4 @@ RemoteFolder
 
 .. autoclass:: RemoteFolder
     :members: name, qualified_name, copy, dict, json
-    :special-members: __str__
+    :special-members: __str__, __abs__, __truediv__

@@ -127,9 +127,6 @@ sonarqube_check:
 push_pip_repository:
   image: ${CI_REGISTRY}/${CI_PROJECT_PATH}:${CI_PIPELINE_ID}
   stage: push_pip
-  only:
-  - master
-  - develop
   variables:
     GIT_STRATEGY: clone
     ARTIFACTORY_PYPI_REP: http://rep.msk.mts.ru/artifactory/api/pypi/pypi-local/
@@ -147,9 +144,6 @@ build_and_publish_docs:
   variables:
     PYTHON_VERSION: '3.7'
   stage: build_and_publish_docs
-  only:
-  - master
-  - develop
   script:
   - pip3 install -r requirements-docs.txt && cd docs && make html && tar cvzf html-etl-entities-master.tar.gz -C _build/html .
   - curl -u "${USER_ARTIFACTORY_DOCKER_LOGIN}":"${USER_ARTIFACTORY_DOCKER_TOKEN}" -X PUT "${ARTIFACTORY_URL}/artifactory/files/onetools/etl-entities/docs/" -T html-etl-entities-master.tar.gz

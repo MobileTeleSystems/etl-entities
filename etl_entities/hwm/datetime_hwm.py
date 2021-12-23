@@ -6,8 +6,10 @@ from typing import Optional
 
 from etl_entities.hwm.column_hwm import ColumnHWM
 from etl_entities.hwm.hwm import HWM
+from etl_entities.hwm.hwm_type_registry import register_hwm_type
 
 
+@register_hwm_type("datetime")
 @total_ordering
 class DateTimeHWM(ColumnHWM[datetime]):
     """DateTime HWM type
@@ -18,7 +20,7 @@ class DateTimeHWM(ColumnHWM[datetime]):
 
         Column instance
 
-    table : :obj:`etl_entities.source.db.table.Table`
+    source : :obj:`etl_entities.source.db.table.Table`
 
         Table instance
 
@@ -43,18 +45,18 @@ class DateTimeHWM(ColumnHWM[datetime]):
         from etl_entities import DateTimeHWM, Column, Table
 
         column = Column(name="id")
-        table = Table(name="mytable", db="mydb", location="postgres://db.host:5432")
+        table = Table(name="mytable", db="mydb", instance="postgres://db.host:5432")
 
         hwm = DateTimeHWM(
             column=column,
-            table=table,
+            source=table,
             value=datetime(year=2021, month=21, day=31, hour=11, minute=22, second=33),
         )
     """
 
     value: Optional[datetime] = None
 
-    def serialize(self) -> str:
+    def serialize_value(self) -> str:
         """Return string representation of HWM value
 
         Returns
@@ -74,10 +76,10 @@ class DateTimeHWM(ColumnHWM[datetime]):
             hwm = DateTimeHWM(
                 value=datetime(year=2021, month=21, day=31, hour=11, minute=22, second=33), ...
             )
-            assert hwm.serialize() == "2021-12-31T11:22:33"
+            assert hwm.serialize_value() == "2021-12-31T11:22:33"
 
             hwm = DateTimeHWM(value=None, ...)
-            assert hwm.serialize() == "null"
+            assert hwm.serialize_value() == "null"
         """
 
         if self.value is None:
@@ -86,7 +88,7 @@ class DateTimeHWM(ColumnHWM[datetime]):
         return self.value.isoformat()
 
     @classmethod
-    def deserialize(cls, value: str) -> datetime | None:
+    def deserialize_value(cls, value: str) -> datetime | None:
         """Parse string representation to get HWM value
 
         Parameters
@@ -109,14 +111,14 @@ class DateTimeHWM(ColumnHWM[datetime]):
             from datetime import datetime
             from etl_entities import DateTimeHWM
 
-            assert DateTimeHWM.deserialize("2021-12-31T11-22-33") == datetime(
+            assert DateTimeHWM.deserialize_value("2021-12-31T11-22-33") == datetime(
                 year=2021, month=12, day=31, hour=11, minute=22, second=33
             )
 
-            assert DateTimeHWM.deserialize("null") is None
+            assert DateTimeHWM.deserialize_value("null") is None
         """
 
-        value = super().deserialize(value)
+        value = super().deserialize_value(value)
 
         if value.lower() == "null":
             return None
@@ -229,7 +231,7 @@ class DateTimeHWM(ColumnHWM[datetime]):
                     return self.value < other
 
                 raise NotImplementedError(  # NOSONAR
-                    f"Cannot compare {self.__class__.__name__} with different column, table or process",
+                    f"Cannot compare {self.__class__.__name__} with different column, source or process",
                 )
 
             return NotImplemented

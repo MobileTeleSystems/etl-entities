@@ -9,7 +9,7 @@ import psutil
 from pydantic import ConstrainedStr, Field, validator
 
 from etl_entities.entity import BaseModel, Entity
-from etl_entities.location import Host
+from etl_entities.instance import Host
 
 log = logging.getLogger(__name__)
 

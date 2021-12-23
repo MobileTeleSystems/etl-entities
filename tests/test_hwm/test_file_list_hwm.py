@@ -4,7 +4,7 @@ from pathlib import PosixPath
 import pytest
 
 from etl_entities.hwm import FileListHWM
-from etl_entities.location import AbsolutePath, RelativePath
+from etl_entities.instance import AbsolutePath, RelativePath
 from etl_entities.process import Process
 from etl_entities.source import RemoteFolder
 
@@ -17,26 +17,26 @@ from etl_entities.source import RemoteFolder
     ],
 )
 def test_file_list_hwm_valid_input(valid_files):
-    folder = RemoteFolder(root="/home/user/abc", location="ftp://my.domain:23")
+    folder = RemoteFolder(name="/home/user/abc", instance="ftp://my.domain:23")
     process = Process(name="myprocess", host="myhost")
     modified_time = datetime.now() - timedelta(days=5)
 
-    hwm1 = FileListHWM(folder=folder)
-    assert hwm1.folder == folder
+    hwm1 = FileListHWM(source=folder)
+    assert hwm1.source == folder
     assert hwm1.name == "downloaded_files"
     assert hwm1.process is not None
     assert not hwm1.value
     assert not hwm1  # same as above
 
-    hwm2 = FileListHWM(folder=folder, process=process)
-    assert hwm2.folder == folder
+    hwm2 = FileListHWM(source=folder, process=process)
+    assert hwm2.source == folder
     assert hwm2.name == "downloaded_files"
     assert hwm2.process == process
     assert not hwm2.value
     assert not hwm2  # same as above
 
-    hwm3 = FileListHWM(folder=folder, value=valid_files)
-    assert hwm3.folder == folder
+    hwm3 = FileListHWM(source=folder, value=valid_files)
+    assert hwm3.source == folder
     assert hwm3.name == "downloaded_files"
     assert hwm3.process is not None
 
@@ -45,15 +45,15 @@ def test_file_list_hwm_valid_input(valid_files):
     assert hwm3
 
     for file in valid_files:
-        hwm4 = FileListHWM(folder=folder, value=file)
-        assert hwm4.folder == folder
+        hwm4 = FileListHWM(source=folder, value=file)
+        assert hwm4.source == folder
         assert hwm4.name == "downloaded_files"
         assert hwm4.process is not None
         assert RelativePath(file) in hwm4.value
         assert hwm4
 
-    hwm5 = FileListHWM(folder=folder, value=valid_files, process=process)
-    assert hwm5.folder == folder
+    hwm5 = FileListHWM(source=folder, value=valid_files, process=process)
+    assert hwm5.source == folder
     assert hwm5.name == "downloaded_files"
     assert hwm5.process == process
 
@@ -61,8 +61,8 @@ def test_file_list_hwm_valid_input(valid_files):
         assert RelativePath(file) in hwm5.value
     assert hwm5
 
-    hwm6 = FileListHWM(folder=folder, value=valid_files, process=process, modified_time=modified_time)
-    assert hwm6.folder == folder
+    hwm6 = FileListHWM(source=folder, value=valid_files, process=process, modified_time=modified_time)
+    assert hwm6.source == folder
     assert hwm6.name == "downloaded_files"
     assert hwm6.process == process
     assert hwm6.modified_time == modified_time
@@ -85,7 +85,7 @@ def test_file_list_hwm_valid_input(valid_files):
         "some.file/../another",
         "/absolute",
         "/absolute.file",
-        "/absolute.folder/some.csv",
+        "/absolute.source/some.csv",
     ],
 )
 def test_file_list_hwm_wrong_input(invalid_file):
@@ -93,7 +93,7 @@ def test_file_list_hwm_wrong_input(invalid_file):
     valid_file2 = RelativePath("another.csv")
     valid_value = [valid_file1, valid_file2]
     invalid_value = valid_value + [invalid_file]
-    folder = RemoteFolder(root="/home/user/abc", location="ftp://my.domain:23")
+    folder = RemoteFolder(name="/home/user/abc", instance="ftp://my.domain:23")
     process = Process(name="myprocess", host="myhost")
 
     with pytest.raises(ValueError):
@@ -103,29 +103,35 @@ def test_file_list_hwm_wrong_input(invalid_file):
         FileListHWM(value=valid_value)
 
     with pytest.raises(ValueError):
-        FileListHWM(folder=folder, value=1)
+        FileListHWM(source=folder, value=1)
 
     with pytest.raises(ValueError):
-        FileListHWM(folder=folder, value=valid_value, process=1)
+        FileListHWM(source=folder, value=None)
 
     with pytest.raises(ValueError):
-        FileListHWM(folder=folder, value=invalid_value, process=process)
+        FileListHWM(source=folder, value=FileListHWM)
 
     with pytest.raises(ValueError):
-        FileListHWM(folder=folder, value=valid_value, process=process, modified_time="unknown")
+        FileListHWM(source=folder, value=valid_value, process=1)
+
+    with pytest.raises(ValueError):
+        FileListHWM(source=folder, value=invalid_value, process=process)
+
+    with pytest.raises(ValueError):
+        FileListHWM(source=folder, value=valid_value, process=process, modified_time="unknown")
 
     if invalid_file != "":
         with pytest.raises(ValueError):
-            FileListHWM(folder=folder, value=invalid_file, process=process)
+            FileListHWM(source=folder, value=invalid_file, process=process)
 
 
 def test_file_list_hwm_with_value():
     file1 = "some/path/file.py"
     file2 = RelativePath("another.csv")
     value = [file1, file2, file2]
-    folder = RemoteFolder(root="/home/user/abc", location="ftp://my.domain:23")
+    folder = RemoteFolder(name="/home/user/abc", instance="ftp://my.domain:23")
 
-    hwm = FileListHWM(folder=folder)
+    hwm = FileListHWM(source=folder)
 
     hwm1 = hwm.with_value(value)
     assert RelativePath(file1) in hwm1
@@ -143,7 +149,7 @@ def test_file_list_hwm_with_value():
     assert hwm3.modified_time > hwm2.modified_time
 
     with pytest.raises(ValueError):
-        hwm.with_value("/root/path")
+        hwm.with_value("/absolute/path")
 
     with pytest.raises((TypeError, ValueError)):
         hwm.with_value(folder)
@@ -156,13 +162,13 @@ def test_file_list_hwm_frozen():
     file1 = "some/path/file.py"
     file2 = RelativePath("another.csv")
     value = [file1, file2]
-    folder = RemoteFolder(root="/home/user/abc", location="ftp://my.domain:23")
+    folder = RemoteFolder(name="/home/user/abc", instance="ftp://my.domain:23")
     process = Process(name="myprocess", host="myhost")
     modified_time = datetime.now() - timedelta(days=5)
 
-    hwm = FileListHWM(folder=folder)
+    hwm = FileListHWM(source=folder)
 
-    for attr in ("value", "folder", "process", "modified_time"):
+    for attr in ("value", "source", "process", "modified_time"):
         for item in (1, "abc", None, folder, process, file1, file2, value, modified_time):
 
             with pytest.raises(TypeError):
@@ -178,18 +184,18 @@ def test_file_list_hwm_compare():
     value2 = [file1, file2, file2]
     value3 = [file2, file3]
 
-    folder1 = RemoteFolder(root="/home/user/abc", location="ftp://my.domain:23")
-    folder2 = RemoteFolder(root=AbsolutePath("/home/user/cde"), location="ftp://my.domain:32")
+    folder1 = RemoteFolder(name="/home/user/abc", instance="ftp://my.domain:23")
+    folder2 = RemoteFolder(name=AbsolutePath("/home/user/cde"), instance="ftp://my.domain:32")
 
-    hwm = FileListHWM(folder=folder1, value=value1)
-    hwm_with_doubles = FileListHWM(folder=folder1, value=value2)
+    hwm = FileListHWM(source=folder1, value=value1)
+    hwm_with_doubles = FileListHWM(source=folder1, value=value2)
 
     # modified_time is ignored while comparing HWMs
     modified_time = datetime.now() - timedelta(days=5)
-    hwm1 = FileListHWM(folder=folder1, value=value1, modified_time=modified_time)
-    hwm2 = FileListHWM(folder=folder2, value=value1)
-    hwm3 = FileListHWM(folder=folder1, value=value3)
-    hwm4 = FileListHWM(folder=folder2, value=value3)
+    hwm1 = FileListHWM(source=folder1, value=value1, modified_time=modified_time)
+    hwm2 = FileListHWM(source=folder2, value=value1)
+    hwm3 = FileListHWM(source=folder1, value=value3)
+    hwm4 = FileListHWM(source=folder2, value=value3)
 
     assert hwm == hwm1
     assert hwm == hwm_with_doubles
@@ -209,10 +215,10 @@ def test_file_list_hwm_add():
     value1 = [file1, file2]
     value2 = [file1, file2, file3]
 
-    folder = RemoteFolder(root="/home/user/abc", location="ftp://my.domain:23")
+    folder = RemoteFolder(name="/home/user/abc", instance="ftp://my.domain:23")
 
-    hwm1 = FileListHWM(folder=folder, value=value1)
-    hwm2 = FileListHWM(folder=folder, value=value2)
+    hwm1 = FileListHWM(source=folder, value=value1)
+    hwm2 = FileListHWM(source=folder, value=value2)
 
     # If one side is empty then nothing to change, modified_time is the same
     hwm3 = hwm1 + []
@@ -251,10 +257,10 @@ def test_file_list_hwm_sub():
     value1 = [file1, file2]
     value2 = [file1, file2, file3]
 
-    folder = RemoteFolder(root="/home/user/abc", location="ftp://my.domain:23")
+    folder = RemoteFolder(name="/home/user/abc", instance="ftp://my.domain:23")
 
-    hwm1 = FileListHWM(folder=folder, value=value1)
-    hwm2 = FileListHWM(folder=folder, value=value2)
+    hwm1 = FileListHWM(source=folder, value=value1)
+    hwm2 = FileListHWM(source=folder, value=value2)
 
     # sub is not supported
 
@@ -275,21 +281,21 @@ def test_file_list_hwm_sub():
 
 
 def test_file_list_hwm_contains():
-    root = PosixPath("/home/user/abc")
+    name = PosixPath("/home/user/abc")
     file1 = "some/path/file.py"
     file2 = RelativePath("another.csv")
     file3 = RelativePath("other.py")
 
     value = [file1, file2]
-    folder = RemoteFolder(root=root, location="ftp://my.domain:23")
+    folder = RemoteFolder(name=name, instance="ftp://my.domain:23")
 
-    hwm = FileListHWM(folder=folder, value=value)
+    hwm = FileListHWM(source=folder, value=value)
 
     assert file1 in hwm
     assert RelativePath(file1) in hwm
     assert PosixPath(file1) in hwm
-    assert root / file1 in hwm
-    assert str(root / file1) in hwm
+    assert name / file1 in hwm
+    assert str(name / file1) in hwm
 
     assert file3 not in hwm
 
@@ -304,51 +310,62 @@ def test_file_list_hwm_contains():
 
 
 def test_file_list_hwm_qualified_name():
-    folder = RemoteFolder(root="/home/user/abc", location="ftp://my.domain:23")
+    folder = RemoteFolder(name="/home/user/abc", instance="ftp://my.domain:23")
     process = Process(name="myprocess", host="myhost")
 
     hwm = FileListHWM(
-        folder=folder,
+        source=folder,
         process=process,
     )
     assert hwm.qualified_name == "downloaded_files#/home/user/abc@ftp://my.domain:23#myprocess@myhost"
 
 
-def test_file_list_hwm_serialize():
+def test_file_list_hwm_serialization():
     file1 = "some/path/file.py"
     file2 = RelativePath("another.csv")
 
     value = [file1, file2, file2]
-    folder = RemoteFolder(root="/home/user/abc", location="ftp://my.domain:23")
+    serialized_value1 = f"{file2}\n{file1}"
+    serialized_value2 = f"{file2}\n{file1}\n{file2}"
+    folder = RemoteFolder(name="/home/user/abc", instance="ftp://my.domain:23")
+    process = Process(name="abc", host="somehost", task="sometask", dag="somedag")
+    modified_time = datetime.now()
 
-    hwm1 = FileListHWM(folder=folder, value=value)
-    assert hwm1.serialize() == f"{file2}\n{file1}"  # result is sorted
+    serialized1 = {
+        "value": serialized_value1,
+        "type": "files_list",
+        "source": folder.serialize(),
+        "process": process.serialize(),
+        "modified_time": modified_time.isoformat(),
+    }
+    hwm1 = FileListHWM(source=folder, value=value, process=process, modified_time=modified_time)
 
-    hwm2 = FileListHWM(folder=folder)
-    assert hwm2.serialize() == ""
+    assert hwm1.serialize() == serialized1
+    assert FileListHWM.deserialize(serialized1) == hwm1
 
+    serialized2 = serialized1.copy()
+    serialized2["value"] = serialized_value2
+    assert FileListHWM.deserialize(serialized2) == hwm1
 
-def test_file_list_hwm_deserialize():
-    file1 = "some/path/file.py"
-    file2 = RelativePath("another.csv")
-    serialized = "another.csv\nsome/path/file.py\nanother.csv"
+    serialized3 = serialized1.copy()
+    serialized3["value"] = ""
+    hwm2 = FileListHWM(source=folder, process=process, modified_time=modified_time)
 
-    folder = RemoteFolder(root="/home/user/abc", location="ftp://my.domain:23")
-
-    value = FileListHWM.deserialize(serialized)
-    assert RelativePath(file1) in value
-    assert file2 in value
-
-    hwm = FileListHWM(folder=folder, value=serialized)
-    assert file1 in hwm
-    assert file2 in hwm
-
-    assert not FileListHWM.deserialize("")
-
-    for wrong_value in [FileListHWM, None]:  # noqa: WPS335
-        with pytest.raises((TypeError, ValueError)):
-            FileListHWM(folder=folder, value=wrong_value)
+    assert hwm2.serialize() == serialized3
+    assert FileListHWM.deserialize(serialized3) == hwm2
 
     for wrong_value in [FileListHWM, None, []]:  # noqa: WPS335
+        serialized4 = serialized1.copy()
+        serialized4["value"] = wrong_value
         with pytest.raises((TypeError, ValueError)):
-            FileListHWM.deserialize(wrong_value)
+            FileListHWM.deserialize_value(serialized4)
+
+    serialized5 = serialized1.copy()
+    serialized5["type"] = "unknown"
+    with pytest.raises(KeyError):
+        FileListHWM.deserialize(serialized5)
+
+    serialized6 = serialized1.copy()
+    serialized6["type"] = "int"
+    with pytest.raises(ValueError):
+        FileListHWM.deserialize(serialized6)

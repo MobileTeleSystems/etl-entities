@@ -3,7 +3,7 @@ from __future__ import annotations
 import re
 from typing import OrderedDict
 
-from pydantic import ConstrainedStr, Field
+from pydantic import ConstrainedStr, Field, validator
 
 from etl_entities.entity import BaseModel, Entity
 
@@ -57,6 +57,26 @@ class Column(BaseModel, Entity):
 
         return self.name
 
+    @validator("partition", pre=True)
+    def parse_partition_str(cls, value):  # noqa: N805
+        if isinstance(value, str):
+            value = value.strip()
+            result = {}
+            for item in value.strip("/").split("/"):
+                if item.count("=") != 1:
+                    raise ValueError(f"Partition should be passed in format 'name=value', got '{item}'")
+
+                key, value = item.split("=")
+                result[key] = value
+
+            return result
+
+        return value
+
+    @property
+    def partition_kv(self) -> str:
+        return "/".join(f"{k}={v}" for k, v in self.partition.items())
+
     @property
     def qualified_name(self) -> str:
         """
@@ -84,8 +104,7 @@ class Column(BaseModel, Entity):
             assert column2.qualified_name == "mycolumn"
         """
 
-        if self.partition:
-            partition_kv = [f"{k}={v}" for k, v in self.partition.items()]
-            return f"{self}|{'/'.join(partition_kv)}"
+        if self.partition_kv:
+            return f"{self}|{self.partition_kv}"
 
         return str(self)

@@ -7,20 +7,22 @@ from typing import FrozenSet, Iterable
 from pydantic import Field, validator
 
 from etl_entities.hwm.hwm import HWM
-from etl_entities.location import RelativePath
+from etl_entities.hwm.hwm_type_registry import register_hwm_type
+from etl_entities.instance import AbsolutePath, RelativePath
 from etl_entities.source import RemoteFolder
 
 
+@register_hwm_type("files_list")
 class FileListHWM(HWM):
     """File List HWM type
 
     Parameters
     ----------
-    folder : :obj:`etl_entities.location.path.remote_folder.RemoteFolder`
+    source : :obj:`etl_entities.instance.path.remote_folder.RemoteFolder`
 
         Folder instance
 
-    value : :obj:`frosenset` of :obj:`pathlib.PosixPath`, default: empty set
+    value : :obj:`frozenset` of :obj:`pathlib.PosixPath`, default: empty set
 
         HWM value
 
@@ -39,21 +41,24 @@ class FileListHWM(HWM):
 
         from etl_entities import FileListHWM, RemoteFolder
 
-        folder = RemoteFolder(root="/root/path", location="postgres://db.host:5432")
+        folder = RemoteFolder(name="/absolute/path", instance="ftp://ftp.server:21")
 
         hwm = FileListHWM(
-            folder=folder,
+            source=folder,
             value=["some/path", "another.file"],
         )
     """
 
-    folder: RemoteFolder
+    source: RemoteFolder
     value: FrozenSet[RelativePath] = Field(default_factory=frozenset)
+
+    class Config:  # noqa: WPS431
+        json_encoders = {RelativePath: os.fspath, AbsolutePath: os.fspath}
 
     @validator("value", pre=True)
     def validate_value(cls, value):  # noqa: N805
         if isinstance(value, (str, PosixPath, PurePosixPath)):
-            return cls.deserialize(os.fspath(value))
+            return cls.deserialize_value(os.fspath(value))
 
         if isinstance(value, Iterable):
             return frozenset(RelativePath(item) for item in value)
@@ -74,9 +79,9 @@ class FileListHWM(HWM):
         Unique name of HWM
         """
 
-        return "#".join([self.name, self.folder.qualified_name, self.process.qualified_name])
+        return "#".join([self.name, self.source.qualified_name, self.process.qualified_name])
 
-    def serialize(self) -> str:
+    def serialize_value(self) -> str:
         r"""Return string representation of HWM value
 
         Returns
@@ -93,16 +98,16 @@ class FileListHWM(HWM):
             from etl_entities import FileListHWM
 
             hwm = FileListHWM(value=["some/file.py", "another.file"], ...)
-            assert hwm.serialize() == "some/file.py\nanother.file"
+            assert hwm.serialize_value() == "some/file.py\nanother.file"
 
             hwm = FileListHWM(value=[], ...)
-            assert hwm.serialize() == ""
+            assert hwm.serialize_value() == ""
         """
 
         return "\n".join(sorted(os.fspath(item) for item in self.value))
 
     @classmethod
-    def deserialize(cls, value: str) -> frozenset[RelativePath]:  # noqa: E800
+    def deserialize_value(cls, value: str) -> frozenset[RelativePath]:  # noqa: E800
         r"""Parse string representation to get HWM value
 
         Parameters
@@ -113,7 +118,7 @@ class FileListHWM(HWM):
 
         Returns
         -------
-        result : :obj:`frozenset` of :obj:`etl_entities.location.path.relative_path.RelativePath`
+        result : :obj:`frozenset` of :obj:`etl_entities.instance.path.relative_path.RelativePath`
 
             Deserialized value
 
@@ -124,14 +129,14 @@ class FileListHWM(HWM):
 
             from etl_entities import FileListHWM
 
-            assert FileListHWM.deserialize("some/path.py\nanother.file") == frosenset(
+            assert FileListHWM.deserialize_value("some/path.py\nanother.file") == frozenset(
                 RelativePath("some/path.py"), RelativePath("another.file")
             )
 
-            assert FileListHWM.deserialize([]) == frosenset()
+            assert FileListHWM.deserialize_value([]) == frozenset()
         """
 
-        value = super().deserialize(value)
+        value = super().deserialize_value(value)
 
         if value:
             return frozenset(RelativePath(item.strip()) for item in value.split("\n"))
@@ -219,12 +224,12 @@ class FileListHWM(HWM):
 
             from etl_entities import FileListHWM, Folder, AbsolutePath
 
-            hwm = FileListHWM(value=["some/path"], folder=Folder(root="/root/path", ...), ...)
+            hwm = FileListHWM(value=["some/path"], source=Folder(name="/absolute/path", ...), ...)
 
-            assert abs(hwm) == frosenset(AbsolutePath("/root/path/some/path"))
+            assert abs(hwm) == frozenset(AbsolutePath("/absolute/path/some/path"))
         """
 
-        return frozenset(self.folder.root / item for item in self.value)
+        return frozenset(self.source / item for item in self.value)
 
     def __contains__(self, item):
         """Checks if path is present in value
@@ -242,10 +247,10 @@ class FileListHWM(HWM):
 
             from etl_entities import FileListHWM, Folder, AbsolutePath
 
-            hwm = FileListHWM(value=["some/path"], folder=Folder(root="/root/path", ...), ...)
+            hwm = FileListHWM(value=["some/path"], source=Folder(name="/absolute/path", ...), ...)
 
             assert "some/path" in hwm
-            assert "/root/path/some/path" in hwm
+            assert "/absolute/path/some/path" in hwm
         """
 
         if not isinstance(item, os.PathLike):

@@ -6,27 +6,26 @@ from etl_entities.source import RemoteFolder
 
 
 @pytest.mark.parametrize(
-    "valid_root, name",
+    "valid_name",
     [
-        ("/some", "some"),
-        ("/some.file", "some.file"),
-        ("/some/path", "path"),
-        ("/some/folder/file.name", "file.name"),
+        "/some",
+        "/some.file",
+        "/some/path",
+        "/some/folder/file.name",
     ],
 )
 @pytest.mark.parametrize(
-    "valid_location",
-    ["http://some", "hdfs://some.file", "hive://some/path", "abc://some:1234", "cde://192.168.1.1"],
+    "valid_instance",
+    ["rnd-dwh", "ftp://some:1234", "cde://192.168.1.1"],
 )
-def test_remote_folder_valid_input(valid_root, name, valid_location):
-    remote_folder1 = RemoteFolder(root=valid_root, location=valid_location)
-    assert str(remote_folder1.root) == valid_root
-    assert remote_folder1.location == valid_location
-    assert remote_folder1.name == name
+def test_remote_folder_valid_input(valid_name, valid_instance):
+    remote_folder1 = RemoteFolder(name=valid_name, instance=valid_instance)
+    assert str(remote_folder1.name) == valid_name
+    assert remote_folder1.instance == valid_instance
 
 
 @pytest.mark.parametrize(
-    "invalid_root",
+    "invalid_name",
     [
         1,
         None,
@@ -44,13 +43,23 @@ def test_remote_folder_valid_input(valid_root, name, valid_location):
     ],
 )
 @pytest.mark.parametrize(
-    "invalid_location",
+    "invalid_instance",
     [
         1,
         None,
         [],
         "",
-        "no_schema",
+        "001",
+        "*",
+        "some*",
+        "some-",
+        "some_",
+        "*some",
+        "-some",
+        "_some",
+        "001some",
+        "001-some",
+        "001_some",
         "http:/",
         "http://",
         "http:///",
@@ -63,33 +72,33 @@ def test_remote_folder_valid_input(valid_root, name, valid_location):
         "http://some/path#fragment",
     ],
 )
-def test_remote_folder_wrong_input(invalid_root, invalid_location):
-    valid_root = "/some/path"
-    valid_location = "proto://url"
+def test_remote_folder_wrong_input(invalid_name, invalid_instance):
+    valid_name = "/some/path"
+    valid_instance = "proto://url"
 
     with pytest.raises(ValueError):
         RemoteFolder()
 
     with pytest.raises(ValueError):
-        RemoteFolder(root=valid_root)
+        RemoteFolder(name=valid_name)
 
     with pytest.raises(ValueError):
-        RemoteFolder(location=valid_location)
+        RemoteFolder(instance=valid_instance)
 
     with pytest.raises(ValueError):
-        RemoteFolder(root=invalid_root, location=valid_location)
+        RemoteFolder(name=invalid_name, instance=valid_instance)
 
     with pytest.raises(ValueError):
-        RemoteFolder(root=valid_root, location=invalid_location)
+        RemoteFolder(name=valid_name, instance=invalid_instance)
 
 
 def test_remote_folder_frozen():
-    root = "/some/path"
-    location = "proto://url"
+    name = "/some/path"
+    instance = "proto://url"
 
-    remote_folder = RemoteFolder(root=root, location=location)
+    remote_folder = RemoteFolder(name=name, instance=instance)
 
-    for attr in ("root", "location"):
+    for attr in ("name", "instance"):
         for value in (1, ".", "/abc", None, PosixPath()):
 
             with pytest.raises(TypeError):
@@ -97,18 +106,18 @@ def test_remote_folder_frozen():
 
 
 def test_remote_folder_compare():
-    root1 = "/some/path1"
-    root2 = "/some/path2"
+    name1 = "/some/path1"
+    name2 = "/some/path2"
 
-    location1 = "proto://url1"
-    location2 = "proto://url2"
+    instance1 = "proto://url1"
+    instance2 = "proto://url2"
 
-    remote_folder = RemoteFolder(root=root1, location=location1)
+    remote_folder = RemoteFolder(name=name1, instance=instance1)
 
-    remote_folder1 = RemoteFolder(root=root1, location=location1)
-    remote_folder2 = RemoteFolder(root=root2, location=location1)
-    remote_folder3 = RemoteFolder(root=root1, location=location2)
-    remote_folder4 = RemoteFolder(root=root2, location=location2)
+    remote_folder1 = RemoteFolder(name=name1, instance=instance1)
+    remote_folder2 = RemoteFolder(name=name2, instance=instance1)
+    remote_folder3 = RemoteFolder(name=name1, instance=instance2)
+    remote_folder4 = RemoteFolder(name=name2, instance=instance2)
 
     assert remote_folder == remote_folder1
 
@@ -121,11 +130,25 @@ def test_remote_folder_compare():
 
 
 def test_remote_folder_qualified_name():
-    root = "/some/path"
-    location = "http://some.url:234"
+    name = "/some/path"
+    instance = "http://some.url:234"
 
     remote_folder = RemoteFolder(
-        root=root,
-        location=location,
+        name=name,
+        instance=instance,
     )
-    assert remote_folder.qualified_name == f"{root}@{location}"
+    assert remote_folder.qualified_name == f"{name}@{instance}"
+
+
+def test_remote_folder_serialization():
+    name = "/some/path"
+    instance = "http://some.url:234"
+
+    serialized = {"name": name, "instance": instance}
+    remote_folder = RemoteFolder(
+        name=name,
+        instance=instance,
+    )
+
+    assert remote_folder.serialize() == serialized
+    assert RemoteFolder.deserialize(serialized) == remote_folder

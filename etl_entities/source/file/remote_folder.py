@@ -1,12 +1,16 @@
 from __future__ import annotations
 
+import os
+from pathlib import Path
+from typing import Union
+
 from pydantic import validator
 
 from etl_entities.entity import BaseModel, Entity
-from etl_entities.location import AbsolutePath, GenericURL
+from etl_entities.instance import AbsolutePath, Cluster, GenericURL
 
-# root path cannot have delimiters used in qualified_name
-PROHIBITED_ROOT_SYMBOLS = "@#"
+# folder path cannot have delimiters used in qualified_name
+PROHIBITED_PATH_SYMBOLS = "@#"
 
 
 class RemoteFolder(BaseModel, Entity):
@@ -14,15 +18,15 @@ class RemoteFolder(BaseModel, Entity):
 
     Parameters
     ----------
-    root : :obj:`str` or :obj:`pathlib.PosixPath`
+    name : :obj:`str` or :obj:`pathlib.PosixPath`
 
-        Folder root path
+        Folder path
 
         .. warning::
 
             Only absolute path without ``..`` are allowed
 
-    instance : :obj:`etl_entities.location.url.generic_url.GenericURL`
+    instance : :obj:`etl_entities.instance.url.generic_url.GenericURL`
 
         Instance URL in format ``"protocol://some.domain[:port]"``
 
@@ -33,53 +37,39 @@ class RemoteFolder(BaseModel, Entity):
 
         from etl_entities import RemoteFolder
 
-        folder = RemoteFolder(root="/root/folder", location="hdfs://some.domain:10000")
+        folder1 = RemoteFolder(name="/absolute/folder", instance="rnd-dwh")
+        folder2 = RemoteFolder(name="/absolute/folder", instance="ftp://some.domain:10000")
     """
 
-    root: AbsolutePath
-    location: GenericURL
+    name: AbsolutePath
+    instance: Union[GenericURL, Cluster]
 
-    @validator("root", pre=True)
+    class Config:  # noqa: WPS431
+        json_encoders = {AbsolutePath: os.fspath}
+
+    @validator("name", pre=True)
     def check_absolute_path(cls, value):  # noqa: N805
         value = AbsolutePath(value)
 
-        for symbol in PROHIBITED_ROOT_SYMBOLS:
+        for symbol in PROHIBITED_PATH_SYMBOLS:
             if symbol in str(value):
-                raise ValueError(f"Root path cannot contain symbols {' '.join(PROHIBITED_ROOT_SYMBOLS)}")
+                raise ValueError(f"Folder name cannot contain symbols {' '.join(PROHIBITED_PATH_SYMBOLS)}")
 
         return value
 
-    @property
-    def name(self) -> str:
-        """
-        Folder name
-
-        Returns
-        ----------
-        value : str
-
-            Folder base name
-
-        Examples
-        ----------
-
-        .. code:: python
-
-            from etl_entities import RemoteFolder
-
-            folder = RemoteFolder(root="/root/folder", location="hdfs://some.domain:10000")
-
-            assert folder.name == "folder"
-        """
-
-        return self.root.name
-
     def __str__(self):
         """
-        Returns root path
+        Returns name path
         """
 
-        return str(self.root)
+        return str(self.name)
+
+    def __truediv__(self, path: Path) -> AbsolutePath:
+        """
+        Returns absolute path for nested file or folder
+        """
+
+        return self.name / path
 
     @property
     def qualified_name(self) -> str:
@@ -99,9 +89,11 @@ class RemoteFolder(BaseModel, Entity):
 
             from etl_entities import RemoteFolder
 
-            folder = RemoteFolder(root="/root/folder", location="hdfs://some.domain:10000")
+            folder1 = RemoteFolder(name="/absolute/folder", instance="rnd-dwh")
+            folder2 = RemoteFolder(name="/absolute/folder", instance="ftp://some.domain:10000")
 
-            assert folder.qualified_name == "/root/folder@hdfs://some.domain:10000"
+            assert folder1.qualified_name == "/absolute/folder@rnd-dwh"
+            assert folder1.qualified_name == "/absolute/folder@ftp://some.domain:10000"
         """
 
-        return "@".join([str(self), str(self.location)])
+        return "@".join([str(self), str(self.instance)])

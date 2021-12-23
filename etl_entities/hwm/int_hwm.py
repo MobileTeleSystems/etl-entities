@@ -8,8 +8,10 @@ from pydantic.validators import int_validator
 
 from etl_entities.hwm.column_hwm import ColumnHWM
 from etl_entities.hwm.hwm import HWM
+from etl_entities.hwm.hwm_type_registry import register_hwm_type
 
 
+@register_hwm_type("int")
 @total_ordering
 class IntHWM(ColumnHWM[int]):
     """Integer HWM type
@@ -20,7 +22,7 @@ class IntHWM(ColumnHWM[int]):
 
         Column instance
 
-    table : :obj:`etl_entities.source.db.table.Table`
+    source : :obj:`etl_entities.source.db.table.Table`
 
         Table instance
 
@@ -44,15 +46,15 @@ class IntHWM(ColumnHWM[int]):
         from etl_entities import IntHWM, Column, Table
 
         column = Column(name="id")
-        table = Table(name="mytable", db="mydb", location="postgres://db.host:5432")
+        table = Table(name="mytable", db="mydb", instance="postgres://db.host:5432")
 
-        hwm = IntHWM(column=column, table=table, value=1)
+        hwm = IntHWM(column=column, source=table, value=1)
     """
 
     value: Optional[StrictInt] = None
 
     @classmethod
-    def deserialize(cls, value: str) -> int | None:
+    def deserialize_value(cls, value: str) -> int | None:
         """Parse string representation to get HWM value
 
         Parameters
@@ -74,12 +76,12 @@ class IntHWM(ColumnHWM[int]):
 
             from etl_entities import IntHWM
 
-            assert IntHWM.deserialize("123") == 123
+            assert IntHWM.deserialize_value("123") == 123
 
-            assert IntHWM.deserialize("null") is None
+            assert IntHWM.deserialize_value("null") is None
         """
 
-        value = super().deserialize(value)
+        value = super().deserialize_value(value)
 
         if value.lower() == "null":
             return None
@@ -178,7 +180,7 @@ class IntHWM(ColumnHWM[int]):
                     return self.value < other.value
 
                 raise NotImplementedError(  # NOSONAR
-                    f"Cannot compare {self.__class__.__name__} with different column, table or process",
+                    f"Cannot compare {self.__class__.__name__} with different column, source or process",
                 )
 
             return NotImplemented

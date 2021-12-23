@@ -3,10 +3,10 @@ from __future__ import annotations
 import re
 from typing import Union
 
-from pydantic import ConstrainedStr
+from pydantic import ConstrainedStr, root_validator
 
 from etl_entities.entity import BaseModel, Entity
-from etl_entities.location import Cluster, GenericURL
+from etl_entities.instance import Cluster, GenericURL
 
 
 # table or db name cannot have delimiters used in qualified_name
@@ -35,8 +35,8 @@ class Table(BaseModel, Entity):
 
             Cannot contain dot symbol ``.``, ``@`` and ``#``
 
-    instance : :obj:`etl_entities.location.url.generic_url.GenericURL`
-                or :obj:`etl_entities.location.cluster.cluster.Cluster`
+    instance : :obj:`etl_entities.instance.url.generic_url.GenericURL`
+                or :obj:`etl_entities.instance.cluster.cluster.Cluster`
 
         Cluster name in format ``my-cluster`` or instance URL in format ``"protocol://some.domain[:port]"``
 
@@ -55,12 +55,31 @@ class Table(BaseModel, Entity):
     db: TableDBName
     instance: Union[GenericURL, Cluster]
 
+    @property
+    def full_name(self) -> str:
+        return f"{self.db}.{self.name}"
+
     def __str__(self):
         """
         Returns table name
         """
 
-        return f"{self.db}.{self.name}"
+        return self.full_name
+
+    @root_validator(pre=True)
+    def parse_name(cls, value: dict) -> dict:  # noqa: N805
+        name: str | None = value.get("name")
+        db: str | None = value.get("db")
+
+        if name and not db and "." in name:
+            if name.count(".") != 1:
+                raise ValueError(f"Table name should be passed in `schema.name` format, got '{name}'")
+
+            db, name = name.split(".")
+            value["name"] = name
+            value["db"] = db
+
+        return value
 
     @property
     def qualified_name(self) -> str:
