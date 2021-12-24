@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from etl_entities.location.path.generic_path import GenericPath
+from etl_entities.instance.path.generic_path import GenericPath
 
 
 class RelativePath(GenericPath):

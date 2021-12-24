@@ -1,2 +1,3 @@
+bidict
 psutil
 pydantic

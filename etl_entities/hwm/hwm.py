@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import json
+from copy import deepcopy
 from datetime import datetime
 from typing import Generic, TypeVar, cast
 
@@ -30,6 +32,7 @@ class HWM(Entity, GenericModel, Generic[T]):
         Process instance
     """
 
+    source: Entity
     value: T
     modified_time: datetime = Field(default_factory=datetime.now)
     process: Process = Field(default_factory=ProcessStackManager.get_current)
@@ -37,11 +40,92 @@ class HWM(Entity, GenericModel, Generic[T]):
     @validator("value", pre=True)
     def validate_value(cls, value):  # noqa: N805
         if isinstance(value, str):
-            return cls.deserialize(value)
+            return cls.deserialize_value(value)
 
         return value
 
-    def serialize(self) -> str:
+    def serialize(self) -> dict:
+        """Return dict representation of HWM
+
+        Returns
+        -------
+        result : dict
+
+            Serialized HWM
+
+        Examples
+        ----------
+
+        .. code:: python
+
+            from etl_entities import IntHWM
+
+            hwm = IntHWM(value=1, ...)
+            assert hwm.serialize() == {
+                "value": "1",
+                "type": "int",
+                "column": {"name": ..., "partition": ...},
+                "source": ...,
+                "process": ...,
+            }
+        """
+
+        # small hack to avoid circular imports
+        from etl_entities.hwm.hwm_type_registry import HWMTypeRegistry
+
+        result = json.loads(self.json())
+
+        result["value"] = self.serialize_value()
+        result["type"] = HWMTypeRegistry.get_key(self.__class__)
+
+        return result
+
+    @classmethod
+    def deserialize(cls, inp: dict) -> HWM:
+        """Return HWM from dict representation
+
+        Returns
+        -------
+        result : HWM
+
+            Deserialized HWM
+
+        Examples
+        ----------
+
+        .. code:: python
+
+            from etl_entities import IntHWM
+
+            assert (
+                IntHWM.deserialize(
+                    {
+                        "value": "1",
+                        "type": "int",
+                        "column": {"name": ..., "partition": ...},
+                        "source": ...,
+                        "process": ...,
+                    }
+                )
+                == IntHWM(value=1, ...)
+            )
+
+            IntHWM.deserialize({"type": "date"})  # raises ValueError
+        """
+
+        # small hack to avoid circular imports
+        from etl_entities.hwm.hwm_type_registry import HWMTypeRegistry
+
+        value = deepcopy(inp)
+        typ = value.pop("type", None)
+        if typ:
+            hwm_type = HWMTypeRegistry.get(typ)
+            if not issubclass(cls, hwm_type):
+                raise ValueError(f"Type {typ} does not match class {cls.__name__}")
+
+        return super().deserialize(value)
+
+    def serialize_value(self) -> str:
         """Return string representation of HWM value
 
         Returns
@@ -58,13 +142,13 @@ class HWM(Entity, GenericModel, Generic[T]):
             from etl_entities import HWM
 
             hwm = HWM(value=1, ...)
-            assert hwm.serialize() == "1"
+            assert hwm.serialize_value() == "1"
         """
 
         return str(self.value).strip()
 
     @classmethod
-    def deserialize(cls, value: str) -> T:
+    def deserialize_value(cls, value: str) -> T:
         """Parse string representation to get HWM value
 
         Parameters
@@ -86,7 +170,7 @@ class HWM(Entity, GenericModel, Generic[T]):
 
             from etl_entities import IntHWM
 
-            assert IntHWM.deserialize("123") == 123
+            assert IntHWM.deserialize_value("123") == 123
         """
 
         return cast(T, strict_str_validator(value).strip())

@@ -10,7 +10,7 @@ class Host(ConstrainedStr):
 
     @classmethod
     def validate(cls, value: str) -> str:
-        url = parse_obj_as(AnyUrl, f"http://{value}")
+        url = parse_obj_as(AnyUrl, f"http://{value}")  # NOSONAR
         if url.host != value:
             raise ValueError(f"Invalid host {value}")
 

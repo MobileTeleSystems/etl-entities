@@ -178,3 +178,21 @@ def test_process_qualified_name(task, dag, prefix):
         dag=dag,
     )
     assert process.qualified_name == f"{prefix}{name}@{host}"
+
+
+@pytest.mark.parametrize(
+    "task, dag",
+    [
+        ("", ""),
+        ("abc", "cde"),
+    ],
+)
+def test_process_serialization(task, dag):
+    name = "some"
+    host = "127.0.0.1"
+
+    serialized = {"name": name, "host": host, "task": task, "dag": dag}
+    process = Process(name=name, host=host, task=task, dag=dag)
+
+    assert process.serialize() == serialized
+    assert Process.deserialize(serialized) == process

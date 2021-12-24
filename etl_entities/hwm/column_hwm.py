@@ -19,7 +19,7 @@ class ColumnHWM(HWM, GenericModel, Generic[T]):
 
         Column instance
 
-    table : :obj:`etl_entities.source.db.table.Table`
+    source : :obj:`etl_entities.source.db.table.Table`
 
         Table instance
 
@@ -43,13 +43,13 @@ class ColumnHWM(HWM, GenericModel, Generic[T]):
         from etl_entities import IntHWM, Column, Table
 
         column = Column(name="id")
-        table = Table(name="mytable", db="mydb", location="postgres://db.host:5432")
+        table = Table(name="mytable", db="mydb", instance="postgres://db.host:5432")
 
-        hwm = IntHWM(column=column, table=table, value=1)
+        hwm = IntHWM(column=column, source=table, value=1)
     """
 
     column: Column
-    table: Table
+    source: Table
     value: Optional[T] = None
 
     @property
@@ -71,9 +71,9 @@ class ColumnHWM(HWM, GenericModel, Generic[T]):
             from etl_entities import IntHWM, Column, Table
 
             column = Column(name="id")
-            table = Table(name="mytable", db="mydb", location="postgres://db.host:5432")
+            table = Table(name="mytable", db="mydb", instance="postgres://db.host:5432")
 
-            hwm = IntHWM(column=column, table=table, value=1)
+            hwm = IntHWM(column=column, source=table, value=1)
 
             assert hwm.name == "id"
         """
@@ -99,9 +99,9 @@ class ColumnHWM(HWM, GenericModel, Generic[T]):
             from etl_entities import ColumnHWM, Column, Table
 
             column = Column(name="id")
-            table = Table(name="mytable", db="mydb", location="postgres://db.host:5432")
+            table = Table(name="mytable", db="mydb", instance="postgres://db.host:5432")
 
-            hwm = IntHWM(column=column, table=table, value=1)
+            hwm = IntHWM(column=column, source=table, value=1)
 
             assert (
                 hwm.qualified_name
@@ -109,7 +109,7 @@ class ColumnHWM(HWM, GenericModel, Generic[T]):
             )
         """
 
-        return "#".join([self.column.qualified_name, self.table.qualified_name, self.process.qualified_name])
+        return "#".join([self.column.qualified_name, self.source.qualified_name, self.process.qualified_name])
 
     def with_value(self, value: T | None) -> ColumnHWM:
         if value is not None:
@@ -120,7 +120,7 @@ class ColumnHWM(HWM, GenericModel, Generic[T]):
 
         return self
 
-    def serialize(self) -> str:
+    def serialize_value(self) -> str:
         """Return string representation of HWM value
 
         Returns
@@ -137,18 +137,18 @@ class ColumnHWM(HWM, GenericModel, Generic[T]):
             from etl_entities import ColumnHWM
 
             hwm = ColumnHWM(value=1, ...)
-            hwm.serialize()
+            hwm.serialize_value()
             # "1"
 
             hwm = ColumnHWM(value=None, ...)
-            hwm.serialize()
+            hwm.serialize_value()
             # "null"
         """
 
         if self.value is None:
             return "null"
 
-        return super().serialize()
+        return super().serialize_value()
 
     def __bool__(self):
         """Check if HWM value is set

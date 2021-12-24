@@ -1,3 +1,5 @@
+from collections import OrderedDict
+
 import pytest
 
 from etl_entities.source import Column
@@ -5,26 +7,42 @@ from etl_entities.source import Column
 
 def test_column_valid_input():
     name = "some"
-    partition_name = "abc"
-    partition_value = "cde"
+    partition_name1 = "abc"
+    partition_value1 = "cde"
+    partition_name2 = "def"
+    partition_value2 = "klm"
 
-    column1 = Column(name=name, partition={partition_name: partition_value})
+    column1 = Column(name=name, partition={partition_name1: partition_value1, partition_name2: partition_value2})
     assert column1.name == name
     assert column1.partition
-    assert column1.partition[partition_name] == partition_value
+    assert column1.partition == OrderedDict([(partition_name1, partition_value1), (partition_name2, partition_value2)])
 
-    column1 = Column(name=name, partition=[(partition_name, partition_value)])
-    assert column1.name == name
-    assert column1.partition
-    assert column1.partition[partition_name] == partition_value
-
-    column2 = Column(name=name)
+    column2 = Column(name=name, partition=[(partition_name1, partition_value1), (partition_name2, partition_value2)])
     assert column2.name == name
-    assert not column2.partition
+    assert column2.partition == OrderedDict([(partition_name1, partition_value1), (partition_name2, partition_value2)])
+
+    column3 = Column(name=name, partition=f"{partition_name1}={partition_value1}/{partition_name2}={partition_value2}")
+    assert column3.name == name
+    assert column3.partition == OrderedDict([(partition_name1, partition_value1), (partition_name2, partition_value2)])
+
+    column4 = Column(
+        name=name,
+        partition=f"/{partition_name1}={partition_value1}/{partition_name2}={partition_value2}/",
+    )
+    assert column4.name == name
+    assert column4.partition == OrderedDict([(partition_name1, partition_value1), (partition_name2, partition_value2)])
+
+    column5 = Column(name=name)
+    assert column5.name == name
+    assert not column5.partition
 
 
 @pytest.mark.parametrize("invalid_name", ["wrong/name", "wrong@name", "wrong=name", "wrong#name", None, frozenset()])
-def test_column_wrong_input(invalid_name):
+@pytest.mark.parametrize(
+    "invalid_partition",
+    ["wrong", "wrong/name", "wrong@name", "wrong#name", "wrong=", "wrong=name=value", "a=b//c=d", None],
+)
+def test_column_wrong_input(invalid_name, invalid_partition):
     valid_name = "some"
 
     with pytest.raises(ValueError):
@@ -42,8 +60,18 @@ def test_column_wrong_input(invalid_name):
     with pytest.raises(ValueError):
         Column(name=valid_name, partition={valid_name: invalid_name})
 
+    if invalid_name:
+        with pytest.raises(ValueError):
+            Column(name=valid_name, partition=f"{invalid_name}={valid_name}")
+
+        with pytest.raises(ValueError):
+            Column(name=valid_name, partition=f"{valid_name}={invalid_name}")
+
     with pytest.raises(ValueError):
         Column(name=invalid_name, partition={valid_name: valid_name})
+
+    with pytest.raises(ValueError):
+        Column(name=valid_name, partition=invalid_partition)
 
 
 def test_column_frozen():
@@ -110,3 +138,17 @@ def test_column_qualified_name(
         partition=partition,
     )
     assert column.qualified_name == f"{name}{partition_qualified_name}"
+
+
+@pytest.mark.parametrize(
+    "partition,",
+    [{"some1": "value1", "some2": "value2"}, {}],
+)
+def test_column_serialization(partition):
+    name = "some"
+
+    serialized = {"name": name, "partition": partition}
+    column = Column(name=name, partition=partition)
+
+    assert column.serialize() == serialized
+    assert Column.deserialize(serialized) == column

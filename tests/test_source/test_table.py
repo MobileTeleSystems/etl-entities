@@ -13,6 +13,11 @@ def test_table_valid_input(instance):
     assert table1.db == db
     assert table1.instance == instance
 
+    table2 = Table(name=f"{db}.{name}", instance=instance)
+    assert table2.name == name
+    assert table2.db == db
+    assert table2.instance == instance
+
 
 @pytest.mark.parametrize("invalid_name", ["wrong.name", "wrong@name", "wrong#name", []])
 @pytest.mark.parametrize("invalid_db", ["wrong.name", "wrong@name", "wrong#name", []])
@@ -68,6 +73,9 @@ def test_table_wrong_input(invalid_name, invalid_db, invalid_instance):
 
     with pytest.raises(ValueError):
         Table(name=valid_name, instance=valid_instance)
+
+    with pytest.raises(ValueError):
+        Table(name=f"{valid_db}.{valid_db}.{valid_name}", instance=valid_instance)
 
     with pytest.raises(ValueError):
         Table(db=valid_db, instance=valid_instance)
@@ -138,3 +146,15 @@ def test_table_qualified_name():
         instance=instance,
     )
     assert table.qualified_name == f"{db}.{name}@{instance}"
+
+
+def test_table_serialization():
+    name = "some"
+    db = "another"
+    instance = "proto://url"
+
+    serialized = {"name": name, "db": db, "instance": instance}
+    table = Table(name=name, db=db, instance=instance)
+
+    assert table.serialize() == serialized
+    assert Table.deserialize(serialized) == table

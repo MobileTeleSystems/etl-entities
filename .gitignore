@@ -68,7 +68,6 @@ env.bak/
 env/
 flake8.txt
 htmlcov/
-instance/
 ipython_config.py
 local_settings.py
 metastore_db

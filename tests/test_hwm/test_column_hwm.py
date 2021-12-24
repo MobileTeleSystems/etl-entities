@@ -21,47 +21,47 @@ def test_column_hwm_valid_input(hwm_class, value):
     process = Process(name="myprocess", host="myhost")
     modified_time = datetime.now() - timedelta(days=5)
 
-    hwm1 = hwm_class(column=column, table=table)
+    hwm1 = hwm_class(column=column, source=table)
     assert hwm1.value is None
     assert not hwm1  # same as above
     assert hwm1.column == column
     assert hwm1.name == column.name
-    assert hwm1.table == table
+    assert hwm1.source == table
     assert hwm1.process is not None
     assert hwm1.modified_time < datetime.now()
 
-    hwm2 = hwm_class(column=column, table=table, value=value)
+    hwm2 = hwm_class(column=column, source=table, value=value)
     assert hwm2.value == value
     assert hwm2  # same as above
     assert hwm2.column == column
     assert hwm2.name == column.name
-    assert hwm2.table == table
+    assert hwm2.source == table
     assert hwm2.process is not None
     assert hwm2.modified_time < datetime.now()
 
-    hwm3 = hwm_class(column=column, table=table, process=process)
+    hwm3 = hwm_class(column=column, source=table, process=process)
     assert hwm3.value is None
     assert not hwm3  # same as above
     assert hwm3.column == column
     assert hwm3.name == column.name
-    assert hwm3.table == table
+    assert hwm3.source == table
     assert hwm3.process == process
     assert hwm3.modified_time < datetime.now()
 
-    hwm4 = hwm_class(column=column, table=table, modified_time=modified_time)
+    hwm4 = hwm_class(column=column, source=table, modified_time=modified_time)
     assert hwm4.value is None
     assert not hwm4  # same as above
     assert hwm4.column == column
     assert hwm4.name == column.name
-    assert hwm4.table == table
+    assert hwm4.source == table
     assert hwm4.modified_time == modified_time
 
-    hwm5 = hwm_class(column=column, table=table, value=value, process=process, modified_time=modified_time)
+    hwm5 = hwm_class(column=column, source=table, value=value, process=process, modified_time=modified_time)
     assert hwm5.value == value
     assert hwm5  # same as above
     assert hwm5.column == column
     assert hwm5.name == column.name
-    assert hwm5.table == table
+    assert hwm5.source == table
     assert hwm5.process == process
     assert hwm5.modified_time == modified_time
 
@@ -69,9 +69,9 @@ def test_column_hwm_valid_input(hwm_class, value):
 @pytest.mark.parametrize(
     "hwm_class, value, wrong_values",
     [
-        (DateHWM, date.today(), ["1.1", "1", "2021-01-01T11:22:33"]),
-        (DateTimeHWM, datetime.now(), ["1.1", "1"]),
-        (IntHWM, 1, [1.1, "1.1"]),
+        (DateHWM, date.today(), ["1.1", "1", "2021-01-01T11:22:33", DateHWM]),
+        (DateTimeHWM, datetime.now(), ["1.1", "1", DateTimeHWM]),
+        (IntHWM, 1, [1.1, "1.1", IntHWM]),
     ],
 )
 def test_column_hwm_wrong_input(hwm_class, value, wrong_values):
@@ -85,29 +85,29 @@ def test_column_hwm_wrong_input(hwm_class, value, wrong_values):
         hwm_class(column=1)
 
     with pytest.raises(ValueError):
-        hwm_class(table=1)
+        hwm_class(source=1)
 
     with pytest.raises(ValueError):
-        hwm_class(column=column, table=1)
+        hwm_class(column=column, source=1)
 
     with pytest.raises(ValueError):
-        hwm_class(column=column, table=table, value="abc")
+        hwm_class(column=column, source=table, value="abc")
 
     with pytest.raises(ValueError):
-        hwm_class(column=column, table=table, value=[])
+        hwm_class(column=column, source=table, value=[])
 
     for wrong_value in wrong_values:
         with pytest.raises(ValueError):
-            hwm_class(column=column, table=table, value=wrong_value)
+            hwm_class(column=column, source=table, value=wrong_value)
 
     with pytest.raises(ValueError):
-        hwm_class(column=column, table=table, process=1)
+        hwm_class(column=column, source=table, process=1)
 
     with pytest.raises(ValueError):
-        hwm_class(column=column, table=table, value=value, process=1)
+        hwm_class(column=column, source=table, value=value, process=1)
 
     with pytest.raises(ValueError):
-        hwm_class(column=column, table=table, value=value, modified_time="unknown")
+        hwm_class(column=column, source=table, value=value, modified_time="unknown")
 
 
 @pytest.mark.parametrize(
@@ -121,7 +121,7 @@ def test_column_hwm_wrong_input(hwm_class, value, wrong_values):
 def test_column_hwm_with_value(hwm_class, value):
     column = Column(name="some")
     table = Table(name="another", db="abc", instance="proto://url")
-    hwm = hwm_class(column=column, table=table)
+    hwm = hwm_class(column=column, source=table)
 
     hwm1 = hwm.with_value(value)
     assert hwm1.value == value
@@ -153,11 +153,11 @@ def test_column_hwm_with_value(hwm_class, value):
 def test_column_hwm_frozen(hwm_class):
     column = Column(name="some")
     table = Table(name="another", db="abc", instance="proto://url")
-    hwm = hwm_class(column=column, table=table)
+    hwm = hwm_class(column=column, source=table)
     process = Process(name="myprocess", host="myhost")
     modified_time = datetime.now() - timedelta(days=5)
 
-    for attr in ("value", "column", "table", "process", "modified_time"):
+    for attr in ("value", "column", "source", "process", "modified_time"):
         for value in (1, "abc", date.today(), datetime.now(), None, column, table, process, modified_time):
 
             with pytest.raises(TypeError):
@@ -179,21 +179,21 @@ def test_column_hwm_compare(hwm_class, value, delta):  # noqa: WPS210
     table1 = Table(name="another1", db="abc", instance="proto1://url1")
     table2 = Table(name="another2", db="bcd", instance="proto1://url2")
 
-    hwm = hwm_class(column=column1, table=table1, value=value)
+    hwm = hwm_class(column=column1, source=table1, value=value)
 
     # modified_time is ignored while comparing HWMs
     modified_time = datetime.now() - timedelta(days=5)
-    hwm1 = hwm_class(column=column1, table=table1, value=value, modified_time=modified_time)
-    hwm2 = hwm_class(column=column2, table=table1, value=value)
-    hwm3 = hwm_class(column=column1, table=table2, value=value)
-    hwm4 = hwm_class(column=column2, table=table2, value=value)
+    hwm1 = hwm_class(column=column1, source=table1, value=value, modified_time=modified_time)
+    hwm2 = hwm_class(column=column2, source=table1, value=value)
+    hwm3 = hwm_class(column=column1, source=table2, value=value)
+    hwm4 = hwm_class(column=column2, source=table2, value=value)
 
     next_value = value + delta
 
-    hwm5 = hwm_class(column=column1, table=table1, value=next_value)
-    hwm6 = hwm_class(column=column2, table=table1, value=next_value)
-    hwm7 = hwm_class(column=column1, table=table2, value=next_value)
-    hwm8 = hwm_class(column=column2, table=table2, value=next_value)
+    hwm5 = hwm_class(column=column1, source=table1, value=next_value)
+    hwm6 = hwm_class(column=column2, source=table1, value=next_value)
+    hwm7 = hwm_class(column=column1, source=table2, value=next_value)
+    hwm8 = hwm_class(column=column2, source=table2, value=next_value)
 
     items = (hwm1, hwm2, hwm3, hwm4)
     next_items = (hwm5, hwm6, hwm7, hwm8)
@@ -229,23 +229,23 @@ def test_column_hwm_compare(hwm_class, value, delta):  # noqa: WPS210
 
 
 @pytest.mark.parametrize(
-    "hwm_class, value, delta",
+    "hwm_class, value",
     [
-        (DateHWM, date.today(), timedelta(days=2)),
-        (DateTimeHWM, datetime.now(), timedelta(seconds=2)),
-        (IntHWM, 1, 2),
+        (DateHWM, date.today()),
+        (DateTimeHWM, datetime.now()),
+        (IntHWM, 1),
     ],
 )
-def test_column_hwm_compare_other_type(hwm_class, value, delta):  # noqa: WPS210
+def test_column_hwm_compare_other_type(hwm_class, value):  # noqa: WPS210
     other_types = {DateHWM, DateTimeHWM, IntHWM} - {hwm_class}
 
     column = Column(name="some")
     table = Table(name="another", db="abc", instance="proto://url")
 
-    hwm = hwm_class(column=column, table=table, value=value)
+    hwm = hwm_class(column=column, source=table, value=value)
 
     for other_type in other_types:
-        other_hwm = other_type(column=column, table=table)
+        other_hwm = other_type(column=column, source=table)
 
         assert hwm != other_hwm
 
@@ -267,7 +267,7 @@ def test_column_hwm_compare_other_type(hwm_class, value, delta):  # noqa: WPS210
 def test_column_hwm_add(hwm_class, value, delta):
     column = Column(name="some")
     table = Table(name="another", db="abc", instance="proto://url")
-    hwm = hwm_class(column=column, table=table)
+    hwm = hwm_class(column=column, source=table)
 
     # If one side is none then nothing to change, modified_time is the same
     hwm1 = hwm + delta
@@ -302,7 +302,7 @@ def test_column_hwm_add(hwm_class, value, delta):
 def test_column_hwm_sub(hwm_class, value, delta):
     column = Column(name="some")
     table = Table(name="another", db="abc", instance="proto://url")
-    hwm = hwm_class(column=column, table=table)
+    hwm = hwm_class(column=column, source=table)
 
     # If one side is none then nothing to change, modified_time is the same
     hwm1 = hwm - delta
@@ -371,58 +371,64 @@ def test_column_hwm_qualified_name(
 
     hwm = hwm_class(
         column=column,
-        table=table,
+        source=table,
         process=process,
     )
     assert hwm.qualified_name == f"{column_qualified_name}#{table_qualified_name}#{process_qualified_name}"
 
 
 @pytest.mark.parametrize(
-    "hwm_class, value, serialized",
+    "hwm_class, hwm_type, value, serialized_value, wrong_values",
     [
-        (DateHWM, date(year=2021, month=12, day=1), "2021-12-01"),
-        (DateTimeHWM, datetime(year=2021, month=12, day=1, hour=4, minute=20, second=33), "2021-12-01T04:20:33"),
-        (IntHWM, 1, "1"),
-    ],
-)
-def test_column_hwm_serialize(hwm_class, value, serialized):
-    column = Column(name="some")
-    table = Table(name="another", db="abc", instance="proto://url")
-
-    hwm1 = hwm_class(column=column, table=table, value=value)
-    assert hwm1.serialize() == serialized
-
-    hwm2 = hwm_class(column=column, table=table)
-    assert hwm2.serialize() == "null"
-
-
-@pytest.mark.parametrize(
-    "hwm_class, value, serialized, wrong_values",
-    [
-        (DateHWM, date(year=2021, month=12, day=1), "2021-12-01", ["1", DateHWM, "unknown", []]),
+        (DateHWM, "date", date(year=2021, month=12, day=1), "2021-12-01", ["1", DateHWM, "unknown", []]),
         (
             DateTimeHWM,
+            "datetime",
             datetime(year=2021, month=12, day=1, hour=4, minute=20, second=33),
             "2021-12-01T04:20:33",
             ["1", DateTimeHWM, "unknown", []],
         ),
-        (IntHWM, 1, "1", ["1.0", IntHWM, "unknown", []]),
+        (IntHWM, "int", 1, "1", ["1.0", IntHWM, "unknown", []]),
     ],
 )
-def test_column_hwm_deserialize(hwm_class, value, serialized, wrong_values):
+def test_column_hwm_serialization(hwm_class, hwm_type, value, serialized_value, wrong_values):
     column = Column(name="some")
     table = Table(name="another", db="abc", instance="proto://url")
+    process = Process(name="abc", host="somehost", task="sometask", dag="somedag")
+    modified_time = datetime.now()
 
-    assert hwm_class.deserialize(serialized) == value
-    assert hwm_class.deserialize("null") is None
+    serialized1 = {
+        "value": serialized_value,
+        "type": hwm_type,
+        "column": column.serialize(),
+        "source": table.serialize(),
+        "process": process.serialize(),
+        "modified_time": modified_time.isoformat(),
+    }
+    hwm1 = hwm_class(column=column, source=table, value=value, process=process, modified_time=modified_time)
 
-    assert hwm_class(column=column, table=table, value=serialized) == value
-    assert not hwm_class(column=column, table=table, value="null")
+    assert hwm1.serialize() == serialized1
+    assert hwm_class.deserialize(serialized1) == hwm1
 
-    for wrong_value in wrong_values:
-        with pytest.raises((TypeError, ValueError)):
-            hwm_class(column=column, table=table, value=wrong_value)
+    serialized2 = serialized1.copy()
+    serialized2["value"] = "null"
+    hwm2 = hwm_class(column=column, source=table, process=process, modified_time=modified_time)
+
+    assert hwm2.serialize() == serialized2
+    assert hwm_class.deserialize(serialized2) == hwm2
 
     for wrong_value in wrong_values + [None]:
+        serialized3 = serialized1.copy()
+        serialized3["value"] = wrong_value
         with pytest.raises((TypeError, ValueError)):
-            hwm_class.deserialize(wrong_value)
+            hwm_class.deserialize_value(serialized3)
+
+    serialized4 = serialized1.copy()
+    serialized4["type"] = "unknown"
+    with pytest.raises(KeyError):
+        hwm_class.deserialize(serialized4)
+
+    serialized5 = serialized1.copy()
+    serialized5["type"] = "files_list"
+    with pytest.raises(ValueError):
+        hwm_class.deserialize(serialized5)
