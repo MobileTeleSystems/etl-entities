@@ -18,7 +18,8 @@ long_description = (here / "README.rst").read_text()
 
 setup(
     name="etl-entities",
-    version_config={
+    setuptools_git_versioning={
+        "enabled": True,
         "template": "{tag}",
         "dev_template": "{tag}.dev{env:CI_PIPELINE_ID:{ccount}}",
         "dirty_template": "{tag}",
@@ -50,7 +51,7 @@ setup(
     install_requires=requirements,
     tests_require=test_requirements,
     extras_require={"test": test_requirements},
-    setup_requires=["setuptools-git-versioning"],
+    setup_requires=["setuptools-git-versioning>=1.8.1"],
     test_suite="tests",
     include_package_data=True,
     zip_safe=False,
