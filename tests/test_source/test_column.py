@@ -40,7 +40,17 @@ def test_column_valid_input():
 @pytest.mark.parametrize("invalid_name", ["wrong/name", "wrong@name", "wrong=name", "wrong#name", None, frozenset()])
 @pytest.mark.parametrize(
     "invalid_partition",
-    ["wrong", "wrong/name", "wrong@name", "wrong#name", "wrong=", "wrong=name=value", "a=b//c=d", None],
+    [
+        "wrong",
+        "wrong/name",
+        "wrong@name",
+        "wrong#name",
+        "wrong=",
+        "wrong=name=value",
+        "a=b//c=d",
+        "duplicate=value1/duplicate=value2",
+        None,
+    ],
 )
 def test_column_wrong_input(invalid_name, invalid_partition):
     valid_name = "some"

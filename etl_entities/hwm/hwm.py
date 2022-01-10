@@ -11,10 +11,10 @@ from pydantic.validators import strict_str_validator
 from etl_entities.entity import Entity, GenericModel
 from etl_entities.process import Process, ProcessStackManager
 
-T = TypeVar("T")
+ValueType = TypeVar("ValueType")
 
 
-class HWM(Entity, GenericModel, Generic[T]):
+class HWM(Entity, GenericModel, Generic[ValueType]):
     """Generic HWM type
 
     Parameters
@@ -33,7 +33,7 @@ class HWM(Entity, GenericModel, Generic[T]):
     """
 
     source: Entity
-    value: T
+    value: ValueType
     modified_time: datetime = Field(default_factory=datetime.now)
     process: Process = Field(default_factory=ProcessStackManager.get_current)
 
@@ -148,7 +148,7 @@ class HWM(Entity, GenericModel, Generic[T]):
         return str(self.value).strip()
 
     @classmethod
-    def deserialize_value(cls, value: str) -> T:
+    def deserialize_value(cls, value: str) -> ValueType:
         """Parse string representation to get HWM value
 
         Parameters
@@ -173,9 +173,9 @@ class HWM(Entity, GenericModel, Generic[T]):
             assert IntHWM.deserialize_value("123") == 123
         """
 
-        return cast(T, strict_str_validator(value).strip())
+        return cast(ValueType, strict_str_validator(value).strip())
 
-    def with_value(self, value: T) -> HWM:
+    def with_value(self, value: ValueType) -> HWM:
         """Create copy of HWM object with specified value
 
         Parameters

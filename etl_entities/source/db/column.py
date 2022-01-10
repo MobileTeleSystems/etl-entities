@@ -61,17 +61,20 @@ class Column(BaseModel, Entity):
     def parse_partition_str(cls, value):  # noqa: N805
         if isinstance(value, str):
             value = value.strip()
-            result = {}
+            result = OrderedDict()
             for item in value.strip("/").split("/"):
                 if item.count("=") != 1:
                     raise ValueError(f"Partition should be passed in format 'name=value', got '{item}'")
 
                 key, value = item.split("=")
+                if key in result:
+                    raise ValueError(f"Passed multiple values for {key} partition column")
+
                 result[key] = value
 
             return result
 
-        return value
+        return OrderedDict(value)
 
     @property
     def partition_kv(self) -> str:
