@@ -118,12 +118,12 @@ class DateTimeHWM(ColumnHWM[datetime]):
             assert DateTimeHWM.deserialize_value("null") is None
         """
 
-        value = super().deserialize_value(value)
+        result = str(super().deserialize_value(value))
 
-        if value.lower() == "null":
+        if result.lower() == "null":
             return None
 
-        return datetime.fromisoformat(value)
+        return datetime.fromisoformat(result)
 
     def __eq__(self, other):
         """Checks equality of two HWM instances

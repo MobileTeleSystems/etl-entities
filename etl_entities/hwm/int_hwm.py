@@ -13,7 +13,7 @@ from etl_entities.hwm.hwm_type_registry import register_hwm_type
 
 @register_hwm_type("int")
 @total_ordering
-class IntHWM(ColumnHWM[int]):
+class IntHWM(ColumnHWM[StrictInt]):
     """Integer HWM type
 
     Parameters
@@ -81,12 +81,12 @@ class IntHWM(ColumnHWM[int]):
             assert IntHWM.deserialize_value("null") is None
         """
 
-        value = super().deserialize_value(value)
+        result = super().deserialize_value(value)
 
-        if value.lower() == "null":
+        if str(result).lower() == "null":
             return None
 
-        return int_validator(value)
+        return int_validator(result)
 
     def __eq__(self, other):
         """Checks equality of two HWM instances

@@ -7,10 +7,10 @@ from etl_entities.entity import GenericModel
 from etl_entities.hwm.hwm import HWM
 from etl_entities.source import Column, Table
 
-T = TypeVar("T")
+ColumnValueType = TypeVar("ColumnValueType")
 
 
-class ColumnHWM(HWM, GenericModel, Generic[T]):
+class ColumnHWM(HWM[Optional[ColumnValueType]], GenericModel, Generic[ColumnValueType]):
     """Column HWM type
 
     Parameters
@@ -50,7 +50,7 @@ class ColumnHWM(HWM, GenericModel, Generic[T]):
 
     column: Column
     source: Table
-    value: Optional[T] = None
+    value: Optional[ColumnValueType] = None
 
     @property
     def name(self) -> str:
@@ -111,7 +111,7 @@ class ColumnHWM(HWM, GenericModel, Generic[T]):
 
         return "#".join([self.column.qualified_name, self.source.qualified_name, self.process.qualified_name])
 
-    def with_value(self, value: T | None) -> ColumnHWM:
+    def with_value(self, value: ColumnValueType | None) -> ColumnHWM:
         if value is not None:
             dct = self.dict()
             dct["value"] = value
