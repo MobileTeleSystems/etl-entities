@@ -198,15 +198,12 @@ class FileListHWM(HWM):
         """
 
         values: Iterable[RelativePath]
-        if isinstance(value, Iterable):
+        if isinstance(value, Iterable) and not isinstance(value, str):
             values = {RelativePath(item) for item in value}
         else:
             values = {RelativePath(value)}
 
-        if values:
-            return self.with_value(self.value.union(values))
-
-        return self
+        return self.with_value(self.value.union(values))
 
     def __abs__(self):
         """Returns list of files with absolute paths
@@ -287,7 +284,10 @@ class FileListHWM(HWM):
             assert hwm1 != hwm2
         """
 
+        if not isinstance(other, FileListHWM):
+            return False
+
         self_fields = self.dict(exclude={"modified_time"})
         other_fields = other.dict(exclude={"modified_time"})
 
-        return isinstance(other, FileListHWM) and self_fields == other_fields
+        return self_fields == other_fields

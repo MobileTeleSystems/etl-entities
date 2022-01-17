@@ -3,6 +3,7 @@ from pathlib import PosixPath
 
 import pytest
 
+from etl_entities import hwm
 from etl_entities.hwm import FileListHWM
 from etl_entities.instance import AbsolutePath, RelativePath
 from etl_entities.process import Process
@@ -230,20 +231,32 @@ def test_file_list_hwm_add():
     assert hwm4 == hwm1
     assert hwm4.modified_time == hwm1.modified_time
 
-    hwm4 = hwm1 + file3
-    hwm5 = hwm1 + [file3]
-    hwm6 = hwm1 + {file3}
+    hwm4 = hwm1 + file1
+    hwm5 = hwm1 + [file1]
+    hwm6 = hwm1 + {file1}
 
-    assert hwm4 == hwm2
-    assert hwm4.modified_time > hwm2.modified_time
+    assert hwm4 == hwm1
+    assert hwm4.modified_time == hwm1.modified_time
 
-    assert hwm5 == hwm2
-    assert hwm5.modified_time > hwm2.modified_time
+    assert hwm5 == hwm1
+    assert hwm5.modified_time == hwm1.modified_time
 
-    assert hwm6 == hwm2
-    assert hwm6.modified_time > hwm2.modified_time
+    assert hwm6 == hwm1
+    assert hwm6.modified_time == hwm1.modified_time
+
+    hwm7 = hwm1 + file3
+    hwm8 = hwm1 + [file3]
+    hwm9 = hwm1 + {file3}
 
     # if something has been changed, update modified_time
+    assert hwm7 == hwm2
+    assert hwm7.modified_time > hwm2.modified_time
+
+    assert hwm8 == hwm2
+    assert hwm8.modified_time > hwm2.modified_time
+
+    assert hwm9 == hwm2
+    assert hwm9.modified_time > hwm2.modified_time
 
     with pytest.raises(TypeError):
         _ = hwm1 + hwm2

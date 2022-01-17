@@ -203,6 +203,9 @@ class HWM(Entity, GenericModel, Generic[ValueType]):
             assert new_hwm.value == 2
         """
 
+        if self.value == value:
+            return self.copy(deep=True)
+
         dct = self.dict()
         dct["value"] = value
         dct["modified_time"] = datetime.now()
