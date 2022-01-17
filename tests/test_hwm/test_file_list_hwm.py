@@ -3,7 +3,6 @@ from pathlib import PosixPath
 
 import pytest
 
-from etl_entities import hwm
 from etl_entities.hwm import FileListHWM
 from etl_entities.instance import AbsolutePath, RelativePath
 from etl_entities.process import Process
