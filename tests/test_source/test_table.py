@@ -13,10 +13,16 @@ def test_table_valid_input(instance):
     assert table1.db == db
     assert table1.instance == instance
 
+    assert table1.full_name == f"{db}.{name}"
+    assert str(table1) == f"{db}.{name}"
+
     table2 = Table(name=f"{db}.{name}", instance=instance)
     assert table2.name == name
     assert table2.db == db
     assert table2.instance == instance
+
+    assert table2.full_name == f"{db}.{name}"
+    assert str(table2) == f"{db}.{name}"
 
 
 @pytest.mark.parametrize("invalid_name", ["wrong.name", "wrong@name", "wrong#name", []])

@@ -80,6 +80,13 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], GenericModel, Generic[ColumnValu
 
         return self.column.name
 
+    def __str__(self) -> str:
+        """
+        Returns full HWM name
+        """
+
+        return f"{self.name}#{self.source.full_name}"
+
     @property
     def qualified_name(self) -> str:
         """

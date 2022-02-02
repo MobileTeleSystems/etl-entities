@@ -17,13 +17,19 @@ def test_column_valid_input():
     assert column1.partition
     assert column1.partition == OrderedDict([(partition_name1, partition_value1), (partition_name2, partition_value2)])
 
+    assert str(column1) == name
+
     column2 = Column(name=name, partition=[(partition_name1, partition_value1), (partition_name2, partition_value2)])
     assert column2.name == name
     assert column2.partition == OrderedDict([(partition_name1, partition_value1), (partition_name2, partition_value2)])
 
+    assert str(column2) == name
+
     column3 = Column(name=name, partition=f"{partition_name1}={partition_value1}/{partition_name2}={partition_value2}")
     assert column3.name == name
     assert column3.partition == OrderedDict([(partition_name1, partition_value1), (partition_name2, partition_value2)])
+
+    assert str(column3) == name
 
     column4 = Column(
         name=name,
@@ -32,9 +38,13 @@ def test_column_valid_input():
     assert column4.name == name
     assert column4.partition == OrderedDict([(partition_name1, partition_value1), (partition_name2, partition_value2)])
 
+    assert str(column4) == name
+
     column5 = Column(name=name)
     assert column5.name == name
     assert not column5.partition
+
+    assert str(column5) == name
 
 
 @pytest.mark.parametrize("invalid_name", ["wrong/name", "wrong@name", "wrong=name", "wrong#name", None, frozenset()])
@@ -147,6 +157,7 @@ def test_column_qualified_name(
         name=name,
         partition=partition,
     )
+
     assert column.qualified_name == f"{name}{partition_qualified_name}"
 
 
