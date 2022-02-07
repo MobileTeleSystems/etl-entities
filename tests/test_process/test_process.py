@@ -40,11 +40,17 @@ def test_process_valid_input(valid_name, valid_host, valid_task, valid_dag):
     assert process1.task == valid_task
     assert process1.dag == valid_dag
 
+    assert process1.full_name == f"{valid_dag}.{valid_task}.{valid_name}"
+    assert str(process1) == f"{valid_dag}.{valid_task}.{valid_name}"
+
     process2 = Process(name=valid_name, host=valid_host)
     assert process2.name == valid_name
     assert process2.host == valid_host
     assert not process2.task
     assert not process2.dag
+
+    assert process2.full_name == valid_name
+    assert str(process2) == valid_name
 
     process3 = Process(name=valid_name)
     assert process3.name == valid_name
@@ -52,11 +58,26 @@ def test_process_valid_input(valid_name, valid_host, valid_task, valid_dag):
     assert not process3.task
     assert not process3.dag
 
+    assert process3.full_name == valid_name
+    assert str(process3) == valid_name
+
     process4 = Process(host=valid_host)
     assert process4.name
     assert process4.host == valid_host
     assert not process3.task
     assert not process3.dag
+
+    assert process4.full_name == process4.name
+    assert str(process4) == process4.name
+
+    process5 = Process()
+    assert process5.name
+    assert process5.host
+    assert not process5.task
+    assert not process5.dag
+
+    assert process5.full_name == process5.name
+    assert str(process5) == process5.name
 
 
 @pytest.mark.parametrize(
@@ -164,7 +185,7 @@ def test_process_compare():
     "task, dag, prefix",
     [
         ("", "", ""),
-        ("abc", "cde", "abc.cde."),
+        ("abc", "cde", "cde.abc."),
     ],
 )
 def test_process_qualified_name(task, dag, prefix):

@@ -57,11 +57,32 @@ class Table(BaseModel, Entity):
 
     @property
     def full_name(self) -> str:
+        """
+        Full name of table
+
+        Returns
+        ----------
+        value : str
+
+            Table full name
+
+        Examples
+        ----------
+
+        .. code:: python
+
+            from etl_entities import Table
+
+            table = Table(name="mytable", db="mydb", instance="postgres://db.host:5432")
+
+            assert table.full_name == "mydb.mytable"
+        """
+
         return f"{self.db}.{self.name}"
 
     def __str__(self):
         """
-        Returns table name
+        Returns full table name
         """
 
         return self.full_name

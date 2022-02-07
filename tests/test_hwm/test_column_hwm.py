@@ -21,6 +21,8 @@ def test_column_hwm_valid_input(hwm_class, value):
     process = Process(name="myprocess", host="myhost")
     modified_time = datetime.now() - timedelta(days=5)
 
+    full_name = f"{column.name}#{table.full_name}"
+
     hwm1 = hwm_class(column=column, source=table)
     assert hwm1.value is None
     assert not hwm1  # same as above
@@ -29,6 +31,8 @@ def test_column_hwm_valid_input(hwm_class, value):
     assert hwm1.source == table
     assert hwm1.process is not None
     assert hwm1.modified_time < datetime.now()
+
+    assert str(hwm1) == full_name
 
     hwm2 = hwm_class(column=column, source=table, value=value)
     assert hwm2.value == value
@@ -39,6 +43,8 @@ def test_column_hwm_valid_input(hwm_class, value):
     assert hwm2.process is not None
     assert hwm2.modified_time < datetime.now()
 
+    assert str(hwm2) == full_name
+
     hwm3 = hwm_class(column=column, source=table, process=process)
     assert hwm3.value is None
     assert not hwm3  # same as above
@@ -48,6 +54,8 @@ def test_column_hwm_valid_input(hwm_class, value):
     assert hwm3.process == process
     assert hwm3.modified_time < datetime.now()
 
+    assert str(hwm3) == full_name
+
     hwm4 = hwm_class(column=column, source=table, modified_time=modified_time)
     assert hwm4.value is None
     assert not hwm4  # same as above
@@ -55,6 +63,8 @@ def test_column_hwm_valid_input(hwm_class, value):
     assert hwm4.name == column.name
     assert hwm4.source == table
     assert hwm4.modified_time == modified_time
+
+    assert str(hwm4) == full_name
 
     hwm5 = hwm_class(column=column, source=table, value=value, process=process, modified_time=modified_time)
     assert hwm5.value == value
@@ -64,6 +74,8 @@ def test_column_hwm_valid_input(hwm_class, value):
     assert hwm5.source == table
     assert hwm5.process == process
     assert hwm5.modified_time == modified_time
+
+    assert str(hwm5) == full_name
 
 
 @pytest.mark.parametrize(
@@ -356,6 +368,7 @@ def test_column_hwm_sub(hwm_class, value, delta):
     "process, process_qualified_name",
     [
         (Process(name="myprocess", host="myhost"), "myprocess@myhost"),
+        (Process(name="myprocess", task="abc", dag="cde", host="myhost"), "cde.abc.myprocess@myhost"),
     ],
 )
 def test_column_hwm_qualified_name(
@@ -367,8 +380,6 @@ def test_column_hwm_qualified_name(
     process,
     process_qualified_name,
 ):
-    process = Process(name="myprocess", host="myhost")
-
     hwm = hwm_class(
         column=column,
         source=table,
