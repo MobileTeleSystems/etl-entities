@@ -47,7 +47,7 @@ class DateHWM(ColumnHWM[date]):
         column = Column(name="id")
         table = Table(name="mytable", db="mydb", instance="postgres://db.host:5432")
 
-        hwm = DateHWM(column=column, source=table, value=date(year=2021, month=21, day=3))
+        hwm = DateHWM(column=column, source=table, value=date(year=2021, month=12, day=3))
     """
 
     value: Optional[date] = None

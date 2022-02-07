@@ -50,7 +50,7 @@ class DateTimeHWM(ColumnHWM[datetime]):
         hwm = DateTimeHWM(
             column=column,
             source=table,
-            value=datetime(year=2021, month=21, day=31, hour=11, minute=22, second=33),
+            value=datetime(year=2021, month=12, day=31, hour=11, minute=22, second=33),
         )
     """
 
@@ -74,7 +74,7 @@ class DateTimeHWM(ColumnHWM[datetime]):
             from etl_entities import DateTimeHWM
 
             hwm = DateTimeHWM(
-                value=datetime(year=2021, month=21, day=31, hour=11, minute=22, second=33), ...
+                value=datetime(year=2021, month=12, day=31, hour=11, minute=22, second=33), ...
             )
             assert hwm.serialize_value() == "2021-12-31T11:22:33"
 
