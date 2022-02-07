@@ -56,9 +56,9 @@ class Process(BaseModel, Entity):
         from etl_entities import Process
 
         process = Process()
-        process1 = Process(name="mycolumn")
-        process2 = Process(name="mycolumn", host="myhost")
-        process3 = Process(name="mycolumn", task="abc", dag="cde", host="myhost")
+        process1 = Process(name="myprocess")
+        process2 = Process(name="myprocess", host="myhost")
+        process3 = Process(name="myprocess", task="abc", dag="cde", host="myhost")
     """
 
     name: str = Field(default_factory=lambda: psutil.Process(os.getpid()).name())
@@ -77,11 +77,34 @@ class Process(BaseModel, Entity):
 
     @property
     def full_name(self) -> str:
-        return ".".join(filter(None, (self.task, self.dag, self.name)))
+        """
+        Full process name
+
+        Returns
+        ----------
+        value : str
+
+            Process full name
+
+        Examples
+        ----------
+
+        .. code:: python
+
+            from etl_entities import Process
+
+            process1 = Process(name="myprocess")
+            process2 = Process(name="myprocess", task="abc", dag="cde")
+
+            assert process1.full_name == "myprocess"
+            assert process2.full_name == "cde.abc.myprocess"
+        """
+
+        return ".".join(filter(None, (self.dag, self.task, self.name)))
 
     def __str__(self):
         """
-        Returns process name
+        Returns full process name
         """
 
         return self.full_name
@@ -104,10 +127,10 @@ class Process(BaseModel, Entity):
 
             from etl_entities import Process
 
-            process1 = Process(name="mycolumn", host="myhost")
+            process1 = Process(name="myprocess", host="myhost")
             assert process1.qualified_name == "currentapp@somehost"
 
-            process2 = Process(name="mycolumn", task="abc", dag="cde", host="myhost")
+            process2 = Process(name="myprocess", task="abc", dag="cde", host="myhost")
             assert process2.qualified_name == "abc.cde.currentapp@somehost"
         """
 
@@ -124,7 +147,7 @@ class Process(BaseModel, Entity):
 
             from etl_entities import Process
 
-            with Process(name="mycolumn", host="myhost") as process:
+            with Process(name="myprocess", host="myhost") as process:
                 ...
         """
 

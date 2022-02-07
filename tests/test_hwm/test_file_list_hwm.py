@@ -21,12 +21,16 @@ def test_file_list_hwm_valid_input(valid_files):
     process = Process(name="myprocess", host="myhost")
     modified_time = datetime.now() - timedelta(days=5)
 
+    full_name = f"downloaded_files#{folder.name}"
+
     hwm1 = FileListHWM(source=folder)
     assert hwm1.source == folder
     assert hwm1.name == "downloaded_files"
     assert hwm1.process is not None
     assert not hwm1.value
     assert not hwm1  # same as above
+
+    assert str(hwm1) == full_name
 
     hwm2 = FileListHWM(source=folder, process=process)
     assert hwm2.source == folder
@@ -35,10 +39,14 @@ def test_file_list_hwm_valid_input(valid_files):
     assert not hwm2.value
     assert not hwm2  # same as above
 
+    assert str(hwm2) == full_name
+
     hwm3 = FileListHWM(source=folder, value=valid_files)
     assert hwm3.source == folder
     assert hwm3.name == "downloaded_files"
     assert hwm3.process is not None
+
+    assert str(hwm3) == full_name
 
     for file in valid_files:
         assert RelativePath(file) in hwm3.value
@@ -52,10 +60,14 @@ def test_file_list_hwm_valid_input(valid_files):
         assert RelativePath(file) in hwm4.value
         assert hwm4
 
+        assert str(hwm4) == full_name
+
     hwm5 = FileListHWM(source=folder, value=valid_files, process=process)
     assert hwm5.source == folder
     assert hwm5.name == "downloaded_files"
     assert hwm5.process == process
+
+    assert str(hwm5) == full_name
 
     for file in valid_files:
         assert RelativePath(file) in hwm5.value
@@ -66,6 +78,8 @@ def test_file_list_hwm_valid_input(valid_files):
     assert hwm6.name == "downloaded_files"
     assert hwm6.process == process
     assert hwm6.modified_time == modified_time
+
+    assert str(hwm6) == full_name
 
     for file in valid_files:
         assert RelativePath(file) in hwm6.value
@@ -321,15 +335,21 @@ def test_file_list_hwm_contains():
         assert folder not in hwm
 
 
-def test_file_list_hwm_qualified_name():
+@pytest.mark.parametrize(
+    "process, process_qualified_name",
+    [
+        (Process(name="myprocess", host="myhost"), "myprocess@myhost"),
+        (Process(name="myprocess", task="abc", dag="cde", host="myhost"), "cde.abc.myprocess@myhost"),
+    ],
+)
+def test_file_list_hwm_qualified_name(process, process_qualified_name):
     folder = RemoteFolder(name="/home/user/abc", instance="ftp://my.domain:23")
-    process = Process(name="myprocess", host="myhost")
 
     hwm = FileListHWM(
         source=folder,
         process=process,
     )
-    assert hwm.qualified_name == "downloaded_files#/home/user/abc@ftp://my.domain:23#myprocess@myhost"
+    assert hwm.qualified_name == f"downloaded_files#/home/user/abc@ftp://my.domain:23#{process_qualified_name}"
 
 
 def test_file_list_hwm_serialization():

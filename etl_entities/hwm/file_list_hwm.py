@@ -69,9 +69,22 @@ class FileListHWM(HWM):
     def name(self) -> str:
         """
         Name of HWM
+
+        Returns
+        ----------
+        value : str
+
+            Static value ``"downloaded_files"``
         """
 
         return "downloaded_files"
+
+    def __str__(self) -> str:
+        """
+        Returns full HWM name
+        """
+
+        return f"{self.name}#{self.source.full_name}"
 
     @property
     def qualified_name(self) -> str:

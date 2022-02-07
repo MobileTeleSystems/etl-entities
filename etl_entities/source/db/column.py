@@ -103,8 +103,8 @@ class Column(BaseModel, Entity):
                 name="mycolumn", partition={"partcolumn": "value1", "partcolumn2": "value2"}
             )
 
-            assert column1.qualified_name == "mycolumn|partcolumn1=value1/partcolumn2=value2"
-            assert column2.qualified_name == "mycolumn"
+            assert column1.qualified_name == "mycolumn"
+            assert column2.qualified_name == "mycolumn|partcolumn1=value1/partcolumn2=value2"
         """
 
         if self.partition_kv:

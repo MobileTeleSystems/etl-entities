@@ -57,12 +57,37 @@ class RemoteFolder(BaseModel, Entity):
 
         return value
 
-    def __str__(self):
+    @property
+    def full_name(self):
         """
-        Returns name path
+        Full folder name
+
+        Returns
+        ----------
+        value : str
+
+            Folder full name
+
+        Examples
+        ----------
+
+        .. code:: python
+
+            from etl_entities import RemoteFolder
+
+            folder = RemoteFolder(name="/absolute/folder", instance="rnd-dwh")
+
+            assert folder.full_name == "/absolute/folder"
         """
 
-        return str(self.name)
+        return os.fspath(self.name)
+
+    def __str__(self):
+        """
+        Returns full process name
+        """
+
+        return self.full_name
 
     def __truediv__(self, path: Path) -> AbsolutePath:
         """

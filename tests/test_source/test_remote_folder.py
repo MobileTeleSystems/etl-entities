@@ -23,6 +23,9 @@ def test_remote_folder_valid_input(valid_name, valid_instance):
     assert str(remote_folder1.name) == valid_name
     assert remote_folder1.instance == valid_instance
 
+    assert remote_folder1.full_name == valid_name
+    assert str(remote_folder1) == valid_name
+
 
 @pytest.mark.parametrize(
     "invalid_name",
