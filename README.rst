@@ -5,6 +5,13 @@ HWM lib
 
 The library contains class HWM.
 
+.. documentation
+
+Documentation
+-------------
+
+See https://bigdata.pages.mts.ru/platform/onetools/etl-entities/
+
 .. install
 
 Install
