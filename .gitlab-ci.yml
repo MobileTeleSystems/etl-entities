@@ -62,6 +62,7 @@ include:
 ## Переиспользование добавленного template'а по добавлению SSH-ключа пользователя ansible. ##
 devops_get_cicd_secrets:
   extends: .base_devops_get_cicd_secrets
+  interruptible: true
 
 mypy:
   image: $CI_REGISTRY/platform/python:${PYTHON_VERSION}
@@ -72,6 +73,8 @@ mypy:
   # remove fixed mypy version after https://github.com/samuelcolvin/pydantic/issues/3528
   - pip3 install "mypy<0.920" pydantic
   - python3 -m mypy etl_entities
+  interruptible: true
+
 flake8:
   image: $CI_REGISTRY/platform/python:${PYTHON_VERSION}
   variables:
@@ -83,6 +86,7 @@ flake8:
   artifacts:
     when: always
     paths: [flake8.txt]
+  interruptible: true
 
 black:
   image: $CI_REGISTRY/platform/python:${PYTHON_VERSION}
@@ -92,13 +96,14 @@ black:
   script:
   - pip3 install black
   - python3 -m black . --check
+  interruptible: true
 
 build_docker_image:
   extends: .base_docker_build
   stage: build
   variables:
+    DOCKER_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}
     DOCKER_BUILD_EXTRA_ARGS: --build-arg BUILD_NUMBER=$CI_PIPELINE_ID --build-arg BRANCH_NAME=$CI_COMMIT_BRANCH
-    DOCKER_IMAGE_TAG: ${CI_PIPELINE_ID}
     DOCKER_CACHE_FROM: ${CI_REGISTRY}/${CI_PROJECT_PATH}:dev
     STOP_IF_EXISTS: "false"
   rules:
@@ -109,19 +114,32 @@ build_docker_image:
       DOCKER_ADDITIONAL_TAGS: dev
   - if: $CI_COMMIT_TAG
     variables:
-      DOCKER_ADDITIONAL_TAGS: latest,${CI_COMMIT_TAG}
+      DOCKER_ADDITIONAL_TAGS: latest
+      DOCKER_IMAGE_TAG: ${CI_COMMIT_TAG}
   - when: on_success
+  interruptible: true
 
 run_unit_tests:
-  image: ${CI_REGISTRY}/${CI_PROJECT_PATH}:${CI_PIPELINE_ID}
+  image: ${CI_REGISTRY}/${CI_PROJECT_PATH}:${DOCKER_IMAGE_TAG}
   stage: unit_tests
   variables:
+    DOCKER_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}
     JUNIT_FILE: ${CI_PROJECT_DIR}/junitxml.xml
     COVERAGE_FILE: ${CI_PROJECT_DIR}/coverage.xml
   script:
   - pytest --verbose -s tests --cov-append --cov=etl_entities --cov-config=tests/.coveragerc --cov-report=xml:${COVERAGE_FILE} --junitxml=${JUNIT_FILE}
   after_script:
   - sed -i s/'\/app\/etl_entities'/'etl_entities'/ ${COVERAGE_FILE}
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    when: never
+  - if: $CI_COMMIT_BRANCH =~ /^(dev|develop|master|main)$/
+    variables:
+      DOCKER_IMAGE_TAG: dev
+  - if: $CI_COMMIT_TAG
+    variables:
+      DOCKER_IMAGE_TAG: ${CI_COMMIT_TAG}
+  - when: on_success
   artifacts:
     when: always
     paths:
@@ -131,18 +149,21 @@ run_unit_tests:
       - ${JUNIT_FILE}
       cobertura:
       - ${COVERAGE_FILE}
+  interruptible: true
 
 sonarqube_check:
   extends: .base_check_sonarqube
   stage: sonarqube_check
   variables:
     SONAR_SOURCES: etl_entities
+  interruptible: true
 
 build_and_deploy:
   extends: .base_pip_pkg_build_and_deploy_to_jfrog
   stage: artifactory
   variables:
     PYTHON_VERSION: '3.7'
+  interruptible: true
 
 build_docs:
   image: $CI_REGISTRY/platform/python:${PYTHON_VERSION}
@@ -163,6 +184,7 @@ build_docs:
   artifacts:
     paths:
       - docs/html-*.tar.gz
+  interruptible: true
 
 publish_docs:
   extends: .base_rt_upload
@@ -173,6 +195,7 @@ publish_docs:
   dependencies:
     - build_docs
     - devops_get_cicd_secrets
+  interruptible: true
 
 ### --------------- DEPLOY --------------- ###
 pages:
@@ -182,10 +205,18 @@ pages:
   - publish_docs
   variables:
     CICD_PAGES_ARTIFACTORY_DOCS_PATH: files/onetools/${CI_PROJECT_NAME}/docs
+  interruptible: true
 
 clean_docker_repo:
   extends: .base_docker_cleaner
   stage: .post
-  when: always
   variables:
-    DOCKER_IMAGE_TAGS: ${CI_PIPELINE_ID}
+    DOCKER_IMAGE_TAGS: ${CI_COMMIT_REF_SLUG}
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    when: never
+  - if: $CI_COMMIT_BRANCH =~ /^(dev|develop|master|main)$/
+    when: never
+  - if: $CI_COMMIT_TAG
+    when: never
+  - when: always
