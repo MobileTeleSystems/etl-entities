@@ -21,7 +21,7 @@ setup(
     setuptools_git_versioning={
         "enabled": True,
         "template": "{tag}",
-        "dev_template": "{tag}.dev{env:CI_PIPELINE_ID:{ccount}}",
+        "dev_template": "{tag}.dev{env:CI_PIPELINE_IID:{ccount}}",
         "dirty_template": "{tag}",
         "version_file": here / "etl_entities" / "VERSION",
         "count_commits_from_version_file": True,
