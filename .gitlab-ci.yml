@@ -81,7 +81,7 @@ flake8:
     PYTHON_VERSION: '3.7'
   stage: static analysis
   script:
-  - pip3 install wemake-python-styleguide bandit==1.7.2
+  - pip3 install wemake-python-styleguide
   - python3 -m flake8 --format=default . 2>&1 | tee flake8.txt
   artifacts:
     when: always
@@ -105,7 +105,7 @@ build_docker_image:
     DOCKER_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}
     DOCKER_BUILD_EXTRA_ARGS: --build-arg BUILD_NUMBER=$CI_PIPELINE_IID --build-arg BRANCH_NAME=$CI_COMMIT_BRANCH
     DOCKER_CACHE_FROM: ${CI_REGISTRY}/${CI_PROJECT_PATH}:dev
-    STOP_IF_EXISTS: "false"
+    STOP_IF_EXISTS: 'false'
   rules:
   - if: $CI_PIPELINE_SOURCE == "merge_request_event"
     when: never
@@ -183,18 +183,18 @@ build_docs:
     fi
   artifacts:
     paths:
-      - docs/html-*.tar.gz
+    - docs/html-*.tar.gz
   interruptible: true
 
 publish_docs:
   extends: .base_rt_upload
   stage: artifactory
   variables:
-    JFROG_RT_ARTIFACTS_PATTERN: "docs/html-*.tar.gz"
-    JFROG_RT_UPLOAD_PATH: "files/onetools/${CI_PROJECT_NAME}/"
+    JFROG_RT_ARTIFACTS_PATTERN: docs/html-*.tar.gz
+    JFROG_RT_UPLOAD_PATH: files/onetools/${CI_PROJECT_NAME}/
   dependencies:
-    - build_docs
-    - devops_get_cicd_secrets
+  - build_docs
+  - devops_get_cicd_secrets
   interruptible: true
 
 ### --------------- DEPLOY --------------- ###
