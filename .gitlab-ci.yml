@@ -218,5 +218,6 @@ clean_docker_repo:
   - if: $CI_COMMIT_BRANCH =~ /^(dev|develop|master|main)$/
     when: never
   - if: $CI_COMMIT_TAG
-    when: never
+    variables:
+      DOCKER_IMAGE_TAG: ${CI_COMMIT_TAG}
   - when: always
