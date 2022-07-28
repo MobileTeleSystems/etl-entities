@@ -1,13 +1,12 @@
 from __future__ import annotations
 
 import os
-from pathlib import Path
 from typing import Union
 
 from pydantic import validator
 
 from etl_entities.entity import BaseModel, Entity
-from etl_entities.instance import AbsolutePath, Cluster, GenericURL
+from etl_entities.instance import AbsolutePath, Cluster, GenericPath, GenericURL
 
 # folder path cannot have delimiters used in qualified_name
 PROHIBITED_PATH_SYMBOLS = "@#"
@@ -89,7 +88,7 @@ class RemoteFolder(BaseModel, Entity):
 
         return self.full_name
 
-    def __truediv__(self, path: Path) -> AbsolutePath:
+    def __truediv__(self, path: GenericPath) -> AbsolutePath:
         """
         Returns absolute path for nested file or folder
         """

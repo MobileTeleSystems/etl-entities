@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from datetime import datetime
+from functools import total_ordering
 from typing import Generic, Optional, TypeVar
 
 from etl_entities.entity import GenericModel
@@ -10,8 +10,9 @@ from etl_entities.source import Column, Table
 ColumnValueType = TypeVar("ColumnValueType")
 
 
+@total_ordering
 class ColumnHWM(HWM[Optional[ColumnValueType]], GenericModel, Generic[ColumnValueType]):
-    """Column HWM type
+    """Base column HWM type
 
     Parameters
     ----------
@@ -23,7 +24,7 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], GenericModel, Generic[ColumnValu
 
         Table instance
 
-    value : int or ``None``, default: ``None``
+    value : ``ColumnValueType`` or ``None``, default: ``None``
 
         HWM value
 
@@ -34,18 +35,6 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], GenericModel, Generic[ColumnValu
     process : :obj:`etl_entities.process.process.Process`, default: current process
 
         Process instance
-
-    Examples
-    ----------
-
-    .. code:: python
-
-        from etl_entities import IntHWM, Column, Table
-
-        column = Column(name="id")
-        table = Table(name="mytable", db="mydb", instance="postgres://db.host:5432")
-
-        hwm = IntHWM(column=column, source=table, value=1)
     """
 
     column: Column
@@ -68,12 +57,10 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], GenericModel, Generic[ColumnValu
 
         .. code:: python
 
-            from etl_entities import IntHWM, Column, Table
-
             column = Column(name="id")
             table = Table(name="mytable", db="mydb", instance="postgres://db.host:5432")
 
-            hwm = IntHWM(column=column, source=table, value=1)
+            hwm = ColumnHWM(column=column, source=table, value=val)
 
             assert hwm.name == "id"
         """
@@ -103,12 +90,10 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], GenericModel, Generic[ColumnValu
 
         .. code:: python
 
-            from etl_entities import ColumnHWM, Column, Table
-
             column = Column(name="id")
             table = Table(name="mytable", db="mydb", instance="postgres://db.host:5432")
 
-            hwm = IntHWM(column=column, source=table, value=1)
+            hwm = ColumnHWM(column=column, source=table, value=1)
 
             assert (
                 hwm.qualified_name
@@ -118,12 +103,9 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], GenericModel, Generic[ColumnValu
 
         return "#".join([self.column.qualified_name, self.source.qualified_name, self.process.qualified_name])
 
-    def with_value(self, value: ColumnValueType | None) -> ColumnHWM:
+    def with_value(self, value: ColumnValueType | None):
         if value is not None:
-            dct = self.dict()
-            dct["value"] = value
-            dct["modified_time"] = datetime.now()
-            return self.parse_obj(dct)
+            return super().with_value(value)
 
         return self
 
@@ -135,21 +117,6 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], GenericModel, Generic[ColumnValu
         result : str
 
             Serialized value
-
-        Examples
-        ----------
-
-        .. code:: python
-
-            from etl_entities import ColumnHWM
-
-            hwm = ColumnHWM(value=1, ...)
-            hwm.serialize_value()
-            # "1"
-
-            hwm = ColumnHWM(value=None, ...)
-            hwm.serialize_value()
-            # "null"
         """
 
         if self.value is None:
@@ -206,12 +173,13 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], GenericModel, Generic[ColumnValu
 
         .. code:: python
 
-            from etl_entities import IntHWM
+            # assume val2 == val1 + inc
 
-            hwm1 = IntHWM(value=1, ...)
-            hwm2 = IntHWM(value=2, ...)
+            hwm1 = ColumnHWM(value=val1, ...)
+            hwm2 = ColumnHWM(value=val2, ...)
 
-            assert hwm1 + 1 == hwm2  # same as IntHWM(value=hwm1.value + 1, ...)
+            # same as ColumnHWM(value=hwm1.value + inc, ...)
+            assert hwm1 + inc == hwm2
         """
 
         if self.value is not None and value is not None:
@@ -243,15 +211,78 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], GenericModel, Generic[ColumnValu
 
         .. code:: python
 
-            from etl_entities import IntHWM
+            # assume val2 == val1 - dec
 
-            hwm1 = IntHWM(value=1, ...)
-            hwm2 = IntHWM(value=2, ...)
+            hwm1 = ColumnHWM(value=val1, ...)
+            hwm2 = ColumnHWM(value=val2, ...)
 
-            assert hwm1 - 1 == hwm2  # same as IntHWM(value=hwm1.value - 1, ...)
+            # same as ColumnHWM(value=hwm1.value - dec, ...)
+            assert hwm1 - dec == hwm2
         """
 
         if self.value is not None and value is not None:
             return self.with_value(self.value - value)
 
         return self
+
+    def __eq__(self, other):
+        """Checks equality of two HWM instances
+
+        Params
+        -------
+        other : :obj:`etl_entities.hwm.column_hwm.ColumnHWM` or any :obj:`object`
+
+            You can compare two :obj:`hwmlib.hwm.column_hwm.ColumnHWM` instances,
+            obj:`hwmlib.hwm.column_hwm.ColumnHWM` with an :obj:`object`,
+            if its value is comparable with the ``value`` attribute of HWM
+
+        Returns
+        --------
+        result : bool
+
+            ``True`` if both inputs are the same, ``False`` otherwise.
+        """
+
+        if isinstance(other, HWM):
+            self_fields = self.dict(exclude={"modified_time"})
+            other_fields = other.dict(exclude={"modified_time"})
+            return isinstance(other, ColumnHWM) and self_fields == other_fields
+
+        return self.value == other
+
+    def __lt__(self, other):
+        """Checks current HWM value is less than another one
+
+        Params
+        -------
+        other : :obj:`etl_entities.hwm.column_hwm.ColumnHWM` or any :obj:`object`
+
+            You can compare two :obj:`hwmlib.hwm.column_hwm.ColumnHWM` instances,
+            obj:`hwmlib.hwm.column_hwm.ColumnHWM` with an :obj:`object`,
+            if its value is comparable with the ``value`` attribute of HWM
+
+            .. warning::
+
+                You cannot compare HWMs if one of them has None value
+
+        Returns
+        --------
+        result : bool
+
+            ``True`` if current HWM value is less than provided value, ``False`` otherwise.
+        """
+
+        if isinstance(other, HWM):
+            if isinstance(other, ColumnHWM):
+                self_fields = self.dict(exclude={"value", "modified_time"})
+                other_fields = other.dict(exclude={"value", "modified_time"})
+                if self_fields == other_fields:
+                    return self.value < other.value
+
+                raise NotImplementedError(  # NOSONAR
+                    "Cannot compare ColumnHWM with different column, source or process",
+                )
+
+            return NotImplemented
+
+        return self.value < other

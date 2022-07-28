@@ -1,16 +1,13 @@
 from __future__ import annotations
 
 from datetime import datetime
-from functools import total_ordering
 from typing import Optional
 
 from etl_entities.hwm.column_hwm import ColumnHWM
-from etl_entities.hwm.hwm import HWM
 from etl_entities.hwm.hwm_type_registry import register_hwm_type
 
 
 @register_hwm_type("datetime")
-@total_ordering
 class DateTimeHWM(ColumnHWM[datetime]):
     """DateTime HWM type
 
@@ -165,12 +162,10 @@ class DateTimeHWM(ColumnHWM[datetime]):
             assert hwm1 != hwm2
         """
 
-        if isinstance(other, HWM):
-            self_fields = self.dict(exclude={"modified_time"})
-            other_fields = other.dict(exclude={"modified_time"})
-            return isinstance(other, DateTimeHWM) and self_fields == other_fields
+        if isinstance(other, ColumnHWM) and not isinstance(other, DateTimeHWM):
+            return False
 
-        return self.value == other
+        return super().__eq__(other)
 
     def __lt__(self, other):
         """Checks current HWM value is less than another one
@@ -223,17 +218,7 @@ class DateTimeHWM(ColumnHWM[datetime]):
             assert hwm1 < None  # same thing
         """
 
-        if isinstance(other, HWM):
-            if isinstance(other, DateTimeHWM):
-                self_fields = self.dict(exclude={"value", "modified_time"})
-                other_fields = other.dict(exclude={"value", "modified_time"})
-                if self_fields == other_fields:
-                    return self.value < other
-
-                raise NotImplementedError(  # NOSONAR
-                    f"Cannot compare {self.__class__.__name__} with different column, source or process",
-                )
-
+        if isinstance(other, ColumnHWM) and not isinstance(other, DateTimeHWM):
             return NotImplemented
 
-        return self.value < other
+        return super().__lt__(other)

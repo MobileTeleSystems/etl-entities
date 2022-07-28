@@ -81,7 +81,7 @@ class HWM(Entity, GenericModel, Generic[ValueType]):
         return result
 
     @classmethod
-    def deserialize(cls, inp: dict) -> HWM:
+    def deserialize(cls, inp: dict):
         """Return HWM from dict representation
 
         Returns
@@ -97,18 +97,15 @@ class HWM(Entity, GenericModel, Generic[ValueType]):
 
             from etl_entities import IntHWM
 
-            assert (
-                IntHWM.deserialize(
-                    {
-                        "value": "1",
-                        "type": "int",
-                        "column": {"name": ..., "partition": ...},
-                        "source": ...,
-                        "process": ...,
-                    }
-                )
-                == IntHWM(value=1, ...)
-            )
+            assert IntHWM.deserialize(
+                {
+                    "value": "1",
+                    "type": "int",
+                    "column": {"name": ..., "partition": ...},
+                    "source": ...,
+                    "process": ...,
+                }
+            ) == IntHWM(value=1, ...)
 
             IntHWM.deserialize({"type": "date"})  # raises ValueError
         """
@@ -175,7 +172,7 @@ class HWM(Entity, GenericModel, Generic[ValueType]):
 
         return cast(ValueType, strict_str_validator(value).strip())
 
-    def with_value(self, value: ValueType) -> HWM:
+    def with_value(self, value: ValueType):
         """Create copy of HWM object with specified value
 
         Parameters
