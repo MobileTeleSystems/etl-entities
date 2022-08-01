@@ -167,7 +167,11 @@ class FileListHWM(FileHWM[FileListType]):
         return bool(self.value)
 
     def __add__(self, value: str | os.PathLike | Iterable[str | os.PathLike]):
-        """Creates copy of HWM with added value
+        """Adds path or paths to HWM value, and return updated HWM
+
+        .. note::
+
+            Changes HWM value in place instead of returning new one
 
         Params
         -------
@@ -179,7 +183,7 @@ class FileListHWM(FileHWM[FileListType]):
         --------
         result : FileListHWM
 
-            Copy of HWM with updated value
+            Self
 
         Examples
         ----------
@@ -195,13 +199,44 @@ class FileListHWM(FileHWM[FileListType]):
             # same as FileListHWM(value=hwm1.value + "another.file", ...)
         """
 
-        values: Iterable[RelativePath]
-        if isinstance(value, Iterable) and not isinstance(value, str):
-            values = {RelativePath(item) for item in value}
-        else:
-            values = {RelativePath(value)}
+        self.set_value(self.value | self.validate_value(value))
+        return self
 
-        return self.with_value(self.value.union(values))
+    def __sub__(self, value: str | os.PathLike | Iterable[str | os.PathLike]):
+        """Remove path or paths from HWM value, and return updated HWM
+
+        .. note::
+
+            Changes HWM value in place instead of returning new one
+
+        Params
+        -------
+        value : :obj:`str` or :obj:`pathlib.PosixPath` or :obj:`typing.Iterable` of them
+
+            Path or collection of paths to be added to value
+
+        Returns
+        --------
+        result : FileListHWM
+
+            Self
+
+        Examples
+        ----------
+
+        .. code:: python
+
+            from etl_entities import FileListHWM
+
+            hwm1 = FileListHWM(value=["some/path"], ...)
+            hwm2 = FileListHWM(value=["some/path", "another.file"], ...)
+
+            assert hwm1 - "another.file" == hwm2
+            # same as FileListHWM(value=hwm1.value - "another.file", ...)
+        """
+
+        self.set_value(self.value - self.validate_value(value))
+        return self
 
     def __abs__(self) -> frozenset[AbsolutePath]:
         """Returns list of files with absolute paths

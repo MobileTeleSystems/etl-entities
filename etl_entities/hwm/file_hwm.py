@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 from abc import abstractmethod
-from typing import Generic, Iterable, Optional, TypeVar
+from typing import Generic, Iterable, TypeVar
 
 from etl_entities.entity import GenericModel
 from etl_entities.hwm.hwm import HWM
@@ -12,7 +12,7 @@ from etl_entities.source import RemoteFolder
 FileHWMValueType = TypeVar("FileHWMValueType")
 
 
-class FileHWM(HWM[Optional[FileHWMValueType]], GenericModel, Generic[FileHWMValueType]):
+class FileHWM(HWM[FileHWMValueType], GenericModel, Generic[FileHWMValueType]):
     """Basic file HWM type
 
     Parameters
@@ -62,15 +62,13 @@ class FileHWM(HWM[Optional[FileHWMValueType]], GenericModel, Generic[FileHWMValu
 
         return "#".join([self.name, self.source.qualified_name, self.process.qualified_name])
 
-    def with_value(self, value: FileHWMValueType | None):
-        if value is not None:
-            return super().with_value(value)
-
-        return self
-
     @abstractmethod
     def __add__(self, value: str | os.PathLike | Iterable[str | os.PathLike]):
-        """Creates copy of HWM with added value
+        """Add value to HWM and return update HWM
+
+        .. note::
+
+            Changes HWM value in place instead of returning new one
 
         Params
         -------
@@ -82,7 +80,7 @@ class FileHWM(HWM[Optional[FileHWMValueType]], GenericModel, Generic[FileHWMValu
         --------
         result : FileHWM
 
-            Copy of HWM with updated value
+            Self
         """
 
     def __bool__(self):

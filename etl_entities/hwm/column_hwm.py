@@ -103,12 +103,6 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], GenericModel, Generic[ColumnValu
 
         return "#".join([self.column.qualified_name, self.source.qualified_name, self.process.qualified_name])
 
-    def with_value(self, value: ColumnValueType | None):
-        if value is not None:
-            return super().with_value(value)
-
-        return self
-
     def serialize_value(self) -> str:
         """Return string representation of HWM value
 
@@ -150,7 +144,11 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], GenericModel, Generic[ColumnValu
         return self.value is not None
 
     def __add__(self, value):
-        """Creates copy of HWM with increased value
+        """Increase HWM value and return updated HWM
+
+        .. note::
+
+            Changes HWM value in place instead of returning new one
 
         Params
         -------
@@ -160,13 +158,11 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], GenericModel, Generic[ColumnValu
 
             For example, you cannot add ``str`` to ``int`` value, but you can add ``int`` to ``int``.
 
-            ``None`` input does not change the value.
-
         Returns
         --------
-        result : HWM
+        result : ColumnHWM
 
-            Copy of HWM with updated value
+            Self
 
         Examples
         ----------
@@ -182,13 +178,15 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], GenericModel, Generic[ColumnValu
             assert hwm1 + inc == hwm2
         """
 
-        if self.value is not None and value is not None:
-            return self.with_value(self.value + value)
-
+        self.set_value(self.value + self.validate_value(value))
         return self
 
     def __sub__(self, value):
-        """Creates copy of HWM with decreased value
+        """Decrease HWM value, and return update HWM
+
+        .. note::
+
+            Changes HWM value in place instead of returning new one
 
         Params
         -------
@@ -198,13 +196,11 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], GenericModel, Generic[ColumnValu
 
             For example, you cannot subtract ``str`` from ``int`` value, but you can subtract ``int`` from ``int``.
 
-            ``None`` input does not change the value.
-
         Returns
         --------
-        result : HWM
+        result : ColumnHWM
 
-            Copy of HWM with updated value
+            Self
 
         Examples
         ----------
@@ -220,9 +216,7 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], GenericModel, Generic[ColumnValu
             assert hwm1 - dec == hwm2
         """
 
-        if self.value is not None and value is not None:
-            return self.with_value(self.value - value)
-
+        self.set_value(self.value - self.validate_value(value))
         return self
 
     def __eq__(self, other):

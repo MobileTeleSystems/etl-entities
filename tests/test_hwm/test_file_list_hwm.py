@@ -139,7 +139,7 @@ def test_file_list_hwm_wrong_input(invalid_file):
             FileListHWM(source=folder, value=invalid_file, process=process)
 
 
-def test_file_list_hwm_with_value():
+def test_file_list_hwm_set_value():
     file1 = "some/path/file.py"
     file2 = RelativePath("another.csv")
     value = [file1, file2, file2]
@@ -147,29 +147,32 @@ def test_file_list_hwm_with_value():
 
     hwm = FileListHWM(source=folder)
 
-    hwm1 = hwm.with_value(value)
+    hwm1 = hwm.copy()
+    hwm1.set_value(value)
     assert RelativePath(file1) in hwm1
     assert file2 in hwm1
     assert hwm1.modified_time > hwm.modified_time
 
-    hwm2 = hwm.with_value(file1)
+    hwm2 = hwm.copy()
+    hwm2.set_value(file1)
     assert file1 in hwm2
     assert file2 not in hwm2
     assert hwm2.modified_time > hwm1.modified_time
 
-    hwm3 = hwm.with_value(file2)
+    hwm3 = hwm.copy()
+    hwm3.set_value(file2)
     assert file1 not in hwm3
     assert file2 in hwm3
     assert hwm3.modified_time > hwm2.modified_time
 
     with pytest.raises(ValueError):
-        hwm.with_value("/absolute/path")
+        hwm.set_value("/absolute/path")
 
-    with pytest.raises((TypeError, ValueError)):
-        hwm.with_value(folder)
+    with pytest.raises(TypeError):
+        hwm.set_value(folder)
 
-    with pytest.raises((TypeError, ValueError)):
-        hwm.with_value(hwm1)
+    with pytest.raises(TypeError):
+        hwm.set_value(hwm1)
 
 
 def test_file_list_hwm_frozen():
@@ -244,9 +247,9 @@ def test_file_list_hwm_add():
     assert hwm4 == hwm1
     assert hwm4.modified_time == hwm1.modified_time
 
-    hwm4 = hwm1 + file1
-    hwm5 = hwm1 + [file1]
-    hwm6 = hwm1 + {file1}
+    hwm4 = hwm1.copy() + file1
+    hwm5 = hwm1.copy() + [file1]
+    hwm6 = hwm1.copy() + {file1}
 
     assert hwm4 == hwm1
     assert hwm4.modified_time == hwm1.modified_time
@@ -257,9 +260,9 @@ def test_file_list_hwm_add():
     assert hwm6 == hwm1
     assert hwm6.modified_time == hwm1.modified_time
 
-    hwm7 = hwm1 + file3
-    hwm8 = hwm1 + [file3]
-    hwm9 = hwm1 + {file3}
+    hwm7 = hwm1.copy() + file3
+    hwm8 = hwm1.copy() + [file3]
+    hwm9 = hwm1.copy() + {file3}
 
     # if something has been changed, update modified_time
     assert hwm7 == hwm2
@@ -279,6 +282,7 @@ def test_file_list_hwm_sub():
     file1 = "some/path/file.py"
     file2 = RelativePath("another.csv")
     file3 = RelativePath("some.orc")
+    file4 = RelativePath("unknown.orc")
 
     value1 = [file1, file2]
     value2 = [file1, file2, file3]
@@ -288,22 +292,45 @@ def test_file_list_hwm_sub():
     hwm1 = FileListHWM(source=folder, value=value1)
     hwm2 = FileListHWM(source=folder, value=value2)
 
-    # sub is not supported
+    # If one side is empty then nothing to change, modified_time is the same
+    hwm3 = hwm2.copy() - []
+    hwm4 = hwm2.copy() - {}
+
+    assert hwm3 == hwm2
+    assert hwm3.modified_time == hwm2.modified_time
+
+    assert hwm4 == hwm2
+    assert hwm4.modified_time == hwm2.modified_time
+
+    hwm4 = hwm2.copy() - file4
+    hwm5 = hwm2.copy() - [file4]
+    hwm6 = hwm2.copy() - {file4}
+
+    assert hwm4 == hwm2
+    assert hwm4.modified_time == hwm2.modified_time
+
+    assert hwm5 == hwm2
+    assert hwm5.modified_time == hwm2.modified_time
+
+    assert hwm6 == hwm2
+    assert hwm6.modified_time == hwm2.modified_time
+
+    hwm7 = hwm2.copy() - file3
+    hwm8 = hwm2.copy() - [file3]
+    hwm9 = hwm2.copy() - {file3}
+
+    # if something has been changed, update modified_time
+    assert hwm7 == hwm1
+    assert hwm7.modified_time > hwm2.modified_time
+
+    assert hwm8 == hwm1
+    assert hwm8.modified_time > hwm2.modified_time
+
+    assert hwm9 == hwm1
+    assert hwm9.modified_time > hwm2.modified_time
 
     with pytest.raises(TypeError):
-        _ = hwm1 - file3
-
-    with pytest.raises(TypeError):
-        _ = hwm1 - [file3]
-
-    with pytest.raises(TypeError):
-        _ = hwm1 - {file3}
-
-    with pytest.raises(TypeError):
-        _ = hwm1 - (file3,)
-
-    with pytest.raises(TypeError):
-        _ = hwm1 - hwm2
+        _ = hwm1 + hwm2
 
 
 def test_file_list_hwm_contains():
