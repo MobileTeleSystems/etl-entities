@@ -130,28 +130,29 @@ def test_column_hwm_wrong_input(hwm_class, value, wrong_values):
         (IntHWM, 1),
     ],
 )
-def test_column_hwm_with_value(hwm_class, value):
+def test_column_hwm_set_value(hwm_class, value):
     column = Column(name="some")
     table = Table(name="another", db="abc", instance="proto://url")
     hwm = hwm_class(column=column, source=table)
 
-    hwm1 = hwm.with_value(value)
+    hwm1 = hwm.copy()
+    hwm1.set_value(value)
     assert hwm1.value == value
     assert hwm1.modified_time > hwm.modified_time
 
-    # None preserves original HWM value
-    hwm2 = hwm1.with_value(None)
-    assert hwm2.value == value
-    assert hwm2.modified_time == hwm1.modified_time
+    hwm2 = hwm1.copy()
+    hwm2.set_value(None)
+    assert hwm2.value is None
+    assert hwm2.modified_time > hwm.modified_time
 
     with pytest.raises((TypeError, ValueError)):
-        hwm.with_value("unknown")
+        hwm.set_value("unknown")
 
-    with pytest.raises((TypeError, ValueError)):
-        hwm.with_value(column)
+    with pytest.raises(ValueError):
+        hwm.set_value(column)
 
-    with pytest.raises((TypeError, ValueError)):
-        hwm.with_value(hwm1)
+    with pytest.raises(ValueError):
+        hwm.set_value(hwm1)
 
 
 @pytest.mark.parametrize(
@@ -281,26 +282,22 @@ def test_column_hwm_add(hwm_class, value, delta):
     table = Table(name="another", db="abc", instance="proto://url")
     hwm = hwm_class(column=column, source=table)
 
-    # If one side is none then nothing to change, modified_time is the same
-    hwm1 = hwm + delta
-    hwm2 = hwm + None
-
-    assert hwm1 == hwm
-    assert hwm1.modified_time == hwm.modified_time
-
-    assert hwm2 == hwm
-    assert hwm2.modified_time == hwm.modified_time
-
-    hwm3 = hwm.with_value(value)
-    hwm4 = hwm.with_value(value + delta)
-    hwm5 = hwm3 + delta
-
     # if something has been changed, update modified_time
-    assert hwm5 == hwm4
-    assert hwm5.modified_time > hwm4.modified_time
+    hwm1 = hwm.copy(update={"value": value})
+
+    hwm2 = hwm.copy(update={"value": value + delta})
+
+    hwm3 = hwm1.copy() + delta
+
+    assert hwm3 == hwm2
+    assert hwm3.modified_time > hwm.modified_time
+
+    # not allowed
+    with pytest.raises(TypeError):
+        _ = hwm3 + None
 
     with pytest.raises(TypeError):
-        _ = hwm3 + hwm4
+        _ = hwm + delta
 
 
 @pytest.mark.parametrize(
@@ -316,26 +313,19 @@ def test_column_hwm_sub(hwm_class, value, delta):
     table = Table(name="another", db="abc", instance="proto://url")
     hwm = hwm_class(column=column, source=table)
 
-    # If one side is none then nothing to change, modified_time is the same
-    hwm1 = hwm - delta
-    hwm2 = hwm - None
+    hwm1 = hwm.copy(update={"value": value})
+    hwm2 = hwm.copy(update={"value": value - delta})
+    hwm3 = hwm1.copy() - delta
 
-    assert hwm1 == hwm
-    assert hwm1.modified_time == hwm.modified_time
+    assert hwm3 == hwm2
+    assert hwm3.modified_time > hwm.modified_time
 
-    assert hwm2 == hwm
-    assert hwm2.modified_time == hwm.modified_time
-
-    # if something has been changed, update modified_time
-    hwm3 = hwm.with_value(value)
-    hwm4 = hwm.with_value(value - delta)
-    hwm5 = hwm3 - delta
-
-    assert hwm5 == hwm4
-    assert hwm5.modified_time > hwm4.modified_time
+    # not allowed
+    with pytest.raises(TypeError):
+        _ = hwm3 - None
 
     with pytest.raises(TypeError):
-        _ = hwm5 - hwm3
+        _ = hwm - delta
 
 
 @pytest.mark.parametrize(

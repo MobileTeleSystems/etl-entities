@@ -44,6 +44,42 @@ class HWM(Entity, GenericModel, Generic[ValueType]):
 
         return value
 
+    def set_value(self, value: ValueType) -> HWM:
+        """Replaces current HWM value with the passed one, and return HWM.
+
+        .. note::
+
+            Changes HWM value in place instead of returning new one
+
+        Returns
+        -------
+        result : HWM
+
+            Self
+
+        Examples
+        ----------
+
+        .. code:: python
+
+            from etl_entities import IntHWM
+
+            hwm = IntHWM(value=1, ...)
+
+            hwm.set_value(2)
+            assert hwm.value == 2
+        """
+
+        new_value = self.validate_value(value)
+        # `validate_value` checks for specific types. if value of the unknown type is passed, it is returned as is
+        # so a small hack here to force check if value is consistent with a type hint
+        new_obj = self.__class__.parse_obj(self.copy(update={"value": new_value}))
+
+        if self.value != new_obj.value:
+            object.__setattr__(self, "value", new_obj.value)  # noqa: WPS609
+            object.__setattr__(self, "modified_time", datetime.now())  # noqa: WPS609
+        return self
+
     def serialize(self) -> dict:
         """Return dict representation of HWM
 
@@ -171,39 +207,3 @@ class HWM(Entity, GenericModel, Generic[ValueType]):
         """
 
         return cast(ValueType, strict_str_validator(value).strip())
-
-    def with_value(self, value: ValueType):
-        """Create copy of HWM object with specified value
-
-        Parameters
-        ----------
-        value : Any
-
-            New HWM value
-
-        Returns
-        -------
-        result : HWM
-
-            Copy of HWM
-
-        Examples
-        ----------
-
-        .. code:: python
-
-            from etl_entities import IntHWM
-
-            hwm = IntHWM(value=1, ...)
-            new_hwm = hwm.with_value(2)
-
-            assert new_hwm.value == 2
-        """
-
-        if self.value == value:
-            return self.copy(deep=True)
-
-        dct = self.dict()
-        dct["value"] = value
-        dct["modified_time"] = datetime.now()
-        return self.parse_obj(dct)
