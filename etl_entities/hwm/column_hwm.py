@@ -118,6 +118,37 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], GenericModel, Generic[ColumnValu
 
         return super().serialize_value()
 
+    def covers(self, value: ColumnValueType) -> bool:
+        """Return ``True`` if input value is already covered by HWM
+
+        Examples
+        ----------
+
+        .. code:: python
+
+            column = Column(name="id")
+            table = Table(name="mytable", db="mydb", instance="postgres://db.host:5432")
+
+            hwm = ColumnHWM(column=column, source=table, value=1)
+
+            assert hwm.covers(0)  # 0 <= 1
+            assert hwm.covers(1)  # 1 <= 1
+            assert hwm.covers(0.5)  # 0.5 <= 1
+            assert not hwm.covers(2)  # 2 > 1
+
+            empty_hwm = ColumnHWM(column=column, source=table)
+
+            assert not empty_hwm.covers(0)  # non comparable with None
+            assert not empty_hwm.covers(1)  # non comparable with None
+            assert not empty_hwm.covers(0.5)  # non comparable with None
+            assert not empty_hwm.covers(2)  # non comparable with None
+        """
+
+        if self.value is None:
+            return False
+
+        return self.validate_value(value) <= self.value
+
     def __bool__(self):
         """Check if HWM value is set
 

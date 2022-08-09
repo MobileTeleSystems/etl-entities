@@ -141,6 +141,24 @@ class FileListHWM(FileHWM[FileListType]):
 
         return frozenset()
 
+    def covers(self, value: str | os.PathLike) -> bool:
+        """Return ``True`` if input value is already covered by HWM
+
+        Examples
+        ----------
+
+        .. code:: python
+
+            from etl_entities import FileListHWM
+
+            hwm = FileListHWM(value=["some/path.py"], ...)
+
+            assert hwm.covers("some/path.py")  # path in HWM
+            assert not hwm.covers("another/path.py")  # path not in HWM
+        """
+
+        return value in self
+
     def __bool__(self):
         """Check if HWM value is set
 
