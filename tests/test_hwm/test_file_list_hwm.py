@@ -224,6 +224,43 @@ def test_file_list_hwm_compare():
                 assert item1 != item2
 
 
+def test_file_list_hwm_covera():
+    file1 = "some/path/file.py"
+    file2 = RelativePath("another.csv")
+    file3 = "another/path.py"
+    file4 = RelativePath("test.csv")
+
+    folder = RemoteFolder(name="/home/user/abc", instance="ftp://my.domain:23")
+
+    empty_hwm = FileListHWM(source=folder)
+
+    assert not empty_hwm.covers(str(file1))
+    assert not empty_hwm.covers(RelativePath(file1))
+
+    assert not empty_hwm.covers(str(file2))
+    assert not empty_hwm.covers(RelativePath(file2))
+
+    assert not empty_hwm.covers(str(file3))
+    assert not empty_hwm.covers(RelativePath(file3))
+
+    assert not empty_hwm.covers(str(file4))
+    assert not empty_hwm.covers(RelativePath(file4))
+
+    hwm = FileListHWM(source=folder, value=[file1, file2])
+
+    assert hwm.covers(str(file1))
+    assert hwm.covers(RelativePath(file1))
+
+    assert hwm.covers(str(file2))
+    assert hwm.covers(RelativePath(file2))
+
+    assert not hwm.covers(str(file3))
+    assert not hwm.covers(RelativePath(file3))
+
+    assert not hwm.covers(str(file4))
+    assert not hwm.covers(RelativePath(file4))
+
+
 def test_file_list_hwm_add():
     file1 = "some/path/file.py"
     file2 = RelativePath("another.csv")
@@ -344,9 +381,12 @@ def test_file_list_hwm_contains():
 
     hwm = FileListHWM(source=folder, value=value)
 
+    # relative path is checked
     assert file1 in hwm
     assert RelativePath(file1) in hwm
     assert PosixPath(file1) in hwm
+
+    # as well as absolute
     assert name / file1 in hwm
     assert str(name / file1) in hwm
 

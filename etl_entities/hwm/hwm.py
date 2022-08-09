@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+from abc import abstractmethod
 from copy import deepcopy
 from datetime import datetime
 from typing import Generic, TypeVar, cast
@@ -207,3 +208,7 @@ class HWM(Entity, GenericModel, Generic[ValueType]):
         """
 
         return cast(ValueType, strict_str_validator(value).strip())
+
+    @abstractmethod
+    def covers(self, value) -> bool:
+        """Return ``True`` if input value is already covered by HWM"""
