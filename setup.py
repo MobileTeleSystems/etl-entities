@@ -1,32 +1,23 @@
-from __future__ import annotations
+from os.path import abspath, dirname, join
 
-from pathlib import Path
+from setuptools import find_packages, setup
 
-from setuptools import setup, find_packages
+from version import get_version
 
+__version__ = get_version()
+SELF_PATH = abspath(dirname(__file__))
 
-def parse_requirements(file: Path) -> list[str]:
-    lines = file.read_text().splitlines()
-    return [line.rstrip() for line in lines if line and not line.startswith("#")]
+with open(join(SELF_PATH, "requirements.txt")) as f:
+    requirements = [line.rstrip() for line in f if line and not line.startswith("#")]
 
-
-here = Path(__file__).parent.absolute()
-
-requirements = parse_requirements(here / "requirements.txt")
-test_requirements = parse_requirements(here / "requirements-test.txt")
-long_description = (here / "README.rst").read_text()
+with open(join(SELF_PATH, "README.rst")) as f:
+    long_description = f.read()
 
 setup(
     name="etl-entities",
-    setuptools_git_versioning={
-        "enabled": True,
-        "template": "{tag}",
-        "dev_template": "{tag}.dev{env:CI_PIPELINE_IID:{ccount}}",
-        "dirty_template": "{tag}",
-        "version_file": here / "etl_entities" / "VERSION",
-        "count_commits_from_version_file": True,
-    },
-    author="Volkov Dmitrii",
+    version=__version__,
+    author="ONEtools Team",
+    author_email="onetools@mts.ru",
     description="ETL Entities lib",
     long_description=long_description,
     long_description_content_type="text/x-rst",
@@ -49,9 +40,6 @@ setup(
     },
     python_requires=">=3.7",
     install_requires=requirements,
-    tests_require=test_requirements,
-    extras_require={"test": test_requirements},
-    setup_requires=["setuptools-git-versioning>=1.8.1"],
     test_suite="tests",
     include_package_data=True,
     zip_safe=False,

@@ -20,6 +20,7 @@ stages:
 - build_docs
 - artifactory
 - deploy
+- clean_repo
 - .post
 
 ### --------------- Include gitlab-ci-templates --------------- ###
@@ -46,7 +47,9 @@ include:
 # Artifactory
 - project: DevOps/cicd-store/gitlabci/artifactory
   ref: v3
-  file: .base_rt_upload.yml
+  file:
+  - .base_rt_upload.yml
+  - .base_rt_cli.yml
 
 # PIP BUILD AND DEPLOY TO JFROG
 - project: DevOps/cicd-store/gitlabci/pip
@@ -158,13 +161,6 @@ sonarqube_check:
     SONAR_SOURCES: etl_entities
   interruptible: true
 
-build_and_deploy:
-  extends: .base_pip_pkg_build_and_deploy_to_jfrog
-  stage: artifactory
-  variables:
-    PYTHON_VERSION: '3.7'
-  interruptible: true
-
 build_docs:
   image: $CI_REGISTRY/platform/python:${PYTHON_VERSION}
   variables:
@@ -172,8 +168,10 @@ build_docs:
   stage: build_docs
   before_script:
   - export VERSION=$(python setup.py --version)
+  - echo "VERSION=$VERSION" >> deploy.env
   script:
-  - pip3 install -r requirements-docs.txt
+  - pip install -r requirements.txt -r requirements-docs.txt
+  - pip install -e .
   - cd docs
   - make html
   - tar cvzf html-${VERSION}.tar.gz -C _build/html .
@@ -184,6 +182,15 @@ build_docs:
   artifacts:
     paths:
     - docs/html-*.tar.gz
+    reports:
+      dotenv: deploy.env
+  interruptible: true
+
+build_and_deploy:
+  extends: .base_pip_pkg_build_and_deploy_to_jfrog
+  stage: artifactory
+  variables:
+    PYTHON_VERSION: '3.7'
   interruptible: true
 
 publish_docs:
@@ -206,6 +213,46 @@ pages:
   variables:
     CICD_PAGES_ARTIFACTORY_DOCS_PATH: files/onetools/${CI_PROJECT_NAME}/docs
   interruptible: true
+
+start_review:
+  stage: clean_repo
+  dependencies:
+  - build_docs
+  environment:
+    name: review/$CI_COMMIT_REF_SLUG
+    url: ${CI_PAGES_URL}/${VERSION}/
+    on_stop: stop_review
+  script:
+  - echo "Start review"
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    when: never
+  - if: $CI_COMMIT_BRANCH =~ /^(dev|develop|master|main)$/
+    when: never
+  - if: $CI_COMMIT_TAG
+    when: never
+  - when: always
+
+stop_review:
+  extends: .base_rt_cli
+  stage: clean_repo
+  script:
+    # Remove artifacts for feature/bug branch
+  - export CI_COMMIT_REF_SLUG=$(echo $CI_COMMIT_REF_SLUG | tr '-' '.')
+  - jfrog rt delete files/onetools/${CI_PROJECT_NAME}/docs/*+${CI_COMMIT_REF_SLUG}*
+  - jfrog rt delete pypi-local/${CI_PROJECT_NAME}/*+${CI_COMMIT_REF_SLUG}
+  environment:
+    name: review/$CI_COMMIT_REF_SLUG
+    action: stop
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    when: never
+  - if: $CI_COMMIT_BRANCH =~ /^(dev|develop|master|main)$/
+    when: never
+  - if: $CI_COMMIT_TAG
+    when: never
+  - when: manual
+    allow_failure: true
 
 clean_docker_repo:
   extends: .base_docker_cleaner
