@@ -4,5 +4,5 @@ Datetime HWM
 
 
 .. autoclass:: DateTimeHWM
-    :members: name, qualified_name, with_value, dict, json, copy, serialize, deserialize
+    :members: name, qualified_name, set_value, dict, json, copy, serialize, deserialize, covers
     :special-members: __bool__, __add__, __sub__, __eq__, __lt__

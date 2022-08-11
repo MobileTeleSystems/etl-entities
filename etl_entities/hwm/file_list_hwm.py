@@ -6,14 +6,15 @@ from typing import FrozenSet, Iterable
 
 from pydantic import Field, validator
 
-from etl_entities.hwm.hwm import HWM
+from etl_entities.hwm.file_hwm import FileHWM
 from etl_entities.hwm.hwm_type_registry import register_hwm_type
 from etl_entities.instance import AbsolutePath, RelativePath
-from etl_entities.source import RemoteFolder
+
+FileListType = FrozenSet[RelativePath]
 
 
 @register_hwm_type("files_list")
-class FileListHWM(HWM):
+class FileListHWM(FileHWM[FileListType]):
     """File List HWM type
 
     Parameters
@@ -49,11 +50,10 @@ class FileListHWM(HWM):
         )
     """
 
-    source: RemoteFolder
-    value: FrozenSet[RelativePath] = Field(default_factory=frozenset)
+    value: FileListType = Field(default_factory=frozenset)
 
     class Config:  # noqa: WPS431
-        json_encoders = {RelativePath: os.fspath, AbsolutePath: os.fspath}
+        json_encoders = {RelativePath: os.fspath}
 
     @validator("value", pre=True)
     def validate_value(cls, value):  # noqa: N805
@@ -74,25 +74,10 @@ class FileListHWM(HWM):
         ----------
         value : str
 
-            Static value ``"downloaded_files"``
+            Static value ``"file_list"``
         """
 
-        return "downloaded_files"
-
-    def __str__(self) -> str:
-        """
-        Returns full HWM name
-        """
-
-        return f"{self.name}#{self.source.full_name}"
-
-    @property
-    def qualified_name(self) -> str:
-        """
-        Unique name of HWM
-        """
-
-        return "#".join([self.name, self.source.qualified_name, self.process.qualified_name])
+        return "file_list"
 
     def serialize_value(self) -> str:
         r"""Return string representation of HWM value
@@ -120,7 +105,7 @@ class FileListHWM(HWM):
         return "\n".join(sorted(os.fspath(item) for item in self.value))
 
     @classmethod
-    def deserialize_value(cls, value: str) -> frozenset[RelativePath]:  # noqa: E800
+    def deserialize_value(cls, value: str) -> FileListType:  # noqa: E800
         r"""Parse string representation to get HWM value
 
         Parameters
@@ -149,12 +134,30 @@ class FileListHWM(HWM):
             assert FileListHWM.deserialize_value([]) == frozenset()
         """
 
-        value = super().deserialize_value(value)
+        str_value: str = super().deserialize_value(value)  # type: ignore[assignment]
 
-        if value:
-            return frozenset(RelativePath(item.strip()) for item in value.split("\n"))
+        if str_value:
+            return frozenset(RelativePath(item.strip()) for item in str_value.split("\n"))
 
         return frozenset()
+
+    def covers(self, value: str | os.PathLike) -> bool:
+        """Return ``True`` if input value is already covered by HWM
+
+        Examples
+        ----------
+
+        .. code:: python
+
+            from etl_entities import FileListHWM
+
+            hwm = FileListHWM(value=["some/path.py"], ...)
+
+            assert hwm.covers("some/path.py")  # path in HWM
+            assert not hwm.covers("another/path.py")  # path not in HWM
+        """
+
+        return value in self
 
     def __bool__(self):
         """Check if HWM value is set
@@ -182,7 +185,11 @@ class FileListHWM(HWM):
         return bool(self.value)
 
     def __add__(self, value: str | os.PathLike | Iterable[str | os.PathLike]):
-        """Creates copy of HWM with added value
+        """Adds path or paths to HWM value, and return updated HWM
+
+        .. note::
+
+            Changes HWM value in place instead of returning new one
 
         Params
         -------
@@ -192,9 +199,9 @@ class FileListHWM(HWM):
 
         Returns
         --------
-        result : HWM
+        result : FileListHWM
 
-            Copy of HWM with updated value
+            Self
 
         Examples
         ----------
@@ -210,15 +217,46 @@ class FileListHWM(HWM):
             # same as FileListHWM(value=hwm1.value + "another.file", ...)
         """
 
-        values: Iterable[RelativePath]
-        if isinstance(value, Iterable) and not isinstance(value, str):
-            values = {RelativePath(item) for item in value}
-        else:
-            values = {RelativePath(value)}
+        self.set_value(self.value | self.validate_value(value))
+        return self
 
-        return self.with_value(self.value.union(values))
+    def __sub__(self, value: str | os.PathLike | Iterable[str | os.PathLike]):
+        """Remove path or paths from HWM value, and return updated HWM
 
-    def __abs__(self):
+        .. note::
+
+            Changes HWM value in place instead of returning new one
+
+        Params
+        -------
+        value : :obj:`str` or :obj:`pathlib.PosixPath` or :obj:`typing.Iterable` of them
+
+            Path or collection of paths to be added to value
+
+        Returns
+        --------
+        result : FileListHWM
+
+            Self
+
+        Examples
+        ----------
+
+        .. code:: python
+
+            from etl_entities import FileListHWM
+
+            hwm1 = FileListHWM(value=["some/path"], ...)
+            hwm2 = FileListHWM(value=["some/path", "another.file"], ...)
+
+            assert hwm1 - "another.file" == hwm2
+            # same as FileListHWM(value=hwm1.value - "another.file", ...)
+        """
+
+        self.set_value(self.value - self.validate_value(value))
+        return self
+
+    def __abs__(self) -> frozenset[AbsolutePath]:
         """Returns list of files with absolute paths
 
         Returns
@@ -269,13 +307,11 @@ class FileListHWM(HWM):
         return item in self.value or item in abs(self)
 
     def __eq__(self, other):
-        """Checks equality of two HWM instances
+        """Checks equality of two FileListHWM instances
 
         Params
         -------
         other : :obj:`hwmlib.hwm.file_list_hwm.FileListHWM`
-
-
 
         Returns
         --------
@@ -300,7 +336,4 @@ class FileListHWM(HWM):
         if not isinstance(other, FileListHWM):
             return False
 
-        self_fields = self.dict(exclude={"modified_time"})
-        other_fields = other.dict(exclude={"modified_time"})
-
-        return self_fields == other_fields
+        return super().__eq__(other)

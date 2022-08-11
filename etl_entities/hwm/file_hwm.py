@@ -1,0 +1,118 @@
+from __future__ import annotations
+
+import os
+from abc import abstractmethod
+from typing import Generic, Iterable, TypeVar
+
+from etl_entities.entity import GenericModel
+from etl_entities.hwm.hwm import HWM
+from etl_entities.instance import AbsolutePath
+from etl_entities.source import RemoteFolder
+
+FileHWMValueType = TypeVar("FileHWMValueType")
+
+
+class FileHWM(HWM[FileHWMValueType], GenericModel, Generic[FileHWMValueType]):
+    """Basic file HWM type
+
+    Parameters
+    ----------
+    source : :obj:`etl_entities.instance.path.remote_folder.RemoteFolder`
+
+        Folder instance
+
+    value : ``FileHWMValueType``
+
+        HWM value
+
+    modified_time : :obj:`datetime.datetime`, default: current datetime
+
+        HWM value modification time
+
+    process : :obj:`etl_entities.process.process.Process`, default: current process
+
+        Process instance
+    """
+
+    source: RemoteFolder
+    value: FileHWMValueType
+
+    class Config:  # noqa: WPS431
+        json_encoders = {AbsolutePath: os.fspath}
+
+    @property
+    @abstractmethod
+    def name(self) -> str:
+        """
+        Name of HWM
+        """
+
+    def __str__(self) -> str:
+        """
+        Returns full HWM name
+        """
+
+        return f"{self.name}#{self.source.full_name}"
+
+    @property
+    def qualified_name(self) -> str:
+        """
+        Unique name of HWM
+        """
+
+        return "#".join([self.name, self.source.qualified_name, self.process.qualified_name])
+
+    @abstractmethod
+    def __add__(self, value: str | os.PathLike | Iterable[str | os.PathLike]):
+        """Add value to HWM and return update HWM
+
+        .. note::
+
+            Changes HWM value in place instead of returning new one
+
+        Params
+        -------
+        value : :obj:`str` or :obj:`pathlib.PosixPath` or :obj:`typing.Iterable` of them
+
+            Path or collection of paths to be added to value
+
+        Returns
+        --------
+        result : FileHWM
+
+            Self
+        """
+
+    def __bool__(self):
+        """Check if HWM value is set
+
+        Returns
+        --------
+        result : bool
+
+            ``False`` if ``value`` is empty, ``True`` otherwise
+        """
+
+        return bool(self.value)
+
+    def __eq__(self, other):
+        """Checks equality of two FileHWM instances
+
+        Params
+        -------
+        other : :obj:`hwmlib.hwm.file_hwm.FileHWM`
+
+        Returns
+        --------
+        result : bool
+
+            ``True`` if both inputs are the same, ``False`` otherwise
+        """
+
+        if not isinstance(other, FileHWM):
+            return False
+
+        self_fields = self.dict(exclude={"modified_time"})
+        other_fields = other.dict(exclude={"modified_time"})
+
+        return self_fields == other_fields
