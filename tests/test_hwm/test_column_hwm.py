@@ -354,6 +354,59 @@ def test_column_hwm_sub(hwm_class, value, delta):
 
 
 @pytest.mark.parametrize(
+    "hwm_class, value, delta",
+    [
+        (DateHWM, date.today(), timedelta(days=2)),
+        (DateTimeHWM, datetime.now(), timedelta(seconds=2)),
+        (IntHWM, 2, 1),
+    ],
+)
+def test_column_hwm_update(hwm_class, value, delta):
+    column = Column(name="some")
+    table = Table(name="another", db="abc", instance="proto://url")
+    empty_hwm = hwm_class(column=column, source=table)
+
+    # if both new and current values are None, do nothing
+    hwm = empty_hwm.copy().update(None)
+
+    assert hwm == empty_hwm
+    assert hwm.modified_time == empty_hwm.modified_time
+
+    # if current value is None, set new value
+    hwm1 = empty_hwm.copy(update={"value": value})
+    hwm2 = empty_hwm.copy().update(value)
+
+    assert hwm2 == hwm1
+    assert hwm2.modified_time > hwm1.modified_time
+
+    # if input value is less than or equal to current, do nothing
+    hwm3 = hwm1.copy().update(value - delta)
+    hwm4 = hwm1.copy().update(value)
+
+    assert hwm4 == hwm3 == hwm1
+    assert hwm4.modified_time == hwm3.modified_time == hwm1.modified_time
+
+    # if current value is less than input, use input as a new value and update modified_time
+    hwm5 = hwm1.copy().copy(update={"value": value + delta})
+    hwm6 = hwm1.copy().update(value + delta)
+
+    assert hwm6 == hwm5
+    assert hwm6.modified_time > hwm5.modified_time
+
+    # cannot reset value to None, use `set_value` instead
+    with pytest.raises(TypeError):
+        _ = hwm1.update(None)
+
+    if hwm_class != IntHWM:
+        # cannot compare value with delta
+        with pytest.raises(ValueError):
+            _ = hwm.update(delta)
+
+        with pytest.raises(TypeError):
+            _ = hwm1.update(delta)
+
+
+@pytest.mark.parametrize(
     "hwm_class",
     [
         DateHWM,

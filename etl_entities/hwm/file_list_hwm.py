@@ -159,6 +159,45 @@ class FileListHWM(FileHWM[FileListType]):
 
         return value in self
 
+    def update(self, value: str | os.PathLike | Iterable[str | os.PathLike]):
+        """Updates current HWM value with some implementation-specific login, and return HWM.
+
+        .. note::
+
+            Changes HWM value in place
+
+        Returns
+        -------
+        result : HWM
+
+            Self
+
+        Examples
+        ----------
+
+        .. code:: python
+
+            from etl_entities import FileListHWM
+
+            hwm = FileListHWM(value=["some/existing_path.py"], ...)
+
+            # new paths are appended
+            hwm.update("some/new_path.py")
+            assert hwm.value == [
+                "some/existing_path.py",
+                "some/new_path.py",
+            ]
+
+            # existing paths do nothing
+            hwm.update("some/existing_path.py")
+            assert hwm.value == [
+                "some/existing_path.py",
+                "some/new_path.py",
+            ]
+        """
+
+        return self + value
+
     def __bool__(self):
         """Check if HWM value is set
 
