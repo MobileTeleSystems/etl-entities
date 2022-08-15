@@ -224,7 +224,7 @@ def test_file_list_hwm_compare():
                 assert item1 != item2
 
 
-def test_file_list_hwm_covera():
+def test_file_list_hwm_covers():
     file1 = "some/path/file.py"
     file2 = RelativePath("another.csv")
     file3 = "another/path.py"
@@ -274,9 +274,9 @@ def test_file_list_hwm_add():
     hwm1 = FileListHWM(source=folder, value=value1)
     hwm2 = FileListHWM(source=folder, value=value2)
 
-    # If one side is empty then nothing to change, modified_time is the same
-    hwm3 = hwm1 + []
-    hwm4 = hwm1 + {}
+    # empty value -> do nothing
+    hwm3 = hwm1.copy() + []
+    hwm4 = hwm1.copy() + {}
 
     assert hwm3 == hwm1
     assert hwm3.modified_time == hwm1.modified_time
@@ -284,6 +284,7 @@ def test_file_list_hwm_add():
     assert hwm4 == hwm1
     assert hwm4.modified_time == hwm1.modified_time
 
+    # value already known -> do nothing
     hwm4 = hwm1.copy() + file1
     hwm5 = hwm1.copy() + [file1]
     hwm6 = hwm1.copy() + {file1}
@@ -297,11 +298,11 @@ def test_file_list_hwm_add():
     assert hwm6 == hwm1
     assert hwm6.modified_time == hwm1.modified_time
 
+    # if something has been changed, update modified_time
     hwm7 = hwm1.copy() + file3
     hwm8 = hwm1.copy() + [file3]
     hwm9 = hwm1.copy() + {file3}
 
-    # if something has been changed, update modified_time
     assert hwm7 == hwm2
     assert hwm7.modified_time > hwm2.modified_time
 
@@ -329,7 +330,7 @@ def test_file_list_hwm_sub():
     hwm1 = FileListHWM(source=folder, value=value1)
     hwm2 = FileListHWM(source=folder, value=value2)
 
-    # If one side is empty then nothing to change, modified_time is the same
+    # empty value -> do nothing
     hwm3 = hwm2.copy() - []
     hwm4 = hwm2.copy() - {}
 
@@ -339,6 +340,7 @@ def test_file_list_hwm_sub():
     assert hwm4 == hwm2
     assert hwm4.modified_time == hwm2.modified_time
 
+    # value is unknown -> do nothing
     hwm4 = hwm2.copy() - file4
     hwm5 = hwm2.copy() - [file4]
     hwm6 = hwm2.copy() - {file4}
@@ -352,11 +354,11 @@ def test_file_list_hwm_sub():
     assert hwm6 == hwm2
     assert hwm6.modified_time == hwm2.modified_time
 
+    # if something has been changed, update modified_time
     hwm7 = hwm2.copy() - file3
     hwm8 = hwm2.copy() - [file3]
     hwm9 = hwm2.copy() - {file3}
 
-    # if something has been changed, update modified_time
     assert hwm7 == hwm1
     assert hwm7.modified_time > hwm2.modified_time
 
@@ -400,6 +402,61 @@ def test_file_list_hwm_contains():
 
     with pytest.raises(TypeError):
         assert folder not in hwm
+
+
+def test_file_list_hwm_update():
+    file1 = "some/path/file.py"
+    file2 = RelativePath("another.csv")
+    file3 = RelativePath("some.orc")
+
+    value1 = [file1, file2]
+    value2 = [file1, file2, file3]
+
+    folder = RemoteFolder(name="/home/user/abc", instance="ftp://my.domain:23")
+
+    hwm1 = FileListHWM(source=folder, value=value1)
+    hwm2 = FileListHWM(source=folder, value=value2)
+
+    # empty value -> do nothing
+    hwm3 = hwm1.copy().update([])
+    hwm4 = hwm1.copy().update({})
+
+    assert hwm3 == hwm1
+    assert hwm3.modified_time == hwm1.modified_time
+
+    assert hwm4 == hwm1
+    assert hwm4.modified_time == hwm1.modified_time
+
+    # value already known -> do nothing
+    hwm4 = hwm1.copy().update(file1)
+    hwm5 = hwm1.copy().update([file1])
+    hwm6 = hwm1.copy().update({file1})
+
+    assert hwm4 == hwm1
+    assert hwm4.modified_time == hwm1.modified_time
+
+    assert hwm5 == hwm1
+    assert hwm5.modified_time == hwm1.modified_time
+
+    assert hwm6 == hwm1
+    assert hwm6.modified_time == hwm1.modified_time
+
+    hwm7 = hwm1.copy().update(file3)
+    hwm8 = hwm1.copy().update([file3])
+    hwm9 = hwm1.copy().update({file3})
+
+    # if something has been changed, update modified_time
+    assert hwm7 == hwm2
+    assert hwm7.modified_time > hwm2.modified_time
+
+    assert hwm8 == hwm2
+    assert hwm8.modified_time > hwm2.modified_time
+
+    assert hwm9 == hwm2
+    assert hwm9.modified_time > hwm2.modified_time
+
+    with pytest.raises(TypeError):
+        _ = hwm1 + hwm2
 
 
 @pytest.mark.parametrize(

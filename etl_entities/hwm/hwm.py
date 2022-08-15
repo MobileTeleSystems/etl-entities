@@ -212,3 +212,7 @@ class HWM(Entity, GenericModel, Generic[ValueType]):
     @abstractmethod
     def covers(self, value) -> bool:
         """Return ``True`` if input value is already covered by HWM"""
+
+    @abstractmethod
+    def update(self, value):
+        """Update current HWM value with some implementation-specific logic, and return HWM"""

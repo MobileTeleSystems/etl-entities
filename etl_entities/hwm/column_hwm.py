@@ -149,6 +149,43 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], GenericModel, Generic[ColumnValu
 
         return self.validate_value(value) <= self.value
 
+    def update(self, value: ColumnValueType):
+        """Updates current HWM value with some implementation-specific login, and return HWM.
+
+        .. note::
+
+            Changes HWM value in place
+
+        Returns
+        -------
+        result : HWM
+
+            Self
+
+        Examples
+        ----------
+
+        .. code:: python
+
+            from etl_entities import IntHWM
+
+            hwm = IntHWM(value=1, ...)
+
+            hwm.update(2)
+            assert hwm.value == 2
+
+            hwm.update(1)
+            assert hwm.value == 2  # value cannot decrease
+        """
+
+        if self.value is None:
+            return self.set_value(value)
+
+        if self.value < value:  # type: ignore[operator]
+            return self.set_value(value)
+
+        return self
+
     def __bool__(self):
         """Check if HWM value is set
 
