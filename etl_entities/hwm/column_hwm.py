@@ -212,11 +212,7 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], GenericModel, Generic[ColumnValu
         return self.value is not None
 
     def __add__(self, value):
-        """Increase HWM value and return updated HWM
-
-        .. note::
-
-            Changes HWM value in place instead of returning new one
+        """Increase HWM value and return copy of HWM
 
         Params
         -------
@@ -246,15 +242,14 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], GenericModel, Generic[ColumnValu
             assert hwm1 + inc == hwm2
         """
 
-        self.set_value(self.value + value)
+        new_value = self.value + value
+        if self.value != new_value:
+            return self.copy().set_value(new_value)
+
         return self
 
     def __sub__(self, value):
-        """Decrease HWM value, and return update HWM
-
-        .. note::
-
-            Changes HWM value in place instead of returning new one
+        """Decrease HWM value, and return copy of HWM
 
         Params
         -------
@@ -284,7 +279,10 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], GenericModel, Generic[ColumnValu
             assert hwm1 - dec == hwm2
         """
 
-        self.set_value(self.value - value)
+        new_value = self.value - value
+        if self.value != new_value:
+            return self.copy().set_value(new_value)
+
         return self
 
     def __eq__(self, other):

@@ -309,17 +309,21 @@ def test_column_hwm_add(hwm_class, value, delta):
 
     # if something has been changed, update modified_time
     hwm1 = hwm.copy(update={"value": value})
-
     hwm2 = hwm.copy(update={"value": value + delta})
 
-    hwm3 = hwm1.copy() + delta
+    hwm3 = hwm1 + delta
 
     assert hwm3 == hwm2
+    assert hwm3.value == hwm2.value == value + delta
+    assert hwm3 is not hwm1  # a copy is returned
     assert hwm3.modified_time > hwm.modified_time
 
     # not allowed
     with pytest.raises(TypeError):
         _ = hwm3 + None
+
+    with pytest.raises(TypeError):
+        _ = hwm + None
 
     with pytest.raises(TypeError):
         _ = hwm + delta
@@ -340,14 +344,19 @@ def test_column_hwm_sub(hwm_class, value, delta):
 
     hwm1 = hwm.copy(update={"value": value})
     hwm2 = hwm.copy(update={"value": value - delta})
-    hwm3 = hwm1.copy() - delta
+    hwm3 = hwm1 - delta
 
     assert hwm3 == hwm2
+    assert hwm3.value == hwm2.value == value - delta
+    assert hwm3 is not hwm1  # a copy is returned
     assert hwm3.modified_time > hwm.modified_time
 
     # not allowed
     with pytest.raises(TypeError):
         _ = hwm3 - None
+
+    with pytest.raises(TypeError):
+        _ = hwm - None
 
     with pytest.raises(TypeError):
         _ = hwm - delta
@@ -367,30 +376,48 @@ def test_column_hwm_update(hwm_class, value, delta):
     empty_hwm = hwm_class(column=column, source=table)
 
     # if both new and current values are None, do nothing
-    hwm = empty_hwm.copy().update(None)
+    old_hwm = empty_hwm.copy()
+    hwm = old_hwm.update(None)
 
     assert hwm == empty_hwm
+    assert hwm is old_hwm  # existing object is returned
+    assert hwm.value is None
+    assert old_hwm.value is None
     assert hwm.modified_time == empty_hwm.modified_time
 
     # if current value is None, set new value
     hwm1 = empty_hwm.copy(update={"value": value})
-    hwm2 = empty_hwm.copy().update(value)
+
+    old_hwm2 = empty_hwm.copy()
+    hwm2 = old_hwm2.update(value)
 
     assert hwm2 == hwm1
+    assert hwm2.value == old_hwm2.value == value  # old object is updated
+    assert hwm2 is old_hwm2  # in-place replacement
     assert hwm2.modified_time > hwm1.modified_time
 
     # if input value is less than or equal to current, do nothing
-    hwm3 = hwm1.copy().update(value - delta)
-    hwm4 = hwm1.copy().update(value)
+    old_hwm3 = hwm1.copy()
+    hwm3 = old_hwm3.update(value - delta)
+
+    old_hwm4 = hwm1.copy()
+    hwm4 = old_hwm4.update(value)
 
     assert hwm4 == hwm3 == hwm1
+    assert hwm4.value == old_hwm4.value == hwm3.value == old_hwm3.value == value  # old object is returned
+    assert hwm3 is old_hwm3  # in-place replacement
+    assert hwm4 is old_hwm4  # in-place replacement
     assert hwm4.modified_time == hwm3.modified_time == hwm1.modified_time
 
     # if current value is less than input, use input as a new value and update modified_time
     hwm5 = hwm1.copy().copy(update={"value": value + delta})
-    hwm6 = hwm1.copy().update(value + delta)
+
+    old_hwm6 = hwm1.copy()
+    hwm6 = old_hwm6.update(value + delta)
 
     assert hwm6 == hwm5
+    assert hwm6.value == old_hwm6.value == value + delta  # old object is updated
+    assert hwm6 is old_hwm6  # in-place replacement
     assert hwm6.modified_time > hwm5.modified_time
 
     # cannot reset value to None, use `set_value` instead
