@@ -10,13 +10,29 @@ from etl_entities.source import RemoteFolder
 
 
 @pytest.mark.parametrize(
-    "valid_files",
+    "input_file, result_file",
     [
-        ("some", RelativePath("some"), RelativePath("some.file")),
-        ("some/path", RelativePath("some/path"), RelativePath("some/folder/file.name")),
+        ("some", RelativePath("some")),
+        (PosixPath("some"), RelativePath("some")),
+        (RelativePath("some"), RelativePath("some")),
+        ("some.file", RelativePath("some.file")),
+        (PosixPath("some.file"), RelativePath("some.file")),
+        (RelativePath("some.file"), RelativePath("some.file")),
+        ("some/path", RelativePath("some/path")),
+        (PosixPath("some/path"), RelativePath("some/path")),
+        (RelativePath("some/path"), RelativePath("some/path")),
+        ("some/folder/file.name", RelativePath("some/folder/file.name")),
+        (PosixPath("some/folder/file.name"), RelativePath("some/folder/file.name")),
+        (RelativePath("some/folder/file.name"), RelativePath("some/folder/file.name")),
+        ("/home/user/abc/some/path", RelativePath("some/path")),
+        (PosixPath("/home/user/abc/some/path"), RelativePath("some/path")),
+        (AbsolutePath("/home/user/abc/some/path"), RelativePath("some/path")),
+        ("/home/user/abc/some/folder/file.name", RelativePath("some/folder/file.name")),
+        (PosixPath("/home/user/abc/some/folder/file.name"), RelativePath("some/folder/file.name")),
+        (AbsolutePath("/home/user/abc/some/folder/file.name"), RelativePath("some/folder/file.name")),
     ],
 )
-def test_file_list_hwm_valid_input(valid_files):
+def test_file_list_hwm_valid_input(input_file, result_file):
     folder = RemoteFolder(name="/home/user/abc", instance="ftp://my.domain:23")
     process = Process(name="myprocess", host="myhost")
     modified_time = datetime.now() - timedelta(days=5)
@@ -41,39 +57,36 @@ def test_file_list_hwm_valid_input(valid_files):
 
     assert str(hwm2) == full_name
 
-    hwm3 = FileListHWM(source=folder, value=valid_files)
+    hwm3 = FileListHWM(source=folder, value=[input_file])
     assert hwm3.source == folder
     assert hwm3.name == "file_list"
     assert hwm3.process is not None
 
     assert str(hwm3) == full_name
 
-    for file in valid_files:
-        assert RelativePath(file) in hwm3.value
+    assert result_file in hwm3.value
     assert hwm3
 
-    for file in valid_files:
-        hwm4 = FileListHWM(source=folder, value=file)
-        assert hwm4.source == folder
-        assert hwm4.name == "file_list"
-        assert hwm4.process is not None
-        assert RelativePath(file) in hwm4.value
-        assert hwm4
+    hwm4 = FileListHWM(source=folder, value=input_file)
+    assert hwm4.source == folder
+    assert hwm4.name == "file_list"
+    assert hwm4.process is not None
+    assert result_file in hwm4.value
+    assert hwm4
 
-        assert str(hwm4) == full_name
+    assert str(hwm4) == full_name
 
-    hwm5 = FileListHWM(source=folder, value=valid_files, process=process)
+    hwm5 = FileListHWM(source=folder, value=[input_file], process=process)
     assert hwm5.source == folder
     assert hwm5.name == "file_list"
     assert hwm5.process == process
 
     assert str(hwm5) == full_name
 
-    for file in valid_files:
-        assert RelativePath(file) in hwm5.value
+    assert result_file in hwm5.value
     assert hwm5
 
-    hwm6 = FileListHWM(source=folder, value=valid_files, process=process, modified_time=modified_time)
+    hwm6 = FileListHWM(source=folder, value=[input_file], process=process, modified_time=modified_time)
     assert hwm6.source == folder
     assert hwm6.name == "file_list"
     assert hwm6.process == process
@@ -81,8 +94,7 @@ def test_file_list_hwm_valid_input(valid_files):
 
     assert str(hwm6) == full_name
 
-    for file in valid_files:
-        assert RelativePath(file) in hwm6.value
+    assert result_file in hwm6.value
     assert hwm6
 
 
@@ -97,9 +109,7 @@ def test_file_list_hwm_valid_input(valid_files):
         "../another",
         "~/another",
         "some.file/../another",
-        "/absolute",
-        "/absolute.file",
-        "/absolute.source/some.csv",
+        "/absolute/not/matching/source",
     ],
 )
 def test_file_list_hwm_wrong_input(invalid_file):
@@ -142,7 +152,8 @@ def test_file_list_hwm_wrong_input(invalid_file):
 def test_file_list_hwm_set_value():
     file1 = "some/path/file.py"
     file2 = RelativePath("another.csv")
-    value = [file1, file2, file2]
+    file3 = AbsolutePath("/home/user/abc/test.csv")
+    value = [file1, file2, file2, file3]
     folder = RemoteFolder(name="/home/user/abc", instance="ftp://my.domain:23")
 
     hwm = FileListHWM(source=folder)
@@ -151,34 +162,45 @@ def test_file_list_hwm_set_value():
     hwm1.set_value(value)
     assert RelativePath(file1) in hwm1
     assert file2 in hwm1
+    assert file3 in hwm1
     assert hwm1.modified_time > hwm.modified_time
 
     hwm2 = hwm.copy()
     hwm2.set_value(file1)
     assert file1 in hwm2
     assert file2 not in hwm2
+    assert file3 not in hwm2
     assert hwm2.modified_time > hwm1.modified_time
 
     hwm3 = hwm.copy()
     hwm3.set_value(file2)
     assert file1 not in hwm3
     assert file2 in hwm3
+    assert file3 not in hwm3
     assert hwm3.modified_time > hwm2.modified_time
 
-    with pytest.raises(ValueError):
-        hwm.set_value("/absolute/path")
+    hwm4 = hwm.copy()
+    hwm4.set_value(file3)
+    assert file1 not in hwm4
+    assert file2 not in hwm4
+    assert file3 in hwm4
+    assert hwm4.modified_time > hwm2.modified_time
 
-    with pytest.raises(TypeError):
+    with pytest.raises(ValueError):
+        hwm.set_value("/absolute/path/not/matching/source")
+
+    with pytest.raises(ValueError):
         hwm.set_value(folder)
 
-    with pytest.raises(TypeError):
+    with pytest.raises(ValueError):
         hwm.set_value(hwm1)
 
 
 def test_file_list_hwm_frozen():
     file1 = "some/path/file.py"
     file2 = RelativePath("another.csv")
-    value = [file1, file2]
+    file3 = AbsolutePath("/home/user/abc/some.csv")
+    value = [file1, file2, file3]
     folder = RemoteFolder(name="/home/user/abc", instance="ftp://my.domain:23")
     process = Process(name="myprocess", host="myhost")
     modified_time = datetime.now() - timedelta(days=5)
@@ -186,7 +208,7 @@ def test_file_list_hwm_frozen():
     hwm = FileListHWM(source=folder)
 
     for attr in ("value", "source", "process", "modified_time"):
-        for item in (1, "abc", None, folder, process, file1, file2, value, modified_time):
+        for item in (1, "abc", None, folder, process, file1, file2, file3, value, modified_time):
 
             with pytest.raises(TypeError):
                 setattr(hwm, attr, item)
@@ -224,47 +246,40 @@ def test_file_list_hwm_compare():
                 assert item1 != item2
 
 
-def test_file_list_hwm_covera():
+def test_file_list_hwm_covers():
     file1 = "some/path/file.py"
     file2 = RelativePath("another.csv")
-    file3 = "another/path.py"
-    file4 = RelativePath("test.csv")
+    file3 = AbsolutePath("/home/user/abc/some.csv")
+
+    file4 = "another/path.py"
+    file5 = RelativePath("test.csv")
+    file6 = AbsolutePath("/home/user/abc/test.csv")
 
     folder = RemoteFolder(name="/home/user/abc", instance="ftp://my.domain:23")
 
     empty_hwm = FileListHWM(source=folder)
 
-    assert not empty_hwm.covers(str(file1))
-    assert not empty_hwm.covers(RelativePath(file1))
+    assert not empty_hwm.covers(file1)
+    assert not empty_hwm.covers(file2)
+    assert not empty_hwm.covers(file3)
+    assert not empty_hwm.covers(file4)
+    assert not empty_hwm.covers(file5)
+    assert not empty_hwm.covers(file6)
 
-    assert not empty_hwm.covers(str(file2))
-    assert not empty_hwm.covers(RelativePath(file2))
+    hwm = FileListHWM(source=folder, value=[file1, file2, file3])
 
-    assert not empty_hwm.covers(str(file3))
-    assert not empty_hwm.covers(RelativePath(file3))
-
-    assert not empty_hwm.covers(str(file4))
-    assert not empty_hwm.covers(RelativePath(file4))
-
-    hwm = FileListHWM(source=folder, value=[file1, file2])
-
-    assert hwm.covers(str(file1))
-    assert hwm.covers(RelativePath(file1))
-
-    assert hwm.covers(str(file2))
-    assert hwm.covers(RelativePath(file2))
-
-    assert not hwm.covers(str(file3))
-    assert not hwm.covers(RelativePath(file3))
-
-    assert not hwm.covers(str(file4))
-    assert not hwm.covers(RelativePath(file4))
+    assert hwm.covers(file1)
+    assert hwm.covers(file2)
+    assert hwm.covers(file3)
+    assert not hwm.covers(file4)
+    assert not hwm.covers(file5)
+    assert not hwm.covers(file6)
 
 
 def test_file_list_hwm_add():
     file1 = "some/path/file.py"
     file2 = RelativePath("another.csv")
-    file3 = RelativePath("some.orc")
+    file3 = AbsolutePath("/home/user/abc/some.orc")
 
     value1 = [file1, file2]
     value2 = [file1, file2, file3]
@@ -274,51 +289,71 @@ def test_file_list_hwm_add():
     hwm1 = FileListHWM(source=folder, value=value1)
     hwm2 = FileListHWM(source=folder, value=value2)
 
-    # If one side is empty then nothing to change, modified_time is the same
-    hwm3 = hwm1 + []
-    hwm4 = hwm1 + {}
+    # empty value -> do nothing
+    old_hwm = hwm1.copy()
+    hwm3 = old_hwm + []
+    hwm4 = old_hwm + {}
 
     assert hwm3 == hwm1
+    assert hwm3.value == hwm1.value  # value is the same
+    assert hwm3 is old_hwm  # old object is returned
     assert hwm3.modified_time == hwm1.modified_time
 
     assert hwm4 == hwm1
+    assert hwm4.value == hwm1.value  # value is the same
+    assert hwm4 is old_hwm  # old object is returned
     assert hwm4.modified_time == hwm1.modified_time
 
-    hwm4 = hwm1.copy() + file1
-    hwm5 = hwm1.copy() + [file1]
-    hwm6 = hwm1.copy() + {file1}
-
-    assert hwm4 == hwm1
-    assert hwm4.modified_time == hwm1.modified_time
+    # value already known -> do nothing
+    old_hwm = hwm1.copy()
+    hwm5 = hwm1 + file1
+    hwm6 = hwm1 + [file1]
+    hwm7 = hwm1 + {file1}
 
     assert hwm5 == hwm1
+    assert hwm5.value == hwm1.value  # value is the same
+    assert hwm5 is not old_hwm  # a copy is returned
     assert hwm5.modified_time == hwm1.modified_time
 
     assert hwm6 == hwm1
+    assert hwm6.value == hwm1.value  # value is the same
+    assert hwm6 is not old_hwm  # a copy is returned
     assert hwm6.modified_time == hwm1.modified_time
 
-    hwm7 = hwm1.copy() + file3
-    hwm8 = hwm1.copy() + [file3]
-    hwm9 = hwm1.copy() + {file3}
+    assert hwm7 == hwm1
+    assert hwm7.value == hwm1.value  # value is the same
+    assert hwm7 is not old_hwm  # a copy is returned
+    assert hwm7.modified_time == hwm1.modified_time
 
     # if something has been changed, update modified_time
-    assert hwm7 == hwm2
-    assert hwm7.modified_time > hwm2.modified_time
+    old_hwm = hwm1.copy()
+    hwm8 = old_hwm + file3
+    hwm9 = old_hwm + [file3]
+    hwm10 = old_hwm + {file3}
 
     assert hwm8 == hwm2
+    assert hwm8.value == hwm2.value  # value is the updated
+    assert hwm8 is not old_hwm  # a copy is returned
     assert hwm8.modified_time > hwm2.modified_time
 
     assert hwm9 == hwm2
+    assert hwm9.value == hwm2.value  # value is the updated
+    assert hwm9 is not old_hwm  # a copy is returned
     assert hwm9.modified_time > hwm2.modified_time
 
-    with pytest.raises(TypeError):
+    assert hwm10 == hwm2
+    assert hwm10.value == hwm2.value  # value is the updated
+    assert hwm10 is not old_hwm  # a copy is returned
+    assert hwm10.modified_time > hwm2.modified_time
+
+    with pytest.raises(ValueError):
         _ = hwm1 + hwm2
 
 
 def test_file_list_hwm_sub():
     file1 = "some/path/file.py"
     file2 = RelativePath("another.csv")
-    file3 = RelativePath("some.orc")
+    file3 = AbsolutePath("/home/user/abc/some.orc")
     file4 = RelativePath("unknown.orc")
 
     value1 = [file1, file2]
@@ -329,52 +364,64 @@ def test_file_list_hwm_sub():
     hwm1 = FileListHWM(source=folder, value=value1)
     hwm2 = FileListHWM(source=folder, value=value2)
 
-    # If one side is empty then nothing to change, modified_time is the same
-    hwm3 = hwm2.copy() - []
-    hwm4 = hwm2.copy() - {}
+    # empty value -> do nothing
+    old_hwm = hwm1.copy()
+    hwm3 = hwm2 - []
+    hwm4 = hwm2 - {}
 
     assert hwm3 == hwm2
+    assert hwm3 is not old_hwm  # a copy is returned
     assert hwm3.modified_time == hwm2.modified_time
 
     assert hwm4 == hwm2
+    assert hwm4 is not old_hwm  # a copy is returned
     assert hwm4.modified_time == hwm2.modified_time
 
-    hwm4 = hwm2.copy() - file4
-    hwm5 = hwm2.copy() - [file4]
-    hwm6 = hwm2.copy() - {file4}
-
-    assert hwm4 == hwm2
-    assert hwm4.modified_time == hwm2.modified_time
+    # value is unknown -> do nothing
+    old_hwm = hwm1.copy()
+    hwm5 = hwm2 - file4
+    hwm6 = hwm2 - [file4]
+    hwm7 = hwm2 - {file4}
 
     assert hwm5 == hwm2
+    assert hwm5 is not old_hwm  # a copy is returned
     assert hwm5.modified_time == hwm2.modified_time
 
     assert hwm6 == hwm2
+    assert hwm6 is not old_hwm  # a copy is returned
     assert hwm6.modified_time == hwm2.modified_time
 
-    hwm7 = hwm2.copy() - file3
-    hwm8 = hwm2.copy() - [file3]
-    hwm9 = hwm2.copy() - {file3}
+    assert hwm7 == hwm2
+    assert hwm7 is not old_hwm  # a copy is returned
+    assert hwm7.modified_time == hwm2.modified_time
 
     # if something has been changed, update modified_time
-    assert hwm7 == hwm1
-    assert hwm7.modified_time > hwm2.modified_time
+    old_hwm = hwm2.copy()
+    hwm8 = hwm2 - file3
+    hwm9 = hwm2 - [file3]
+    hwm10 = hwm2 - {file3}
 
     assert hwm8 == hwm1
+    assert hwm8 is not old_hwm  # a copy is returned
     assert hwm8.modified_time > hwm2.modified_time
 
     assert hwm9 == hwm1
+    assert hwm9 is not old_hwm  # a copy is returned
     assert hwm9.modified_time > hwm2.modified_time
 
-    with pytest.raises(TypeError):
-        _ = hwm1 + hwm2
+    assert hwm10 == hwm1
+    assert hwm10 is not old_hwm  # a copy is returned
+    assert hwm10.modified_time > hwm2.modified_time
+
+    with pytest.raises(ValueError):
+        _ = hwm1 - hwm2
 
 
 def test_file_list_hwm_contains():
     name = PosixPath("/home/user/abc")
     file1 = "some/path/file.py"
     file2 = RelativePath("another.csv")
-    file3 = RelativePath("other.py")
+    file3 = AbsolutePath("/home/user/abc/some.orc")
 
     value = [file1, file2]
     folder = RemoteFolder(name=name, instance="ftp://my.domain:23")
@@ -402,6 +449,85 @@ def test_file_list_hwm_contains():
         assert folder not in hwm
 
 
+def test_file_list_hwm_update():
+    file1 = "some/path/file.py"
+    file2 = RelativePath("another.csv")
+    file3 = AbsolutePath("/home/user/abc/some.orc")
+
+    value1 = [file1, file2]
+    value2 = [file1, file2, file3]
+
+    folder = RemoteFolder(name="/home/user/abc", instance="ftp://my.domain:23")
+
+    hwm1 = FileListHWM(source=folder, value=value1)
+    hwm2 = FileListHWM(source=folder, value=value2)
+
+    # empty value -> do nothing
+    old_hwm3 = hwm1.copy()
+    hwm3 = old_hwm3.update([])
+
+    old_hwm4 = hwm1.copy()
+    hwm4 = old_hwm4.update({})
+
+    assert hwm3 == hwm1
+    assert hwm3 is old_hwm3  # old object is returned
+    assert hwm3.modified_time == hwm1.modified_time
+
+    assert hwm4 == hwm1
+    assert hwm4 is old_hwm4  # old object is returned
+    assert hwm4.modified_time == hwm1.modified_time
+
+    # value already known -> do nothing
+    old_hwm5 = hwm1.copy()
+    hwm5 = old_hwm5.update(file1)
+
+    old_hwm6 = hwm1.copy()
+    hwm6 = old_hwm6.update([file1])
+
+    old_hwm7 = hwm1.copy()
+    hwm7 = old_hwm7.update({file1})
+
+    assert hwm5 == hwm1
+    assert hwm5 is old_hwm5  # old object is returned
+    assert hwm5.modified_time == hwm1.modified_time
+
+    assert hwm6 == hwm1
+    assert hwm6 is old_hwm6  # old object is returned
+    assert hwm6.modified_time == hwm1.modified_time
+
+    assert hwm7 == hwm1
+    assert hwm7 is old_hwm7  # old object is returned
+    assert hwm7.modified_time == hwm1.modified_time
+
+    old_hwm8 = hwm1.copy()
+    hwm8 = old_hwm8.update(file3)
+
+    old_hwm9 = hwm1.copy()
+    hwm9 = old_hwm9.update([file3])
+
+    old_hwm10 = hwm1.copy()
+    hwm10 = old_hwm10.update({file3})
+
+    # if something has been changed, update modified_time
+    assert hwm8 == hwm2
+    assert hwm8.value == old_hwm8.value == hwm2.value  # old object is updated
+    assert hwm8 is old_hwm8  # in-place replacement
+    assert hwm8.modified_time > hwm2.modified_time
+
+    assert hwm9 == hwm2
+    assert hwm9.value == old_hwm9.value == hwm2.value  # old object is updated
+    assert hwm9 is old_hwm9  # in-place replacement
+    assert hwm9.modified_time > hwm2.modified_time
+
+    assert hwm10 == hwm2
+    assert hwm10.value == old_hwm10.value == hwm2.value  # old object is updated
+    assert hwm10 is old_hwm10  # in-place replacement
+    assert hwm10.modified_time > hwm2.modified_time
+
+    with pytest.raises(ValueError):
+        _ = hwm1.update(hwm2)
+
+
 @pytest.mark.parametrize(
     "process, process_qualified_name",
     [
@@ -422,10 +548,11 @@ def test_file_list_hwm_qualified_name(process, process_qualified_name):
 def test_file_list_hwm_serialization():
     file1 = "some/path/file.py"
     file2 = RelativePath("another.csv")
+    file3 = AbsolutePath("/home/user/abc/some.orc")
 
-    value = [file1, file2, file2]
-    serialized_value1 = f"{file2}\n{file1}"
-    serialized_value2 = f"{file2}\n{file1}\n{file2}"
+    value = [file1, file2, file2, file3]
+    serialized_value1 = "another.csv\nsome.orc\nsome/path/file.py"
+    serialized_value2 = "another.csv\nsome.orc\nsome/path/file.py\nanother.csv"
     folder = RemoteFolder(name="/home/user/abc", instance="ftp://my.domain:23")
     process = Process(name="abc", host="somehost", task="sometask", dag="somedag")
     modified_time = datetime.now()

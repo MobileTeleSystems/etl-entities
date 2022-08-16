@@ -147,7 +147,44 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], GenericModel, Generic[ColumnValu
         if self.value is None:
             return False
 
-        return self.validate_value(value) <= self.value
+        return self._check_new_value(value) <= self.value
+
+    def update(self, value: ColumnValueType):
+        """Updates current HWM value with some implementation-specific login, and return HWM.
+
+        .. note::
+
+            Changes HWM value in place
+
+        Returns
+        -------
+        result : HWM
+
+            Self
+
+        Examples
+        ----------
+
+        .. code:: python
+
+            from etl_entities import IntHWM
+
+            hwm = IntHWM(value=1, ...)
+
+            hwm.update(2)
+            assert hwm.value == 2
+
+            hwm.update(1)
+            assert hwm.value == 2  # value cannot decrease
+        """
+
+        if self.value is None:
+            return self.set_value(value)
+
+        if self.value < value:  # type: ignore[operator]
+            return self.set_value(value)
+
+        return self
 
     def __bool__(self):
         """Check if HWM value is set
@@ -175,11 +212,7 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], GenericModel, Generic[ColumnValu
         return self.value is not None
 
     def __add__(self, value):
-        """Increase HWM value and return updated HWM
-
-        .. note::
-
-            Changes HWM value in place instead of returning new one
+        """Increase HWM value and return copy of HWM
 
         Params
         -------
@@ -209,15 +242,14 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], GenericModel, Generic[ColumnValu
             assert hwm1 + inc == hwm2
         """
 
-        self.set_value(self.value + self.validate_value(value))
+        new_value = self.value + value
+        if self.value != new_value:
+            return self.copy().set_value(new_value)
+
         return self
 
     def __sub__(self, value):
-        """Decrease HWM value, and return update HWM
-
-        .. note::
-
-            Changes HWM value in place instead of returning new one
+        """Decrease HWM value, and return copy of HWM
 
         Params
         -------
@@ -247,7 +279,10 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], GenericModel, Generic[ColumnValu
             assert hwm1 - dec == hwm2
         """
 
-        self.set_value(self.value - self.validate_value(value))
+        new_value = self.value - value
+        if self.value != new_value:
+            return self.copy().set_value(new_value)
+
         return self
 
     def __eq__(self, other):

@@ -4,6 +4,7 @@ from etl_entities.hwm import (
     ColumnHWM,
     DateHWM,
     DateTimeHWM,
+    FileHWM,
     FileListHWM,
     HWMTypeRegistry,
     IntHWM,

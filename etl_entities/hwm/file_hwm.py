@@ -2,7 +2,7 @@ from __future__ import annotations
 
 import os
 from abc import abstractmethod
-from typing import Generic, Iterable, TypeVar
+from typing import Generic, TypeVar
 
 from etl_entities.entity import GenericModel
 from etl_entities.hwm.hwm import HWM
@@ -61,27 +61,6 @@ class FileHWM(HWM[FileHWMValueType], GenericModel, Generic[FileHWMValueType]):
         """
 
         return "#".join([self.name, self.source.qualified_name, self.process.qualified_name])
-
-    @abstractmethod
-    def __add__(self, value: str | os.PathLike | Iterable[str | os.PathLike]):
-        """Add value to HWM and return update HWM
-
-        .. note::
-
-            Changes HWM value in place instead of returning new one
-
-        Params
-        -------
-        value : :obj:`str` or :obj:`pathlib.PosixPath` or :obj:`typing.Iterable` of them
-
-            Path or collection of paths to be added to value
-
-        Returns
-        --------
-        result : FileHWM
-
-            Self
-        """
 
     def __bool__(self):
         """Check if HWM value is set

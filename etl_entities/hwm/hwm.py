@@ -6,7 +6,7 @@ from copy import deepcopy
 from datetime import datetime
 from typing import Generic, TypeVar, cast
 
-from pydantic import Field, validator
+from pydantic import Field, validate_model, validator
 from pydantic.validators import strict_str_validator
 
 from etl_entities.entity import Entity, GenericModel
@@ -39,7 +39,7 @@ class HWM(Entity, GenericModel, Generic[ValueType]):
     process: Process = Field(default_factory=ProcessStackManager.get_current)
 
     @validator("value", pre=True)
-    def validate_value(cls, value):  # noqa: N805
+    def validate_value(cls, value, values):  # noqa: N805
         if isinstance(value, str):
             return cls.deserialize_value(value)
 
@@ -71,14 +71,12 @@ class HWM(Entity, GenericModel, Generic[ValueType]):
             assert hwm.value == 2
         """
 
-        new_value = self.validate_value(value)
-        # `validate_value` checks for specific types. if value of the unknown type is passed, it is returned as is
-        # so a small hack here to force check if value is consistent with a type hint
-        new_obj = self.__class__.parse_obj(self.copy(update={"value": new_value}))
+        new_value = self._check_new_value(value)
 
-        if self.value != new_obj.value:
-            object.__setattr__(self, "value", new_obj.value)  # noqa: WPS609
+        if self.value != new_value:
+            object.__setattr__(self, "value", new_value)  # noqa: WPS609
             object.__setattr__(self, "modified_time", datetime.now())  # noqa: WPS609
+
         return self
 
     def serialize(self) -> dict:
@@ -212,3 +210,17 @@ class HWM(Entity, GenericModel, Generic[ValueType]):
     @abstractmethod
     def covers(self, value) -> bool:
         """Return ``True`` if input value is already covered by HWM"""
+
+    @abstractmethod
+    def update(self, value):
+        """Update current HWM value with some implementation-specific logic, and return HWM"""
+
+    def _check_new_value(self, value):
+        validated_dict, _, validation_error = validate_model(
+            self.__class__,
+            self.copy(update={"value": value}).__dict__,
+        )
+        if validation_error:
+            raise validation_error
+
+        return validated_dict["value"]
