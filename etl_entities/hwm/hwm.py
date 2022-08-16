@@ -76,6 +76,7 @@ class HWM(Entity, GenericModel, Generic[ValueType]):
         if self.value != new_value:
             object.__setattr__(self, "value", new_value)  # noqa: WPS609
             object.__setattr__(self, "modified_time", datetime.now())  # noqa: WPS609
+
         return self
 
     def serialize(self) -> dict:

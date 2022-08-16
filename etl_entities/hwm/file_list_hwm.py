@@ -216,7 +216,11 @@ class FileListHWM(FileHWM[FileListType]):
             ]
         """
 
-        return self + value
+        new_value = self.value | self._check_new_value(value)
+        if self.value != new_value:
+            return self.set_value(new_value)
+
+        return self
 
     def __bool__(self):
         """Check if HWM value is set
@@ -244,11 +248,7 @@ class FileListHWM(FileHWM[FileListType]):
         return bool(self.value)
 
     def __add__(self, value: str | os.PathLike | Iterable[str | os.PathLike]):
-        """Adds path or paths to HWM value, and return updated HWM
-
-        .. note::
-
-            Changes HWM value in place instead of returning new one
+        """Adds path or paths to HWM value, and return copy of HWM
 
         Params
         -------
@@ -276,15 +276,14 @@ class FileListHWM(FileHWM[FileListType]):
             # same as FileListHWM(value=hwm1.value + "another.file", ...)
         """
 
-        self.set_value(self.value | self._check_new_value(value))
+        new_value = self.value | self._check_new_value(value)
+        if self.value != new_value:
+            return self.copy().set_value(new_value)
+
         return self
 
     def __sub__(self, value: str | os.PathLike | Iterable[str | os.PathLike]):
-        """Remove path or paths from HWM value, and return updated HWM
-
-        .. note::
-
-            Changes HWM value in place instead of returning new one
+        """Remove path or paths from HWM value, and return copy of HWM
 
         Params
         -------
@@ -312,7 +311,10 @@ class FileListHWM(FileHWM[FileListType]):
             # same as FileListHWM(value=hwm1.value - "another.file", ...)
         """
 
-        self.set_value(self.value - self._check_new_value(value))
+        new_value = self.value - self._check_new_value(value)
+        if self.value != new_value:
+            return self.copy().set_value(new_value)
+
         return self
 
     def __abs__(self) -> frozenset[AbsolutePath]:

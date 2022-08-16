@@ -290,42 +290,61 @@ def test_file_list_hwm_add():
     hwm2 = FileListHWM(source=folder, value=value2)
 
     # empty value -> do nothing
-    hwm3 = hwm1.copy() + []
-    hwm4 = hwm1.copy() + {}
+    old_hwm = hwm1.copy()
+    hwm3 = old_hwm + []
+    hwm4 = old_hwm + {}
 
     assert hwm3 == hwm1
+    assert hwm3.value == hwm1.value  # value is the same
+    assert hwm3 is old_hwm  # old object is returned
     assert hwm3.modified_time == hwm1.modified_time
 
     assert hwm4 == hwm1
+    assert hwm4.value == hwm1.value  # value is the same
+    assert hwm4 is old_hwm  # old object is returned
     assert hwm4.modified_time == hwm1.modified_time
 
     # value already known -> do nothing
-    hwm4 = hwm1.copy() + file1
-    hwm5 = hwm1.copy() + [file1]
-    hwm6 = hwm1.copy() + {file1}
-
-    assert hwm4 == hwm1
-    assert hwm4.modified_time == hwm1.modified_time
+    old_hwm = hwm1.copy()
+    hwm5 = hwm1 + file1
+    hwm6 = hwm1 + [file1]
+    hwm7 = hwm1 + {file1}
 
     assert hwm5 == hwm1
+    assert hwm5.value == hwm1.value  # value is the same
+    assert hwm5 is not old_hwm  # a copy is returned
     assert hwm5.modified_time == hwm1.modified_time
 
     assert hwm6 == hwm1
+    assert hwm6.value == hwm1.value  # value is the same
+    assert hwm6 is not old_hwm  # a copy is returned
     assert hwm6.modified_time == hwm1.modified_time
 
-    # if something has been changed, update modified_time
-    hwm7 = hwm1.copy() + file3
-    hwm8 = hwm1.copy() + [file3]
-    hwm9 = hwm1.copy() + {file3}
+    assert hwm7 == hwm1
+    assert hwm7.value == hwm1.value  # value is the same
+    assert hwm7 is not old_hwm  # a copy is returned
+    assert hwm7.modified_time == hwm1.modified_time
 
-    assert hwm7 == hwm2
-    assert hwm7.modified_time > hwm2.modified_time
+    # if something has been changed, update modified_time
+    old_hwm = hwm1.copy()
+    hwm8 = old_hwm + file3
+    hwm9 = old_hwm + [file3]
+    hwm10 = old_hwm + {file3}
 
     assert hwm8 == hwm2
+    assert hwm8.value == hwm2.value  # value is the updated
+    assert hwm8 is not old_hwm  # a copy is returned
     assert hwm8.modified_time > hwm2.modified_time
 
     assert hwm9 == hwm2
+    assert hwm9.value == hwm2.value  # value is the updated
+    assert hwm9 is not old_hwm  # a copy is returned
     assert hwm9.modified_time > hwm2.modified_time
+
+    assert hwm10 == hwm2
+    assert hwm10.value == hwm2.value  # value is the updated
+    assert hwm10 is not old_hwm  # a copy is returned
+    assert hwm10.modified_time > hwm2.modified_time
 
     with pytest.raises(ValueError):
         _ = hwm1 + hwm2
@@ -346,42 +365,53 @@ def test_file_list_hwm_sub():
     hwm2 = FileListHWM(source=folder, value=value2)
 
     # empty value -> do nothing
-    hwm3 = hwm2.copy() - []
-    hwm4 = hwm2.copy() - {}
+    old_hwm = hwm1.copy()
+    hwm3 = hwm2 - []
+    hwm4 = hwm2 - {}
 
     assert hwm3 == hwm2
+    assert hwm3 is not old_hwm  # a copy is returned
     assert hwm3.modified_time == hwm2.modified_time
 
     assert hwm4 == hwm2
+    assert hwm4 is not old_hwm  # a copy is returned
     assert hwm4.modified_time == hwm2.modified_time
 
     # value is unknown -> do nothing
-    hwm4 = hwm2.copy() - file4
-    hwm5 = hwm2.copy() - [file4]
-    hwm6 = hwm2.copy() - {file4}
-
-    assert hwm4 == hwm2
-    assert hwm4.modified_time == hwm2.modified_time
+    old_hwm = hwm1.copy()
+    hwm5 = hwm2 - file4
+    hwm6 = hwm2 - [file4]
+    hwm7 = hwm2 - {file4}
 
     assert hwm5 == hwm2
+    assert hwm5 is not old_hwm  # a copy is returned
     assert hwm5.modified_time == hwm2.modified_time
 
     assert hwm6 == hwm2
+    assert hwm6 is not old_hwm  # a copy is returned
     assert hwm6.modified_time == hwm2.modified_time
 
-    # if something has been changed, update modified_time
-    hwm7 = hwm2.copy() - file3
-    hwm8 = hwm2.copy() - [file3]
-    hwm9 = hwm2.copy() - {file3}
+    assert hwm7 == hwm2
+    assert hwm7 is not old_hwm  # a copy is returned
+    assert hwm7.modified_time == hwm2.modified_time
 
-    assert hwm7 == hwm1
-    assert hwm7.modified_time > hwm2.modified_time
+    # if something has been changed, update modified_time
+    old_hwm = hwm2.copy()
+    hwm8 = hwm2 - file3
+    hwm9 = hwm2 - [file3]
+    hwm10 = hwm2 - {file3}
 
     assert hwm8 == hwm1
+    assert hwm8 is not old_hwm  # a copy is returned
     assert hwm8.modified_time > hwm2.modified_time
 
     assert hwm9 == hwm1
+    assert hwm9 is not old_hwm  # a copy is returned
     assert hwm9.modified_time > hwm2.modified_time
+
+    assert hwm10 == hwm1
+    assert hwm10 is not old_hwm  # a copy is returned
+    assert hwm10.modified_time > hwm2.modified_time
 
     with pytest.raises(ValueError):
         _ = hwm1 - hwm2
@@ -433,45 +463,69 @@ def test_file_list_hwm_update():
     hwm2 = FileListHWM(source=folder, value=value2)
 
     # empty value -> do nothing
-    hwm3 = hwm1.copy().update([])
-    hwm4 = hwm1.copy().update({})
+    old_hwm3 = hwm1.copy()
+    hwm3 = old_hwm3.update([])
+
+    old_hwm4 = hwm1.copy()
+    hwm4 = old_hwm4.update({})
 
     assert hwm3 == hwm1
+    assert hwm3 is old_hwm3  # old object is returned
     assert hwm3.modified_time == hwm1.modified_time
 
     assert hwm4 == hwm1
+    assert hwm4 is old_hwm4  # old object is returned
     assert hwm4.modified_time == hwm1.modified_time
 
     # value already known -> do nothing
-    hwm4 = hwm1.copy().update(file1)
-    hwm5 = hwm1.copy().update([file1])
-    hwm6 = hwm1.copy().update({file1})
+    old_hwm5 = hwm1.copy()
+    hwm5 = old_hwm5.update(file1)
 
-    assert hwm4 == hwm1
-    assert hwm4.modified_time == hwm1.modified_time
+    old_hwm6 = hwm1.copy()
+    hwm6 = old_hwm6.update([file1])
+
+    old_hwm7 = hwm1.copy()
+    hwm7 = old_hwm7.update({file1})
 
     assert hwm5 == hwm1
+    assert hwm5 is old_hwm5  # old object is returned
     assert hwm5.modified_time == hwm1.modified_time
 
     assert hwm6 == hwm1
+    assert hwm6 is old_hwm6  # old object is returned
     assert hwm6.modified_time == hwm1.modified_time
 
-    hwm7 = hwm1.copy().update(file3)
-    hwm8 = hwm1.copy().update([file3])
-    hwm9 = hwm1.copy().update({file3})
+    assert hwm7 == hwm1
+    assert hwm7 is old_hwm7  # old object is returned
+    assert hwm7.modified_time == hwm1.modified_time
+
+    old_hwm8 = hwm1.copy()
+    hwm8 = old_hwm8.update(file3)
+
+    old_hwm9 = hwm1.copy()
+    hwm9 = old_hwm9.update([file3])
+
+    old_hwm10 = hwm1.copy()
+    hwm10 = old_hwm10.update({file3})
 
     # if something has been changed, update modified_time
-    assert hwm7 == hwm2
-    assert hwm7.modified_time > hwm2.modified_time
-
     assert hwm8 == hwm2
+    assert hwm8.value == old_hwm8.value == hwm2.value  # old object is updated
+    assert hwm8 is old_hwm8  # in-place replacement
     assert hwm8.modified_time > hwm2.modified_time
 
     assert hwm9 == hwm2
+    assert hwm9.value == old_hwm9.value == hwm2.value  # old object is updated
+    assert hwm9 is old_hwm9  # in-place replacement
     assert hwm9.modified_time > hwm2.modified_time
 
+    assert hwm10 == hwm2
+    assert hwm10.value == old_hwm10.value == hwm2.value  # old object is updated
+    assert hwm10 is old_hwm10  # in-place replacement
+    assert hwm10.modified_time > hwm2.modified_time
+
     with pytest.raises(ValueError):
-        _ = hwm1.copy().update(hwm2)
+        _ = hwm1.update(hwm2)
 
 
 @pytest.mark.parametrize(
