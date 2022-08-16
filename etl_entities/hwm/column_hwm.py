@@ -147,7 +147,7 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], GenericModel, Generic[ColumnValu
         if self.value is None:
             return False
 
-        return self.validate_value(value) <= self.value
+        return self._check_new_value(value) <= self.value
 
     def update(self, value: ColumnValueType):
         """Updates current HWM value with some implementation-specific login, and return HWM.
@@ -246,7 +246,7 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], GenericModel, Generic[ColumnValu
             assert hwm1 + inc == hwm2
         """
 
-        self.set_value(self.value + self.validate_value(value))
+        self.set_value(self.value + value)
         return self
 
     def __sub__(self, value):
@@ -284,7 +284,7 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], GenericModel, Generic[ColumnValu
             assert hwm1 - dec == hwm2
         """
 
-        self.set_value(self.value - self.validate_value(value))
+        self.set_value(self.value - value)
         return self
 
     def __eq__(self, other):

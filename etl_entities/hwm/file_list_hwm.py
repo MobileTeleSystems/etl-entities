@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import os
-from pathlib import PosixPath, PurePosixPath
+from pathlib import PurePosixPath
 from typing import FrozenSet, Iterable
 
 from pydantic import Field, validator
@@ -56,14 +56,34 @@ class FileListHWM(FileHWM[FileListType]):
         json_encoders = {RelativePath: os.fspath}
 
     @validator("value", pre=True)
-    def validate_value(cls, value):  # noqa: N805
-        if isinstance(value, (str, PosixPath, PurePosixPath)):
-            return cls.deserialize_value(os.fspath(value))
+    def validate_value(cls, value, values):  # noqa: N805
+        if "source" not in values:
+            raise ValueError("Missing `source` key")
+
+        source = values["source"]
+
+        if isinstance(value, str):
+            return cls.deserialize_value(value, source.name)
+
+        if isinstance(value, PurePosixPath):
+            return frozenset((cls.validate_item(value, source.name),))
 
         if isinstance(value, Iterable):
-            return frozenset(RelativePath(item) for item in value)
+            return cls.validate_items(value, source.name)
 
         return super().validate_value(value)
+
+    @classmethod
+    def validate_item(cls, item: str | os.PathLike, remote_folder: AbsolutePath) -> RelativePath:
+        path = PurePosixPath(os.fspath(item).strip())
+        if path.is_absolute():
+            return RelativePath(path.relative_to(remote_folder))
+
+        return RelativePath(path)
+
+    @classmethod
+    def validate_items(cls, items: Iterable[str | os.PathLike], remote_folder: AbsolutePath) -> FileListType:
+        return frozenset(cls.validate_item(item, remote_folder) for item in items)
 
     @property
     def name(self) -> str:
@@ -105,7 +125,7 @@ class FileListHWM(FileHWM[FileListType]):
         return "\n".join(sorted(os.fspath(item) for item in self.value))
 
     @classmethod
-    def deserialize_value(cls, value: str) -> FileListType:  # noqa: E800
+    def deserialize_value(cls, value: str, remote_folder: AbsolutePath) -> FileListType:  # type: ignore[override]
         r"""Parse string representation to get HWM value
 
         Parameters
@@ -136,10 +156,10 @@ class FileListHWM(FileHWM[FileListType]):
 
         str_value: str = super().deserialize_value(value)  # type: ignore[assignment]
 
-        if str_value:
-            return frozenset(RelativePath(item.strip()) for item in str_value.split("\n"))
+        if not str_value:
+            return frozenset()
 
-        return frozenset()
+        return cls.validate_items(str_value.split("\n"), remote_folder)
 
     def covers(self, value: str | os.PathLike) -> bool:
         """Return ``True`` if input value is already covered by HWM
@@ -256,7 +276,7 @@ class FileListHWM(FileHWM[FileListType]):
             # same as FileListHWM(value=hwm1.value + "another.file", ...)
         """
 
-        self.set_value(self.value | self.validate_value(value))
+        self.set_value(self.value | self._check_new_value(value))
         return self
 
     def __sub__(self, value: str | os.PathLike | Iterable[str | os.PathLike]):
@@ -292,7 +312,7 @@ class FileListHWM(FileHWM[FileListType]):
             # same as FileListHWM(value=hwm1.value - "another.file", ...)
         """
 
-        self.set_value(self.value - self.validate_value(value))
+        self.set_value(self.value - self._check_new_value(value))
         return self
 
     def __abs__(self) -> frozenset[AbsolutePath]:
