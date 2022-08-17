@@ -39,7 +39,7 @@ class HWM(Entity, GenericModel, Generic[ValueType]):
     process: Process = Field(default_factory=ProcessStackManager.get_current)
 
     @validator("value", pre=True)
-    def validate_value(cls, value, values):  # noqa: N805
+    def validate_value(cls, value):  # noqa: N805
         if isinstance(value, str):
             return cls.deserialize_value(value)
 

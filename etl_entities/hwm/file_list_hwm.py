@@ -71,7 +71,7 @@ class FileListHWM(FileHWM[FileListType]):
         if isinstance(value, Iterable):
             return cls.validate_items(value, source.name)
 
-        return super().validate_value(value, values)
+        return value
 
     @classmethod
     def validate_item(cls, item: str | os.PathLike, remote_folder: AbsolutePath) -> RelativePath:
