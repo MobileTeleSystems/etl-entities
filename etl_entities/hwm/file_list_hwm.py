@@ -62,11 +62,8 @@ class FileListHWM(FileHWM[FileListType]):
 
         source = values["source"]
 
-        if isinstance(value, str):
+        if isinstance(value, (str, os.PathLike)):
             return cls.deserialize_value(value, source.name)
-
-        if isinstance(value, PurePosixPath):
-            return frozenset((cls.validate_item(value, source.name),))
 
         if isinstance(value, Iterable):
             return cls.validate_items(value, source.name)
