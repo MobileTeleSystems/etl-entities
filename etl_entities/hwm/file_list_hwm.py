@@ -62,16 +62,16 @@ class FileListHWM(FileHWM[FileListType]):
 
         source = values["source"]
 
+        if isinstance(value, os.PathLike):
+            return frozenset((cls.validate_item(value, source.name),))
+
         if isinstance(value, str):
             return cls.deserialize_value(value, source.name)
-
-        if isinstance(value, PurePosixPath):
-            return frozenset((cls.validate_item(value, source.name),))
 
         if isinstance(value, Iterable):
             return cls.validate_items(value, source.name)
 
-        return super().validate_value(value)
+        return value
 
     @classmethod
     def validate_item(cls, item: str | os.PathLike, remote_folder: AbsolutePath) -> RelativePath:
