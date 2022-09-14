@@ -551,15 +551,15 @@ def test_file_list_hwm_serialization():
     file3 = AbsolutePath("/home/user/abc/some.orc")
 
     value = [file1, file2, file2, file3]
-    serialized_value1 = "another.csv\nsome.orc\nsome/path/file.py"
-    serialized_value2 = "another.csv\nsome.orc\nsome/path/file.py\nanother.csv"
+    serialized_value1 = ["another.csv", "some.orc", "some/path/file.py"]
+    serialized_value2 = ["another.csv", "some.orc", "some/path/file.py", "another.csv"]
     folder = RemoteFolder(name="/home/user/abc", instance="ftp://my.domain:23")
     process = Process(name="abc", host="somehost", task="sometask", dag="somedag")
     modified_time = datetime.now()
 
     serialized1 = {
         "value": serialized_value1,
-        "type": "files_list",
+        "type": "file_list",
         "source": folder.serialize(),
         "process": process.serialize(),
         "modified_time": modified_time.isoformat(),
@@ -574,13 +574,13 @@ def test_file_list_hwm_serialization():
     assert FileListHWM.deserialize(serialized2) == hwm1
 
     serialized3 = serialized1.copy()
-    serialized3["value"] = ""
+    serialized3["value"] = []
     hwm2 = FileListHWM(source=folder, process=process, modified_time=modified_time)
 
     assert hwm2.serialize() == serialized3
     assert FileListHWM.deserialize(serialized3) == hwm2
 
-    for wrong_value in [FileListHWM, None, []]:  # noqa: WPS335
+    for wrong_value in [FileListHWM, None, ""]:  # noqa: WPS335
         serialized4 = serialized1.copy()
         serialized4["value"] = wrong_value
         with pytest.raises((TypeError, ValueError)):

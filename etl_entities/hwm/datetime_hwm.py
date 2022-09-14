@@ -3,6 +3,9 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Optional
 
+from pydantic import validator
+from pydantic.validators import strict_str_validator
+
 from etl_entities.hwm.column_hwm import ColumnHWM
 from etl_entities.hwm.hwm_type_registry import register_hwm_type
 
@@ -52,6 +55,13 @@ class DateTimeHWM(ColumnHWM[datetime]):
     """
 
     value: Optional[datetime] = None
+
+    @validator("value", pre=True)
+    def validate_value(cls, value):  # noqa: N805
+        if isinstance(value, str):
+            return cls.deserialize_value(value)
+
+        return value
 
     def serialize_value(self) -> str:
         """Return string representation of HWM value
@@ -115,7 +125,7 @@ class DateTimeHWM(ColumnHWM[datetime]):
             assert DateTimeHWM.deserialize_value("null") is None
         """
 
-        result = str(super().deserialize_value(value))
+        result = strict_str_validator(value).strip()
 
         if result.lower() == "null":
             return None
