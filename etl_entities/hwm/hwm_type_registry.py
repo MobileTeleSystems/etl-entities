@@ -124,18 +124,15 @@ class HWMTypeRegistry:
 
             from etl_entities import HWMTypeRegistry, IntHWM
 
-            assert (
-                HWMTypeRegistry.parse(
-                    {
-                        "value": "1",
-                        "type": "int",
-                        "column": {"name": ..., "partition": ...},
-                        "source": ...,
-                        "process": ...,
-                    }
-                )
-                == IntHWM(value=1, ...)
-            )
+            assert HWMTypeRegistry.parse(
+                {
+                    "value": "1",
+                    "type": "int",
+                    "column": {"name": ..., "partition": ...},
+                    "source": ...,
+                    "process": ...,
+                }
+            ) == IntHWM(value=1, ...)
 
             HWMTypeRegistry.parse({"type": "unknown"})  # raises KeyError
         """
@@ -144,8 +141,8 @@ class HWMTypeRegistry:
         return klass.deserialize(inp)
 
 
-def register_hwm_type(*type_names: str):
-    """Decorator for registering some HWM class with a type name or names
+def register_hwm_type(type_name: str):
+    """Decorator for registering some HWM class with a type name
 
     Examples
     --------
@@ -155,19 +152,17 @@ def register_hwm_type(*type_names: str):
         from etl_entities import HWMTypeRegistry, register_hwm_type, HWM
 
 
-        @register_hwm_type("somename", "anothername")
+        @register_hwm_type("somename")
         class MyHWM(HWM):
             ...
 
 
         assert HWMTypeRegistry.get("somename") == MyHWM
-        assert HWMTypeRegistry.get("anothername") == MyHWM
 
     """
 
     def wrapper(klass: type[HWM]):
-        for type_name in type_names:
-            HWMTypeRegistry.add(type_name, klass)
+        HWMTypeRegistry.add(type_name, klass)
 
         return klass
 
