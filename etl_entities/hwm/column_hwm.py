@@ -10,8 +10,9 @@ from etl_entities.source import Column, Table
 ColumnValueType = TypeVar("ColumnValueType")
 
 
-@total_ordering
-class ColumnHWM(HWM[Optional[ColumnValueType]], GenericModel, Generic[ColumnValueType]):
+# see https://github.com/python/mypy/issues/5374#issuecomment-1071157357
+@total_ordering  # type: ignore[misc]
+class ColumnHWM(HWM[Optional[ColumnValueType], str], GenericModel, Generic[ColumnValueType]):
     """Base column HWM type
 
     Parameters
@@ -103,21 +104,6 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], GenericModel, Generic[ColumnValu
 
         return "#".join([self.column.qualified_name, self.source.qualified_name, self.process.qualified_name])
 
-    def serialize_value(self) -> str:
-        """Return string representation of HWM value
-
-        Returns
-        -------
-        result : str
-
-            Serialized value
-        """
-
-        if self.value is None:
-            return "null"
-
-        return super().serialize_value()
-
     def covers(self, value: ColumnValueType) -> bool:
         """Return ``True`` if input value is already covered by HWM
 
@@ -150,7 +136,7 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], GenericModel, Generic[ColumnValu
         return self._check_new_value(value) <= self.value
 
     def update(self, value: ColumnValueType):
-        """Updates current HWM value with some implementation-specific login, and return HWM.
+        """Updates current HWM value with some implementation-specific logic, and return HWM.
 
         .. note::
 
@@ -158,9 +144,9 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], GenericModel, Generic[ColumnValu
 
         Returns
         -------
-        result : HWM
+        result : ColumnHWM
 
-            Self
+            HWM copy with new value
 
         Examples
         ----------
@@ -226,7 +212,7 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], GenericModel, Generic[ColumnValu
         --------
         result : ColumnHWM
 
-            Self
+            HWM copy with new value
 
         Examples
         ----------
@@ -263,7 +249,7 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], GenericModel, Generic[ColumnValu
         --------
         result : ColumnHWM
 
-            Self
+            HWM copy with new value
 
         Examples
         ----------

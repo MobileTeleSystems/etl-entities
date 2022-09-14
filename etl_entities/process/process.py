@@ -62,7 +62,7 @@ class Process(BaseModel, Entity):
     """
 
     name: str = Field(default_factory=lambda: psutil.Process(os.getpid()).name())
-    host: Host = Field(default_factory=getfqdn)
+    host: Host = Field(default_factory=getfqdn)  # type: ignore[assignment]
     dag: DagTaskName = DagTaskName()
     task: DagTaskName = DagTaskName()
 

@@ -10,9 +10,14 @@ from etl_entities.instance import AbsolutePath
 from etl_entities.source import RemoteFolder
 
 FileHWMValueType = TypeVar("FileHWMValueType")
+FileHWMSerializedType = TypeVar("FileHWMSerializedType")
 
 
-class FileHWM(HWM[FileHWMValueType], GenericModel, Generic[FileHWMValueType]):
+class FileHWM(
+    HWM[FileHWMValueType, FileHWMSerializedType],
+    GenericModel,
+    Generic[FileHWMValueType, FileHWMSerializedType],
+):
     """Basic file HWM type
 
     Parameters

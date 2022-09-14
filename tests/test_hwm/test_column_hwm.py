@@ -535,6 +535,6 @@ def test_column_hwm_serialization(hwm_class, hwm_type, value, serialized_value, 
         hwm_class.deserialize(serialized4)
 
     serialized5 = serialized1.copy()
-    serialized5["type"] = "files_list"
+    serialized5["type"] = "file_list"
     with pytest.raises(ValueError):
         hwm_class.deserialize(serialized5)
