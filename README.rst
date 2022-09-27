@@ -48,6 +48,14 @@ See https://bigdata.pages.mts.ru/platform/onetools/etl-entities/
 Contribution guide
 -------------------
 
+See `<CONTRIBUTING.rst>`__
+
+
+.. contribution
+
+Contribution guide
+-------------------
+
 See https://wiki.bd.msk.mts.ru/display/DAT/Contribution+guide
 
 
