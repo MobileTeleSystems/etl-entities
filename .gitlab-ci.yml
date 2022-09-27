@@ -152,13 +152,6 @@ run_unit_tests:
       - ${COVERAGE_FILE}
   interruptible: true
 
-sonarqube_check:
-  extends: .base_check_sonarqube
-  stage: sonarqube_check
-  variables:
-    SONAR_SOURCES: etl_entities
-  interruptible: true
-
 build_docs:
   image: $CI_REGISTRY/platform/python:${PYTHON_VERSION}
   variables:
