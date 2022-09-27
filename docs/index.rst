@@ -27,6 +27,15 @@
 
 .. toctree::
     :maxdepth: 2
+    :caption: Develop
+    :name: develop
+
+    tests
+    contributing
+    security
+
+.. toctree::
+    :maxdepth: 2
     :caption: Links
     :name: links
 

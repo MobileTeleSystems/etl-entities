@@ -57,8 +57,6 @@ Security
 
 See `<SECURITY.rst>`__
 
-
-
 .. install
 
 Installation
@@ -88,13 +86,10 @@ Version example: ``1.1.2.dev345``
 
     pip install -e etl-entities # latest pre-release
 
-.. develops
+.. tests
 
-Development
----------------
-
-Testing
-~~~~~~~~
+Tests
+-------
 
 Running tests is as simple as:
 
