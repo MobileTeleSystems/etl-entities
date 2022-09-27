@@ -21,10 +21,13 @@ setup(
     description="ETL Entities lib",
     long_description=long_description,
     long_description_content_type="text/x-rst",
+    license="Apache License 2.0",
+    license_files=("LICENSE.txt",),
     url="https://gitlab.services.mts.ru/bigdata/platform/onetools/etl-entities",
     packages=find_packages(exclude=["docs", "docs.*", "tests", "tests.*"]),
     classifiers=[
         "Intended Audience :: Data engineers",
+        "License :: OSI Approved :: Apache Software License",
         "Topic :: Software Development :: ETL tools",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3.7",
