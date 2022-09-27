@@ -50,6 +50,14 @@ Contribution guide
 
 See https://wiki.bd.msk.mts.ru/display/DAT/Contribution+guide
 
+.. security
+
+Security
+-------------------
+
+See `<SECURITY.rst>`__
+
+
 
 .. install
 
