@@ -1,0 +1,4 @@
+bidict==0.22.0
+psutil==5.9.2
+pydantic==1.9.2
+typing_extensions==4.3.0

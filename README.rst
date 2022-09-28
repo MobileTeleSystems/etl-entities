@@ -42,14 +42,6 @@ Contribution guide
 
 See `<CONTRIBUTING.rst>`__
 
-
-.. contribution
-
-Contribution guide
--------------------
-
-See https://wiki.bd.msk.mts.ru/display/DAT/Contribution+guide
-
 .. security
 
 Security
