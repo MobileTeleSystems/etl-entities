@@ -528,6 +528,16 @@ def test_file_list_hwm_update():
         _ = hwm1.update(hwm2)
 
 
+def test_file_list_hwm_iter():
+    folder = RemoteFolder(name="/home/user/abc", instance="ftp://my.domain:23")
+
+    hwm1 = FileListHWM(source=folder, value=["some/path/file.py", RelativePath("another.csv")])
+    assert set(hwm1) == {RelativePath("some/path/file.py"), RelativePath("another.csv")}
+
+    hwm2 = FileListHWM(source=folder)
+    assert set(hwm2) == set()
+
+
 @pytest.mark.parametrize(
     "process, process_qualified_name",
     [

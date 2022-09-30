@@ -324,8 +324,33 @@ class FileListHWM(FileHWM[FileListType, List[str]]):
 
         return self
 
+    def __iter__(self):
+        """Iterate over files in FileListHWM.
+
+        Returns
+        --------
+        result : Iterator[RelativePath]
+
+            Files in HWM, order is not preserved
+
+        Examples
+        ----------
+
+        .. code:: python
+
+            from etl_entities import FileListHWM, RelativePath
+
+            hwm1 = FileListHWM(value=["some", "another"], ...)
+            hwm2 = FileListHWM(value=[], ...)
+
+            assert set(hwm1) == {RelativePath("some"), RelativePath("another")}
+            assert set(hwm2) == set()
+        """
+
+        return iter(self.value)
+
     def __abs__(self) -> frozenset[AbsolutePath]:
-        """Returns list of files with absolute paths
+        """Returns set of files with absolute paths
 
         Returns
         --------
