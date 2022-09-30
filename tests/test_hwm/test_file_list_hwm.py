@@ -571,7 +571,7 @@ def test_file_list_hwm_len():
     assert len(hwm1) == 2
 
     hwm2 = FileListHWM(source=folder)
-    assert len(hwm2) == 0
+    assert not len(hwm2)
 
 
 @pytest.mark.parametrize(
