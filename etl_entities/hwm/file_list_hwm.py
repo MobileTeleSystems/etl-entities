@@ -254,6 +254,31 @@ class FileListHWM(FileHWM[FileListType, List[str]]):
 
         return bool(self.value)
 
+    def __len__(self):
+        """Return number of files in the HWM.
+
+        Returns
+        --------
+        result : int
+
+            Number of files
+
+        Examples
+        ----------
+
+        .. code:: python
+
+            from etl_entities import FileListHWM
+
+            hwm1 = FileListHWM(value=["some", "another"], ...)
+            hwm2 = FileListHWM(value=[], ...)
+
+            assert len(hwm1) == 2
+            assert len(hwm2) == 0
+        """
+
+        return len(self.value)
+
     def __add__(self, value: str | os.PathLike | Iterable[str | os.PathLike]):
         """Adds path or paths to HWM value, and return copy of HWM
 

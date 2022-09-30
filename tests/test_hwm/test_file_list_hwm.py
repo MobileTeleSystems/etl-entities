@@ -564,6 +564,16 @@ def test_file_list_hwm_iter():
     assert set(hwm2) == set()
 
 
+def test_file_list_hwm_len():
+    folder = RemoteFolder(name="/home/user/abc", instance="ftp://my.domain:23")
+
+    hwm1 = FileListHWM(source=folder, value=["some/path/file.py", RelativePath("another.csv")])
+    assert len(hwm1) == 2
+
+    hwm2 = FileListHWM(source=folder)
+    assert len(hwm2) == 0
+
+
 @pytest.mark.parametrize(
     "process, process_qualified_name",
     [
