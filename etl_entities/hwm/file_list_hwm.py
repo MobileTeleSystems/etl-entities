@@ -1,3 +1,17 @@
+#  Copyright 2022 MTS (Mobile Telesystems)
+#
+#  Licensed under the Apache License, Version 2.0 (the "License");
+#  you may not use this file except in compliance with the License.
+#  You may obtain a copy of the License at
+#
+#      http://www.apache.org/licenses/LICENSE-2.0
+#
+#  Unless required by applicable law or agreed to in writing, software
+#  distributed under the License is distributed on an "AS IS" BASIS,
+#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+#  See the License for the specific language governing permissions and
+#  limitations under the License.
+
 from __future__ import annotations
 
 import os
@@ -240,6 +254,31 @@ class FileListHWM(FileHWM[FileListType, List[str]]):
 
         return bool(self.value)
 
+    def __len__(self):
+        """Return number of files in the HWM.
+
+        Returns
+        --------
+        result : int
+
+            Number of files
+
+        Examples
+        ----------
+
+        .. code:: python
+
+            from etl_entities import FileListHWM
+
+            hwm1 = FileListHWM(value=["some", "another"], ...)
+            hwm2 = FileListHWM(value=[], ...)
+
+            assert len(hwm1) == 2
+            assert len(hwm2) == 0
+        """
+
+        return len(self.value)
+
     def __add__(self, value: str | os.PathLike | Iterable[str | os.PathLike]):
         """Adds path or paths to HWM value, and return copy of HWM
 
@@ -310,8 +349,33 @@ class FileListHWM(FileHWM[FileListType, List[str]]):
 
         return self
 
+    def __iter__(self):
+        """Iterate over files in FileListHWM.
+
+        Returns
+        --------
+        result : Iterator[RelativePath]
+
+            Files in HWM, order is not preserved
+
+        Examples
+        ----------
+
+        .. code:: python
+
+            from etl_entities import FileListHWM, RelativePath
+
+            hwm1 = FileListHWM(value=["some", "another"], ...)
+            hwm2 = FileListHWM(value=[], ...)
+
+            assert set(hwm1) == {RelativePath("some"), RelativePath("another")}
+            assert set(hwm2) == set()
+        """
+
+        return iter(self.value)
+
     def __abs__(self) -> frozenset[AbsolutePath]:
-        """Returns list of files with absolute paths
+        """Returns set of files with absolute paths
 
         Returns
         --------

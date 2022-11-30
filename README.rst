@@ -2,18 +2,10 @@
 
 HWM lib
 ==============================
-
-|Build Status| |Quality Gate Status| |Maintainability Rating| |Coverage|
-|Documentation| |PyPI|
+|Build Status| |Documentation| |PyPI|
 
 .. |Build Status| image:: https://gitlab.services.mts.ru/bigdata/platform/onetools/etl-entities/badges/develop/pipeline.svg
     :target: https://gitlab.services.mts.ru/bigdata/platform/onetools/etl-entities/-/pipelines
-.. |Quality Gate Status| image:: https://sonar.bd.msk.mts.ru/api/project_badges/measure?project=etl-entities&metric=alert_status
-    :target: https://sonar.bd.msk.mts.ru/dashboard?id=etl-entities
-.. |Maintainability Rating| image:: https://sonar.bd.msk.mts.ru/api/project_badges/measure?project=etl-entities&metric=sqale_rating
-    :target: https://sonar.bd.msk.mts.ru/dashboard?id=etl-entities
-.. |Coverage| image:: https://sonar.bd.msk.mts.ru/api/project_badges/measure?project=etl-entities&metric=coverage
-    :target: https://sonar.bd.msk.mts.ru/dashboard?id=etl-entities
 .. |Documentation| image:: https://img.shields.io/badge/docs-latest-success
     :target: https://bigdata.pages.mts.ru/platform/onetools/etl-entities/
 .. |PyPI| image:: https://img.shields.io/badge/pypi-download-orange
@@ -48,8 +40,14 @@ See https://bigdata.pages.mts.ru/platform/onetools/etl-entities/
 Contribution guide
 -------------------
 
-See https://wiki.bd.msk.mts.ru/display/DAT/Contribution+guide
+See `<CONTRIBUTING.rst>`__
 
+.. security
+
+Security
+-------------------
+
+See `<SECURITY.rst>`__
 
 .. install
 
@@ -80,13 +78,10 @@ Version example: ``1.1.2.dev345``
 
     pip install -e etl-entities # latest pre-release
 
-.. develops
+.. tests
 
-Development
----------------
-
-Testing
-~~~~~~~~
+Tests
+-------
 
 Running tests is as simple as:
 

@@ -4,4 +4,4 @@ File List HWM
 
 .. autoclass:: FileListHWM
     :members: name, qualified_name, set_value, dict, json, copy, serialize, deserialize, covers, update
-    :special-members: __bool__, __abs__, __add__, __sub__, __in__
+    :special-members: __bool__, __len__, __abs__, __add__, __sub__, __in__, __iter__
