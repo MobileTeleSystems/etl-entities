@@ -12,7 +12,6 @@ default:
 ## Так же можо задать порядок выполнения stage-ов, указав их по порядку в этом блоке. ##
 
 stages:
-- .pre
 - static analysis
 - build
 - unit_tests
@@ -20,8 +19,6 @@ stages:
 - build_docs
 - artifactory
 - deploy
-- clean_repo
-- .post
 
 ### --------------- Include gitlab-ci-templates --------------- ###
 ## Добавляет в текущую конфигурацию CI\CD template's из DevOps репозитория для переиспользования. ##
@@ -34,7 +31,7 @@ include:
 
 # DOCKER
 - project: DevOps/cicd-store/gitlabci/docker
-  ref: v5
+  ref: v6
   file:
   - .base_docker_build.yml
   - .base_docker_cleaner.yml
@@ -61,6 +58,16 @@ include:
   ref: v1
   file: .base_pages_deploy_sphinx.yml
 
+### --------------- Workflow rules --------------- ###
+workflow:
+  rules:
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    when: never
+  # do not run anything on push commit to master branch, tests and linters have already executed on develop branch
+  - if: $CI_COMMIT_BRANCH =~ /^(master|main)$/
+    when: never
+  - when: always
+
 ### --------------- Get VAULT SECRET --------------- ###
 ## Переиспользование добавленного template'а по добавлению SSH-ключа пользователя ansible. ##
 devops_get_cicd_secrets:
@@ -76,6 +83,11 @@ mypy:
   # remove fixed mypy version after https://github.com/samuelcolvin/pydantic/issues/3528
   - pip3 install "mypy<0.920" pydantic
   - python3 -m mypy etl_entities
+  rules:
+  # do not run linters after pushing git tag, code was already linted
+  - if: $CI_COMMIT_TAG
+    when: never
+  - when: on_success
   interruptible: true
 
 flake8:
@@ -89,6 +101,11 @@ flake8:
   artifacts:
     when: always
     paths: [flake8.txt]
+  rules:
+  # do not run linters after pushing git tag, code was already linted
+  - if: $CI_COMMIT_TAG
+    when: never
+  - when: on_success
   interruptible: true
 
 black:
@@ -99,6 +116,11 @@ black:
   script:
   - pip3 install black
   - python3 -m black . --check
+  rules:
+  # do not run linters after pushing git tag, code was already linted
+  - if: $CI_COMMIT_TAG
+    when: never
+  - when: on_success
   interruptible: true
 
 build_docker_image:
@@ -107,18 +129,12 @@ build_docker_image:
   variables:
     DOCKER_IMAGE_TAG: ${CI_COMMIT_REF_SLUG}
     DOCKER_BUILD_EXTRA_ARGS: --build-arg BUILD_NUMBER=$CI_PIPELINE_IID --build-arg BRANCH_NAME=$CI_COMMIT_BRANCH
-    DOCKER_CACHE_FROM: ${CI_REGISTRY}/${CI_PROJECT_PATH}:dev
+    DOCKER_CACHE_FROM: ${CI_REGISTRY}/${CI_PROJECT_PATH}:develop
     STOP_IF_EXISTS: 'false'
   rules:
-  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    when: never
-  - if: $CI_COMMIT_BRANCH =~ /^(dev|develop|master|main)$/
-    variables:
-      DOCKER_ADDITIONAL_TAGS: dev
+  # do not build docker images after pushing git tag, code was already tested
   - if: $CI_COMMIT_TAG
-    variables:
-      DOCKER_ADDITIONAL_TAGS: latest
-      DOCKER_IMAGE_TAG: ${CI_COMMIT_TAG}
+    when: never
   - when: on_success
   interruptible: true
 
@@ -132,14 +148,9 @@ run_unit_tests:
   script:
   - pytest --verbose -s tests --cov-append --cov=etl_entities --cov-config=tests/.coveragerc --cov-report=xml:${COVERAGE_FILE} --junitxml=${JUNIT_FILE}
   rules:
-  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    when: never
-  - if: $CI_COMMIT_BRANCH =~ /^(dev|develop|master|main)$/
-    variables:
-      DOCKER_IMAGE_TAG: dev
+  # do not run tests after pushing git tag, code was already tested
   - if: $CI_COMMIT_TAG
-    variables:
-      DOCKER_IMAGE_TAG: ${CI_COMMIT_TAG}
+    when: never
   - when: on_success
   artifacts:
     when: always
@@ -205,57 +216,77 @@ pages:
     CICD_PAGES_ARTIFACTORY_DOCS_PATH: files/onetools/${CI_PROJECT_NAME}/docs
   interruptible: true
 
-start_review:
-  stage: clean_repo
+start_review_pip:
+  stage: .post
   dependencies:
   - build_docs
   environment:
-    name: review/$CI_COMMIT_REF_SLUG
+    name: review/pip/$CI_COMMIT_REF_SLUG
     url: ${CI_PAGES_URL}/${VERSION}/
-    on_stop: stop_review
+    on_stop: stop_review_pip
   script:
   - echo "Start review"
   rules:
-  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    when: never
-  - if: $CI_COMMIT_BRANCH =~ /^(dev|develop|master|main)$/
+  # environment is used to remove artifacts build in feature/ and bugfix/ branches only
+  # dev and release packages are left intact
+  - if: $CI_COMMIT_BRANCH =~ /^(dev|develop)$/
     when: never
   - if: $CI_COMMIT_TAG
     when: never
-  - when: always
+  - when: on_success
 
-stop_review:
+stop_review_pip:
   extends: .base_rt_cli
-  stage: clean_repo
+  stage: .post
   script:
     # Remove artifacts for feature/bug branch
   - export CI_COMMIT_REF_SLUG=$(echo $CI_COMMIT_REF_SLUG | tr '-' '.')
   - jfrog rt delete files/onetools/${CI_PROJECT_NAME}/docs/*+${CI_COMMIT_REF_SLUG}*
   - jfrog rt delete pypi-local/${CI_PROJECT_NAME}/*+${CI_COMMIT_REF_SLUG}
   environment:
-    name: review/$CI_COMMIT_REF_SLUG
+    name: review/pip/$CI_COMMIT_REF_SLUG
     action: stop
   rules:
-  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    when: never
-  - if: $CI_COMMIT_BRANCH =~ /^(dev|develop|master|main)$/
+  # environment is used to remove artifacts build in feature/ and bugfix/ branches only
+  # dev and release packages are left intact
+  - if: $CI_COMMIT_BRANCH =~ /^(dev|develop)$/
     when: never
   - if: $CI_COMMIT_TAG
     when: never
   - when: manual
     allow_failure: true
 
-clean_docker_repo:
+start_review_docker:
+  stage: .post
+  environment:
+    name: review/docker/$CI_COMMIT_REF_SLUG
+    on_stop: stop_review_docker
+  script:
+  - echo "Start review"
+  rules:
+  # environment is used to remove artifacts build in feature/ and bugfix/ branches only
+  # dev and release packages are left intact
+  - if: $CI_COMMIT_BRANCH =~ /^(dev|develop)$/
+    when: never
+  - if: $CI_COMMIT_TAG
+    when: never
+  - when: on_success
+
+stop_review_docker:
   extends: .base_docker_cleaner
   stage: .post
   variables:
     DOCKER_IMAGE_TAGS: ${CI_COMMIT_REF_SLUG}
+    DOCKER_IMAGE_NAME: ${CI_PROJECT_PATH}
+  environment:
+    name: review/docker/$CI_COMMIT_REF_SLUG
+    action: stop
   rules:
-  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
-    when: never
-  - if: $CI_COMMIT_BRANCH =~ /^(dev|develop|master|main)$/
+  # environment is used to remove artifacts build in feature/ and bugfix/ branches only
+  # dev and release packages are left intact
+  - if: $CI_COMMIT_BRANCH =~ /^(dev|develop)$/
     when: never
   - if: $CI_COMMIT_TAG
-    variables:
-      DOCKER_IMAGE_TAG: ${CI_COMMIT_TAG}
-  - when: always
+    when: never
+  - when: manual
+    allow_failure: true

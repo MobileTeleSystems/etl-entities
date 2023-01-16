@@ -24,6 +24,14 @@ def test_table_valid_input(instance):
     assert table2.full_name == f"{db}.{name}"
     assert str(table2) == f"{db}.{name}"
 
+    table3 = Table(name=name, instance=instance)
+    assert table3.name == name
+    assert not table3.db
+    assert table3.instance == instance
+
+    assert table3.full_name == name
+    assert str(table3) == name
+
 
 @pytest.mark.parametrize("invalid_name", ["wrong.name", "wrong@name", "wrong#name", []])
 @pytest.mark.parametrize("invalid_db", ["wrong.name", "wrong@name", "wrong#name", []])
@@ -76,9 +84,6 @@ def test_table_wrong_input(invalid_name, invalid_db, invalid_instance):
 
     with pytest.raises(ValueError):
         Table(name=valid_name, db=valid_db)
-
-    with pytest.raises(ValueError):
-        Table(name=valid_name, instance=valid_instance)
 
     with pytest.raises(ValueError):
         Table(name=f"{valid_db}.{valid_db}.{valid_name}", instance=valid_instance)
