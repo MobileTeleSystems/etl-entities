@@ -15,7 +15,7 @@
 from __future__ import annotations
 
 import re
-from typing import Union
+from typing import Union, Optional
 
 from pydantic import ConstrainedStr, root_validator
 
@@ -66,7 +66,7 @@ class Table(BaseModel, Entity):
     """
 
     name: TableDBName
-    db: TableDBName
+    db: Optional[TableDBName] = None
     instance: Union[GenericURL, Cluster]
 
     @property
@@ -92,7 +92,7 @@ class Table(BaseModel, Entity):
             assert table.full_name == "mydb.mytable"
         """
 
-        return f"{self.db}.{self.name}"
+        return f"{self.db}.{self.name}" if self.db else self.name
 
     def __str__(self):
         """
@@ -107,7 +107,7 @@ class Table(BaseModel, Entity):
         db: str | None = value.get("db")
 
         if name and not db and "." in name:
-            if name.count(".") != 1:
+            if name.count(".") > 1:
                 raise ValueError(f"Table name should be passed in `schema.name` format, got '{name}'")
 
             db, name = name.split(".")
