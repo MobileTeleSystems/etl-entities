@@ -6,3 +6,5 @@ python:
   - requirements: requirements-docs.txt
   - requirements: requirements-test.txt
   - requirements: requirements.txt
+  - method: pip
+    path: .
