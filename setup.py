@@ -23,7 +23,7 @@ setup(
     long_description_content_type="text/x-rst",
     license="Apache License 2.0",
     license_files=("LICENSE.txt",),
-    url="https://gitlab.services.mts.ru/bigdata/platform/onetools/etl-entities",
+    url="https://github.com/MobileTeleSystems/etl-entities",
     packages=find_packages(exclude=["docs", "docs.*", "tests", "tests.*"]),
     classifiers=[
         "Intended Audience :: Data engineers",
@@ -36,10 +36,10 @@ setup(
         "Operating System :: OS Independent",
     ],
     project_urls={
-        "Documentation": "https://docs.bd.msk.mts.ru/etl-entities/",
-        "Source": "https://git.bd.msk.mts.ru/bigdata/platform/onetools/etl-entities",
-        "CI/CD": "https://gitlab.services.mts.ru/bigdata/platform/onetools/etl-entities/-/pipelines",
-        "Tracker": "https://jira.bd.msk.mts.ru/projects/ONE/issues",
+        "Documentation": "https://etl-entities.readthedocs.io/en/stable/",
+        "Source": "https://github.com/MobileTeleSystems/etl-entities",
+        "CI/CD": "https://github.com/MobileTeleSystems/etl-entities/actions",
+        "Tracker": "https://github.com/MobileTeleSystems/etl-entities/issues",
     },
     python_requires=">=3.7",
     install_requires=requirements,

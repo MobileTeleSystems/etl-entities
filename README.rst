@@ -4,10 +4,10 @@ HWM lib
 ==============================
 |Build Status| |Documentation| |PyPI|
 
-.. |Build Status| image:: https://gitlab.services.mts.ru/bigdata/platform/onetools/etl-entities/badges/develop/pipeline.svg
-    :target: https://gitlab.services.mts.ru/bigdata/platform/onetools/etl-entities/-/pipelines
-.. |Documentation| image:: https://img.shields.io/badge/docs-latest-success
-    :target: https://bigdata.pages.mts.ru/platform/onetools/etl-entities/
+.. |Build Status| image:: https://github.com/MobileTeleSystems/etl-entities/workflows/Tests/badge.svg
+    :target: https://github.com/MobileTeleSystems/etl-entities/actions
+.. |ReadTheDocs| image:: https://img.shields.io/readthedocs/etl-entities.svg
+    :target: https://etl-entities.readthedocs.io
 .. |PyPI| image:: https://img.shields.io/badge/pypi-download-orange
     :target: http://rep.msk.mts.ru/ui/packages/pypi:%2F%2Fetl-entities?name=etl-entities&type=packages
 
@@ -33,7 +33,7 @@ Currently implemented:
 Documentation
 -------------
 
-See https://bigdata.pages.mts.ru/platform/onetools/etl-entities/
+See https://etl-entities.readthedocs.io/
 
 .. contribution
 
