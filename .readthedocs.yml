@@ -4,5 +4,5 @@ python:
   version: '3.8'
   install:
   - requirements: requirements-docs.txt
-  - requirements: requirements-dev.txt
+  - requirements: requirements-test.txt
   - requirements: requirements.txt
