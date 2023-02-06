@@ -2,7 +2,7 @@
 
 HWM lib
 ==============================
-|Build Status| |Documentation| |PyPI|
+|Build Status| |ReadTheDocs| |PyPI|
 
 .. |Build Status| image:: https://github.com/MobileTeleSystems/etl-entities/workflows/Tests/badge.svg
     :target: https://github.com/MobileTeleSystems/etl-entities/actions
