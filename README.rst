@@ -6,8 +6,8 @@ HWM lib
 
 .. |Build Status| image:: https://github.com/MobileTeleSystems/etl-entities/workflows/Tests/badge.svg
     :target: https://github.com/MobileTeleSystems/etl-entities/actions
-.. |ReadTheDocs| image:: https://img.shields.io/readthedocs/etl-entities.svg
-    :target: https://etl-entities.readthedocs.io
+.. |ReadTheDocs| image:: https://readthedocs.org/projects/etl-entities/badge/?version=latest
+    :target: https://etl-entities.readthedocs.io/en/latest/?badge=latest
 .. |PyPI| image:: https://img.shields.io/badge/pypi-download-orange
     :target: http://rep.msk.mts.ru/ui/packages/pypi:%2F%2Fetl-entities?name=etl-entities&type=packages
 
