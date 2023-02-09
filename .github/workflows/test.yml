@@ -79,7 +79,7 @@ jobs:
       run: |
         mkdir reports/ || echo "Directory exists"
         pip install -e . --no-build-isolation
-        coverage run -m pytest --reruns 5 -m ${{ matrix.mark }}
+        coverage run -m pytest -m ${{ matrix.mark }}
 
     - name: Combine coverage
       run: |
