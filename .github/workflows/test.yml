@@ -77,7 +77,7 @@ jobs:
 
     - name: Run tests
       run: |
-        mkdir reports/
+        mkdir reports/ || echo "Directory exists"
         pip install -e . --no-build-isolation
         coverage run -m pytest --reruns 5 -m ${{ matrix.mark }}
 
