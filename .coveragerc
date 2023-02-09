@@ -1,5 +1,9 @@
 [run]
 branch = True
+omit =
+    tests/*
+parallel = true
+data_file = reports/.coverage
 
 [report]
 exclude_lines =

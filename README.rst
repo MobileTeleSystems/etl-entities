@@ -2,7 +2,7 @@
 
 HWM lib
 ==============================
-|Build Status| |ReadTheDocs| |PyPI|
+|Build Status| |ReadTheDocs| |PyPI| |CodeCov|
 
 .. |Build Status| image:: https://github.com/MobileTeleSystems/etl-entities/workflows/Tests/badge.svg
     :target: https://github.com/MobileTeleSystems/etl-entities/actions
@@ -10,6 +10,8 @@ HWM lib
     :target: https://etl-entities.readthedocs.io/en/latest/?badge=latest
 .. |PyPI| image:: https://img.shields.io/badge/pypi-download-orange
     :target: http://rep.msk.mts.ru/ui/packages/pypi:%2F%2Fetl-entities?name=etl-entities&type=packages
+.. |CodeCov| image:: https://codecov.io/gh/MobileTeleSystems/etl-entities/branch/develop/graph/badge.svg?token=RIO8URKNZJ 
+    :target: https://codecov.io/gh/MobileTeleSystems/etl-entities
 
 What is ETL Entities?
 -----------------------
