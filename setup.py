@@ -44,9 +44,7 @@ setup(
     url="https://github.com/MobileTeleSystems/etl-entities",
     packages=find_packages(exclude=["docs", "docs.*", "tests", "tests.*"]),
     classifiers=[
-        "Intended Audience :: Data engineers",
         "License :: OSI Approved :: Apache Software License",
-        "Topic :: Software Development :: ETL tools",
         "Programming Language :: Python :: 3 :: Only",
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
