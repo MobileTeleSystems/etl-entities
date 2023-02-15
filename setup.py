@@ -1,21 +1,37 @@
-from os.path import abspath, dirname, join
+import os
+from pathlib import Path
 
 from setuptools import find_packages, setup
 
-from version import get_version
 
-__version__ = get_version()
-SELF_PATH = abspath(dirname(__file__))
+def get_version():
+    if os.getenv("GITHUB_REF_TYPE", "branch") == "tag":
+        return os.environ["GITHUB_REF_NAME"]
 
-with open(join(SELF_PATH, "requirements.txt")) as f:
-    requirements = [line.rstrip() for line in f if line and not line.startswith("#")]
+    version_file = here / "etl_entities" / "VERSION"
+    version = version_file.read_text().strip()  # noqa: WPS410
 
-with open(join(SELF_PATH, "README.rst")) as f:
-    long_description = f.read()
+    build_num = os.environ.get("GITHUB_RUN_ID", "0")
+    branch_name = os.environ.get("GITHUB_REF_NAME", "")
+
+    if not branch_name:
+        return version
+
+    return f"{version}.dev{build_num}"
+
+def parse_requirements(file: Path) -> list[str]:
+    lines = file.read_text().splitlines()
+    return [line.rstrip() for line in lines if line and not line.startswith("#")]
+
+
+here = Path(__file__).parent.resolve()
+requirements = parse_requirements(here / "requirements.txt")
+long_description = (here / "README.rst").read_text()
+
 
 setup(
     name="etl-entities",
-    version=__version__,
+    version=get_version(),
     author="ONEtools Team",
     author_email="onetools@mts.ru",
     description="ETL Entities lib",
