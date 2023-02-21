@@ -25,14 +25,14 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ~/.cache/pip
-        key: ${{ runner.os }}-python-3.10-release-${{ hashFiles('requirements*.txt') }}
+        key: ${{ runner.os }}-python-3.11-release-${{ hashFiles('requirements*.txt') }}
         restore-keys: |
-          ${{ runner.os }}-python-3.10-release-${{ hashFiles('requirements*.txt') }}
-          ${{ runner.os }}-python-3.10-tests-${{ hashFiles('requirements*.txt') }}
-          ${{ runner.os }}-python-3.10-codeql-${{ hashFiles('requirements*.txt') }}
-          ${{ runner.os }}-python-3.10-release-
-          ${{ runner.os }}-python-3.10-tests-
-          ${{ runner.os }}-python-3.10-codeql-
+          ${{ runner.os }}-python-3.11-release-${{ hashFiles('requirements*.txt') }}
+          ${{ runner.os }}-python-3.11-tests-${{ hashFiles('requirements*.txt') }}
+          ${{ runner.os }}-python-3.11-codeql-${{ hashFiles('requirements*.txt') }}
+          ${{ runner.os }}-python-3.11-release-
+          ${{ runner.os }}-python-3.11-tests-
+          ${{ runner.os }}-python-3.11-codeql-
           ${{ runner.os }}-python
           ${{ runner.os }}-
 
