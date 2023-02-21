@@ -8,8 +8,8 @@ HWM lib
     :target: https://github.com/MobileTeleSystems/etl-entities/actions
 .. |ReadTheDocs| image:: https://readthedocs.org/projects/etl-entities/badge/?version=latest
     :target: https://etl-entities.readthedocs.io/en/latest/?badge=latest
-.. |PyPI| image:: https://badge.fury.io/py/etl-entities.svg
-    :target: https://badge.fury.io/py/etl-entities
+.. |PyPI| image:: https://img.shields.io/pypi/v/etl-entities
+    :target: https://pypi.org/project/etl-entities/
 .. |CodeCov| image:: https://codecov.io/gh/MobileTeleSystems/etl-entities/branch/develop/graph/badge.svg?token=RIO8URKNZJ 
     :target: https://codecov.io/gh/MobileTeleSystems/etl-entities
 
