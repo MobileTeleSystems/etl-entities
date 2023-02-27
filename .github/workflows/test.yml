@@ -5,8 +5,8 @@ on:
     - dependabot/**
     - pre-commit-ci-update-config
   pull_request:
-    branches-ignore:
-    - master
+    branches:
+    - develop
   workflow_dispatch:
 
 concurrency:
