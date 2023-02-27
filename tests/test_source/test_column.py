@@ -102,7 +102,6 @@ def test_column_frozen():
 
     for attr in ("name", "partition"):
         for value in (1, "abc", None):
-
             with pytest.raises(TypeError):
                 setattr(column1, attr, value)
 

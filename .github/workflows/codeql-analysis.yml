@@ -2,11 +2,13 @@ name: CodeQL
 
 on:
   push:
-    branches:
-    - '**'
+    branches-ignore:
+    - dependabot/**
+    - pre-commit-ci-update-config
+    - master
   pull_request:
     branches:
-    - master
+    - develop
   schedule:
   - cron: 45 13 * * 6
 
@@ -27,23 +29,19 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Set up Python ${{ matrix.python-version }}
+    - name: Set up Python 3.11
       uses: actions/setup-python@v4
       with:
-        python-version: '3.10'
+        python-version: '3.11'
 
     - name: Cache pip
       uses: actions/cache@v3
       with:
         path: ~/.cache/pip
-        key: ${{ runner.os }}-python-${{ matrix.python-version }}-codeql-${{ hashFiles('requirements*.txt') }}
+        key: ${{ runner.os }}-python-3.11-codeql-${{ hashFiles('requirements*.txt') }}
         restore-keys: |
-          ${{ runner.os }}-python-${{ matrix.python-version }}-codeql-${{ hashFiles('requirements*.txt') }}
-          ${{ runner.os }}-python-${{ matrix.python-version }}-tests-${{ hashFiles('requirements*.txt') }}
-          ${{ runner.os }}-python-${{ matrix.python-version }}-release-${{ hashFiles('requirements*.txt') }}
-          ${{ runner.os }}-python-${{ matrix.python-version }}-codeql-
-          ${{ runner.os }}-python-${{ matrix.python-version }}-tests-
-          ${{ runner.os }}-python-${{ matrix.python-version }}-release-
+          ${{ runner.os }}-python-3.11-codeql-${{ hashFiles('requirements*.txt') }}
+          ${{ runner.os }}-python-3.11-codeql-
           ${{ runner.os }}-python
           ${{ runner.os }}-
 
@@ -52,13 +50,16 @@ jobs:
 
     - name: Install dependencies
       run: |
-        pip install -I -r requirements.txt -r requirements-test.txt
+        pip install -I -r requirements.txt -r requirements-dev.txt
         # Set the `CODEQL-PYTHON` environment variable to the Python executable
         # that includes the dependencies
         echo "CODEQL_PYTHON=$(which python)" >> $GITHUB_ENV
 
     - name: Run flake8
-      run: flake8 .
+      run: python3 -m flake8 .
+
+    - name: Run mypy
+      run: python3 -m mypy --config-file setup.cfg etl_entities
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL

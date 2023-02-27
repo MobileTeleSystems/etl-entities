@@ -11,17 +11,13 @@
 # documentation root, use os.path.abspath to make it absolute, like shown here.
 #
 import subprocess
-import sys
-from pathlib import Path
 
 from packaging import version as Version
-
-sys.path.insert(0, str(Path(__file__).parent.parent.absolute() / "src"))
 
 # -- Project information -----------------------------------------------------
 
 project = "etl-entities"
-copyright = "2022, ONEtools"
+copyright = "2023, ONEtools"
 author = "ONEtools"
 
 # The version info for the project you're documenting, acts as replacement for
@@ -30,9 +26,7 @@ author = "ONEtools"
 #
 # The short X.Y version.
 
-ver = Version.parse(
-    subprocess.check_output("python ../setup.py --version", shell=True, universal_newlines=True).strip()
-)
+ver = Version.parse(subprocess.check_output("python ../setup.py --version", shell=True, text=True).strip())
 version = ver.base_version
 # The full version, including alpha/beta/rc tags.
 release = ver.public
@@ -85,4 +79,4 @@ todo_include_todos = False
 # -- Options for HTMLHelp output ------------------------------------------
 
 # Output file base name for HTML help builder.
-htmlhelp_basename = "my-project-doc"
+htmlhelp_basename = "etl-entities-doc"

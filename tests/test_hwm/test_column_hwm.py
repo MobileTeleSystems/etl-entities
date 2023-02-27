@@ -172,7 +172,6 @@ def test_column_hwm_frozen(hwm_class):
 
     for attr in ("value", "column", "source", "process", "modified_time"):
         for value in (1, "abc", date.today(), datetime.now(), None, column, table, process, modified_time):
-
             with pytest.raises(TypeError):
                 setattr(hwm, attr, value)
 

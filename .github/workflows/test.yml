@@ -41,11 +41,7 @@ jobs:
         key: ${{ runner.os }}-python-${{ matrix.python-version }}-tests-${{ hashFiles('requirements*.txt') }}
         restore-keys: |
           ${{ runner.os }}-python-${{ matrix.python-version }}-tests-${{ hashFiles('requirements*.txt') }}
-          ${{ runner.os }}-python-${{ matrix.python-version }}-codeql-${{ hashFiles('requirements*.txt') }}
-          ${{ runner.os }}-python-${{ matrix.python-version }}-release-${{ hashFiles('requirements*.txt') }}
           ${{ runner.os }}-python-${{ matrix.python-version }}-tests-
-          ${{ runner.os }}-python-${{ matrix.python-version }}-codeql-
-          ${{ runner.os }}-python-${{ matrix.python-version }}-release-
           ${{ runner.os }}-python
           ${{ runner.os }}-
 

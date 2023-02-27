@@ -103,7 +103,6 @@ def test_remote_folder_frozen():
 
     for attr in ("name", "instance"):
         for value in (1, ".", "/abc", None, PosixPath()):
-
             with pytest.raises(TypeError):
                 setattr(remote_folder, attr, value)
 

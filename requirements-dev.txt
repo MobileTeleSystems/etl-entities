@@ -1,0 +1,5 @@
+black
+mypy
+pre-commit
+types-psutil
+wemake-python-styleguide

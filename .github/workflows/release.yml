@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     tags:
-    - "[0-9]+.[0-9]+.[0-9]+"
+    - '[0-9]+.[0-9]+.[0-9]+'
 
 jobs:
   release:
@@ -28,11 +28,7 @@ jobs:
         key: ${{ runner.os }}-python-3.11-release-${{ hashFiles('requirements*.txt') }}
         restore-keys: |
           ${{ runner.os }}-python-3.11-release-${{ hashFiles('requirements*.txt') }}
-          ${{ runner.os }}-python-3.11-tests-${{ hashFiles('requirements*.txt') }}
-          ${{ runner.os }}-python-3.11-codeql-${{ hashFiles('requirements*.txt') }}
           ${{ runner.os }}-python-3.11-release-
-          ${{ runner.os }}-python-3.11-tests-
-          ${{ runner.os }}-python-3.11-codeql-
           ${{ runner.os }}-python
           ${{ runner.os }}-
 
