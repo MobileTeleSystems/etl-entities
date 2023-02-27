@@ -1,15 +1,26 @@
 .. title
 
-HWM lib
-==============================
-|Build Status| |Documentation| |PyPI|
+ETL Entities lib
+================
+|Repo Status| |PyPI| |PyPI License| |PyPI Python Version|
+|Documentation| |Build Status| |Coverage|
 
-.. |Build Status| image:: https://gitlab.services.mts.ru/bigdata/platform/onetools/etl-entities/badges/develop/pipeline.svg
-    :target: https://gitlab.services.mts.ru/bigdata/platform/onetools/etl-entities/-/pipelines
-.. |Documentation| image:: https://img.shields.io/badge/docs-latest-success
-    :target: https://bigdata.pages.mts.ru/platform/onetools/etl-entities/
-.. |PyPI| image:: https://img.shields.io/badge/pypi-download-orange
-    :target: http://rep.msk.mts.ru/ui/packages/pypi:%2F%2Fetl-entities?name=etl-entities&type=packages
+.. |Repo Status| image:: https://www.repostatus.org/badges/latest/active.svg
+    :target: https://www.repostatus.org/#active
+.. |PyPI| image:: https://img.shields.io/pypi/v/etl-entities
+    :target: https://pypi.org/project/etl-entities/
+.. |PyPI License| image:: https://img.shields.io/pypi/l/etl-entities.svg
+    :target: https://github.com/MobileTeleSystems/etl-entities/blob/develop/LICENSE.txt
+.. |PyPI Python Version| image:: https://img.shields.io/pypi/pyversions/etl-entities.svg
+    :target: https://badge.fury.io/py/etl-entities
+.. |ReadTheDocs| image:: https://img.shields.io/readthedocs/etl-entities.svg
+    :target: https://etl-entities.readthedocs.io
+.. |Build Status| image:: https://github.com/MobileTeleSystems/etl-entities/workflows/Tests/badge.svg
+    :target: https://github.com/MobileTeleSystems/etl-entities/actions
+.. |Documentation| image:: https://readthedocs.org/projects/etl-entities/badge/?version=stable
+    :target: https://etl-entities.readthedocs.io/en/latest/?badge=stable
+.. |Coverage| image:: https://codecov.io/gh/MobileTeleSystems/etl-entities/branch/develop/graph/badge.svg?token=RIO8URKNZJ
+    :target: https://codecov.io/gh/MobileTeleSystems/etl-entities
 
 What is ETL Entities?
 -----------------------
@@ -26,14 +37,21 @@ Currently implemented:
     * ``RemoteFolder``
     * ``Process``
 
-**Supports only Python == 3.7**
+.. installation
+
+How to install
+---------------
+
+.. code:: bash
+
+    pip install etl-entities
 
 .. documentation
 
 Documentation
 -------------
 
-See https://bigdata.pages.mts.ru/platform/onetools/etl-entities/
+See https://etl-entities.readthedocs.io/
 
 .. contribution
 
@@ -49,42 +67,82 @@ Security
 
 See `<SECURITY.rst>`__
 
-.. install
+.. develops
 
-Installation
----------------
-
-Stable release
-~~~~~~~~~~~~~~~
-
-Stable version is released on every tag to ``master`` branch. Please use stable releases on production environment.
-Version example: ``1.1.2``
-
-.. code:: bash
-
-    pip install etl-entities==1.1.2 # exact version
-
-    pip install etl-entities # latest release
-
-Development release
-~~~~~~~~~~~~~~~~~~~~
-
-Development version is released on every tag to ``develop`` branch. Please use development releases **only** for testing purposes.
-Version example: ``1.1.2.dev345``
-
-.. code:: bash
-
-    pip install etl-entities==1.1.2dev345 # exact version
-
-    pip install -e etl-entities # latest pre-release
-
-.. tests
-
-Tests
+Develop
 -------
 
-Running tests is as simple as:
+Clone repo
+~~~~~~~~~~
 
-.. code-block:: bash
+Clone repo:
 
+.. code:: bash
+
+    git clone git@github.com:MobileTeleSystems/etl-entities.git -b develop
+
+    cd etl-entities
+
+Setup environment
+~~~~~~~~~~~~~~~~~
+
+Create virtualenv and install dependencies:
+
+.. code:: bash
+
+    # create virtual environment
+    python -m venv venv
+    source venv/bin/activate
+    pip install -U wheel
+    pip install -U pip setuptools
+
+    # install requirements
+    pip install -U -r requirements.txt
+
+Install dependencies for development:
+
+.. code:: bash
+
+    # install linters, formatters, etc
+    pip install -U -r requirements-dev.txt
+
+Enable pre-commit hooks
+~~~~~~~~~~~~~~~~~~~~~~~
+
+Install pre-commit hooks:
+
+.. code:: bash
+
+    pre-commit install --install-hooks
+
+Test pre-commit hooks run:
+
+.. code:: bash
+
+    pre-commit run
+
+Run tests
+~~~~~~~~~
+
+.. code:: bash
+
+    # install requirements for testing
+    pip install -U -r requirements-test.txt
+
+    # run tests
     pytest
+
+Build documentation
+~~~~~~~~~~~~~~~~~~~
+
+.. code:: bash
+
+    # install requirements for documentation
+    pip install -U -r requirements-docs.txt
+
+    cd docs
+
+    # generate html documentation
+    make html
+
+Then open ``docs/_build/html/index.html`` file in browser.

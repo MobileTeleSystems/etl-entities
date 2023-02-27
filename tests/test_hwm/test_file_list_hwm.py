@@ -213,7 +213,6 @@ def test_file_list_hwm_frozen():
 
     for attr in ("value", "source", "process", "modified_time"):
         for item in (1, "abc", None, folder, process, file1, file2, file3, value, modified_time):
-
             with pytest.raises(TypeError):
                 setattr(hwm, attr, item)
 
