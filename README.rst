@@ -18,7 +18,7 @@ ETL Entities lib
 .. |Build Status| image:: https://github.com/MobileTeleSystems/etl-entities/workflows/Tests/badge.svg
     :target: https://github.com/MobileTeleSystems/etl-entities/actions
 .. |Documentation| image:: https://readthedocs.org/projects/etl-entities/badge/?version=stable
-    :target: https://etl-entities.readthedocs.io/en/latest/?badge=stable
+    :target: https://etl-entities.readthedocs.io/en/stable/
 .. |Coverage| image:: https://codecov.io/gh/MobileTeleSystems/etl-entities/branch/develop/graph/badge.svg?token=RIO8URKNZJ
     :target: https://codecov.io/gh/MobileTeleSystems/etl-entities
 

@@ -4,6 +4,7 @@ on:
     branches-ignore:
     - dependabot/**
     - pre-commit-ci-update-config
+    - master
   pull_request:
     branches:
     - develop
