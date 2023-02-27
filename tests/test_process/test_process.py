@@ -141,7 +141,6 @@ def test_process_frozen():
 
     for attr in ("name", "host", "task", "dag"):
         for value in (1, ".", "/abc", None, PosixPath()):
-
             with pytest.raises(TypeError):
                 setattr(process, attr, value)
 

@@ -1,4 +1,4 @@
-#  Copyright 2022 MTS (Mobile Telesystems)
+#  Copyright 2023 MTS (Mobile Telesystems)
 #
 #  Licensed under the Apache License, Version 2.0 (the "License");
 #  you may not use this file except in compliance with the License.
@@ -15,7 +15,7 @@
 from __future__ import annotations
 
 import re
-from typing import Union, Optional
+from typing import Optional, Union
 
 from pydantic import ConstrainedStr, root_validator
 

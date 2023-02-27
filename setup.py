@@ -21,6 +21,7 @@ def get_version():
 
     return f"{version}.dev{build_num}"
 
+
 def parse_requirements(file: Path) -> list[str]:
     lines = file.read_text().splitlines()
     return [line.rstrip() for line in lines if line and not line.startswith("#")]
@@ -28,7 +29,7 @@ def parse_requirements(file: Path) -> list[str]:
 
 here = Path(__file__).parent.resolve()
 requirements = parse_requirements(here / "requirements.txt")
-long_description = (here / "README.rst").read_text()
+long_description = here.joinpath("README.rst").read_text()
 
 
 setup(
@@ -36,7 +37,7 @@ setup(
     version=get_version(),
     author="ONEtools Team",
     author_email="onetools@mts.ru",
-    description="ETL Entities lib",
+    description="ETL Entities lib for onETL",
     long_description=long_description,
     long_description_content_type="text/x-rst",
     license="Apache License 2.0",
@@ -49,6 +50,8 @@ setup(
         "Programming Language :: Python :: 3.7",
         "Programming Language :: Python :: 3.8",
         "Programming Language :: Python :: 3.9",
+        "Programming Language :: Python :: 3.10",
+        "Programming Language :: Python :: 3.11",
         "Operating System :: OS Independent",
     ],
     project_urls={
@@ -59,7 +62,6 @@ setup(
     },
     python_requires=">=3.7",
     install_requires=requirements,
-    test_suite="tests",
     include_package_data=True,
     zip_safe=False,
 )

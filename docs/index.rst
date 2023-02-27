@@ -1,5 +1,5 @@
 .. include:: ../README.rst
-    :end-before: install
+    :end-before: documentation
 
 .. toctree::
     :maxdepth: 2
@@ -10,16 +10,10 @@
     self
 
 .. toctree::
-    :maxdepth: 2
-    :caption: How to
-    :name: howto
-
-    install
-
-.. toctree::
     :maxdepth: 1
     :caption: Contents
     :name: mastertoc
+    :hidden:
 
     hwm/index
     source/index
@@ -29,15 +23,8 @@
     :maxdepth: 2
     :caption: Develop
     :name: develop
+    :hidden:
 
-    tests
+    develop
     contributing
     security
-
-.. toctree::
-    :maxdepth: 2
-    :caption: Links
-    :name: links
-
-    Index <genindex.html#https://>
-    Search page <search.html#https://>

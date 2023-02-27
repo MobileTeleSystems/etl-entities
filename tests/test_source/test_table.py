@@ -110,7 +110,6 @@ def test_table_frozen():
 
     for attr in ("name", "db", "instance"):
         for value in (1, "abc", None):
-
             with pytest.raises(TypeError):
                 setattr(table1, attr, value)
 
