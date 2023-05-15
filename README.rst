@@ -6,19 +6,17 @@ ETL Entities lib
 |Documentation| |Build Status| |Coverage|
 
 .. |Repo Status| image:: https://www.repostatus.org/badges/latest/active.svg
-    :target: https://www.repostatus.org/#active
+    :target: https://github.com/MobileTeleSystems/etl-entities
 .. |PyPI| image:: https://img.shields.io/pypi/v/etl-entities
     :target: https://pypi.org/project/etl-entities/
 .. |PyPI License| image:: https://img.shields.io/pypi/l/etl-entities.svg
     :target: https://github.com/MobileTeleSystems/etl-entities/blob/develop/LICENSE.txt
 .. |PyPI Python Version| image:: https://img.shields.io/pypi/pyversions/etl-entities.svg
     :target: https://badge.fury.io/py/etl-entities
-.. |ReadTheDocs| image:: https://img.shields.io/readthedocs/etl-entities.svg
-    :target: https://etl-entities.readthedocs.io
 .. |Build Status| image:: https://github.com/MobileTeleSystems/etl-entities/workflows/Tests/badge.svg
     :target: https://github.com/MobileTeleSystems/etl-entities/actions
 .. |Documentation| image:: https://readthedocs.org/projects/etl-entities/badge/?version=stable
-    :target: https://etl-entities.readthedocs.io/en/latest/?badge=stable
+    :target: https://etl-entities.readthedocs.io/
 .. |Coverage| image:: https://codecov.io/gh/MobileTeleSystems/etl-entities/branch/develop/graph/badge.svg?token=RIO8URKNZJ
     :target: https://codecov.io/gh/MobileTeleSystems/etl-entities
 

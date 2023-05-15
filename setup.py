@@ -55,7 +55,7 @@ setup(
         "Operating System :: OS Independent",
     ],
     project_urls={
-        "Documentation": "https://etl-entities.readthedocs.io/en/stable/",
+        "Documentation": "https://etl-entities.readthedocs.io/",
         "Source": "https://github.com/MobileTeleSystems/etl-entities",
         "CI/CD": "https://github.com/MobileTeleSystems/etl-entities/actions",
         "Tracker": "https://github.com/MobileTeleSystems/etl-entities/issues",

@@ -9,10 +9,16 @@
 # If extensions (or modules to document with autodoc) are in another directory,
 # add these directories to sys.path here. If the directory is relative to the
 # documentation root, use os.path.abspath to make it absolute, like shown here.
-#
+
+
+import os
 import subprocess
+import sys
+from pathlib import Path
 
 from packaging import version as Version
+
+sys.path.insert(0, os.fspath(Path(__file__).parent.parent.absolute()))
 
 # -- Project information -----------------------------------------------------
 
@@ -36,7 +42,12 @@ release = ver.public
 # Add any Sphinx extension module names here, as strings. They can be
 # extensions coming with Sphinx (named 'sphinx.ext.*') or your custom
 # ones.
-extensions = ["sphinx.ext.autosummary", "numpydoc", "sphinx_rtd_theme", "sphinx.ext.autodoc"]
+extensions = [
+    "numpydoc",
+    "sphinx_copybutton",
+    "sphinx.ext.autodoc",
+    "sphinx.ext.autosummary",
+]
 numpydoc_show_class_members = True
 
 # Add any paths that contain templates here, relative to this directory.
@@ -53,12 +64,12 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
 #
-html_theme = "sphinx_rtd_theme"
+html_theme = "furo"
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
-html_static_path = []
+html_static_path = ["_static"]
 
 # The master toctree document.
 master_doc = "index"

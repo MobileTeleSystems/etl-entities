@@ -1,4 +1,4 @@
-include README.rst requirements.txt requirements-test.txt etl_entities/VERSION
+include README.rst requirements.txt requirements-test.txt etl_entities/VERSION etl_entities/py.typed
 recursive-exclude * __pycache__
 recursive-exclude * *.pyc
 recursive-exclude * *.pyo
