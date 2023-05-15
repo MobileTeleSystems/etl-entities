@@ -1,13 +1,11 @@
 name: Tests
 on:
   push:
-    branches-ignore:
-    - dependabot/**
-    - pre-commit-ci-update-config
-    - master
-  pull_request:
     branches:
     - develop
+  pull_request:
+    branches-ignore:
+    - master
   workflow_dispatch:
 
 concurrency:
@@ -16,7 +14,7 @@ concurrency:
 
 jobs:
   tests:
-    name: Run ${{ matrix.mark }} tests (${{ matrix.python-version }} on ${{ matrix.os }})
+    name: Run tests (${{ matrix.python-version }} on ${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
@@ -54,8 +52,6 @@ jobs:
 
     - name: Build package
       run: |
-        git version
-        git tag -l --sort=-creatordate --merged
         python setup.py --version
         python setup.py bdist_wheel sdist
 
@@ -63,18 +59,13 @@ jobs:
       run: |
         mkdir reports/ || echo "Directory exists"
         pip install -e . --no-build-isolation
-        coverage run -m pytest
-
-    - name: Combine coverage
-      run: |
-        coverage combine
-        coverage xml -o reports/coverage-${{ matrix.python-version }}.xml -i
+        ./pytest_runner.sh
 
     - name: Upload coverage results
       uses: actions/upload-artifact@v3
       with:
-        name: code-coverage-${{ matrix.python-version }}
-        path: reports/coverage-${{ matrix.python-version }}.xml
+        name: coverage-${{ matrix.python-version }}-os-${{ matrix.os }}
+        path: reports/*
 
   all_done:
     name: Tests done
@@ -85,17 +76,43 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
+    - name: Set up Python 3.11
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.11'
+
+    - name: Cache pip
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-python-3.11-coverage-${{ hashFiles('requirements*.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-python-3.11-coverage-${{ hashFiles('requirements*.txt') }}
+          ${{ runner.os }}-python-3.11-coverage-
+          ${{ runner.os }}-python
+          ${{ runner.os }}-
+
+    - name: Upgrade pip
+      run: python -m pip install --upgrade pip setuptools wheel
+
+    - name: Install dependencies
+      run: pip install -I -r requirements-test.txt
+
     - name: Download all coverage reports
       uses: actions/download-artifact@v3
       with:
         path: reports
 
-    - name: Move coverage reports to the root folder
+    - name: Move coverage data to the root folder
       run: find reports -type f -exec mv '{}' reports \;
+
+    - name: Generate coverate reports
+      run: ./combine_coverage.sh
 
     - name: Check coverage
       uses: codecov/codecov-action@v3
       with:
+        token: ${{ secrets.CODECOV_TOKEN }}
         directory: ./reports
         fail_ci_if_error: true
 
