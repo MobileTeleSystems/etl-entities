@@ -35,7 +35,7 @@ long_description = here.joinpath("README.rst").read_text()
 setup(
     name="etl-entities",
     version=get_version(),
-    author="ONEtools Team",
+    author="DataOps.ETL",
     author_email="onetools@mts.ru",
     description="ETL Entities lib for onETL",
     long_description=long_description,
