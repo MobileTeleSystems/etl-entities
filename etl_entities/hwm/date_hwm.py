@@ -132,7 +132,6 @@ class DateHWM(ColumnHWM[date]):
 
         if result.lower() == "null":
             return None
-
         return date.fromisoformat(result)
 
     def __eq__(self, other):

@@ -116,10 +116,8 @@ class HWM(ABC, Entity, GenericModel, Generic[ValueType, SerializedType]):
         from etl_entities.hwm.hwm_type_registry import HWMTypeRegistry
 
         result = json.loads(self.json())
-
         result["value"] = self.serialize_value()
         result["type"] = HWMTypeRegistry.get_key(self.__class__)
-
         return result
 
     @classmethod
