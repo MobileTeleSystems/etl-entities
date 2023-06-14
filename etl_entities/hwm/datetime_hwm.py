@@ -143,7 +143,6 @@ class DateTimeHWM(ColumnHWM[datetime]):
 
         if result.lower() == "null":
             return None
-
         return datetime.fromisoformat(result)
 
     def __eq__(self, other):
