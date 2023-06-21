@@ -8,6 +8,9 @@ on:
     - master
   workflow_dispatch:
 
+env:
+  DEFAULT_PYTHON: '3.11'
+
 concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
   cancel-in-progress: true
@@ -18,52 +21,23 @@ jobs:
     runs-on: ubuntu-latest
     if: github.repository == 'MobileTeleSystems/etl-entities'  # prevent running on forks
 
+    environment:
+      name: test-pypi
+      url: https://test.pypi.org/p/etl-entities
+    permissions:
+      id-token: write # to auth in Test PyPI
+
     steps:
-    - uses: fountainhead/action-wait-for-check@v1.1.0
-      id: wait-for-linters
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        checkName: Linters
-        ref: ${{ github.sha }}
-        timeoutSeconds: 3600
-
-    - name: Fail the Build
-      uses: cutenode/action-always-fail@v1
-      if: steps.wait-for-linters.outputs.conclusion != 'success'
-
-    - uses: fountainhead/action-wait-for-check@v1.1.0
-      id: wait-for-codeql
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        checkName: CodeQL
-        ref: ${{ github.sha }}
-        timeoutSeconds: 3600
-
-    - name: Fail the Build
-      uses: cutenode/action-always-fail@v1
-      if: steps.wait-for-codeql.outputs.conclusion != 'success'
-
-    - uses: fountainhead/action-wait-for-check@v1.1.0
-      id: wait-for-tests
-      with:
-        token: ${{ secrets.GITHUB_TOKEN }}
-        checkName: Tests done
-        ref: ${{ github.sha }}
-        timeoutSeconds: 3600
-
-    - name: Fail the Build
-      uses: cutenode/action-always-fail@v1
-      if: steps.wait-for-tests.outputs.conclusion != 'success'
-
     - name: Checkout code
       uses: actions/checkout@v3
       with:
         fetch-depth: 0
 
-    - name: Set up Python 3.11
+    - name: Set up Python ${{ env.DEFAULT_PYTHON }}
+      id: python
       uses: actions/setup-python@v4
       with:
-        python-version: '3.11'
+        python-version: ${{ env.DEFAULT_PYTHON }}
 
     - name: Upgrade pip
       run: python -m pip install --upgrade pip setuptools wheel
@@ -74,5 +48,4 @@ jobs:
     - name: Publish package
       uses: pypa/gh-action-pypi-publish@release/v1
       with:
-        password: ${{ secrets.TEST_PYPI_API_TOKEN }}
         repository-url: https://test.pypi.org/legacy/
