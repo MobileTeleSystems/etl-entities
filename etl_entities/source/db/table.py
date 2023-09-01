@@ -15,9 +15,9 @@
 from __future__ import annotations
 
 import re
-from typing import Optional, Union
+from typing import Union
 
-from pydantic import ConstrainedStr, root_validator
+from pydantic import ConstrainedStr
 
 from etl_entities.entity import BaseModel, Entity
 from etl_entities.instance import Cluster, GenericURL
@@ -25,7 +25,7 @@ from etl_entities.instance import Cluster, GenericURL
 
 # table or db name cannot have delimiters used in qualified_name
 class TableDBName(ConstrainedStr):
-    regex = re.compile("^[^.@#]+$")
+    regex = re.compile("^[^@#]+$")
 
 
 class Table(BaseModel, Entity):
@@ -61,12 +61,11 @@ class Table(BaseModel, Entity):
 
         from etl_entities import Table
 
-        table1 = Table(name="mytable", db="mydb", instance="postgres://db.host:5432")
-        table2 = Table(name="mytable", db="mydb", instance="rnd-dwh")
+        table1 = Table(name="mydb.mytable", instance="postgres://db.host:5432")
+        table2 = Table(name="mydb.mytable", instance="rnd-dwh")
     """
 
     name: TableDBName
-    db: Optional[TableDBName] = None
     instance: Union[GenericURL, Cluster]
 
     @property
@@ -87,12 +86,12 @@ class Table(BaseModel, Entity):
 
             from etl_entities import Table
 
-            table = Table(name="mytable", db="mydb", instance="postgres://db.host:5432")
+            table = Table(name="mydb.mytable", instance="postgres://db.host:5432")
 
             assert table.full_name == "mydb.mytable"
         """
 
-        return f"{self.db}.{self.name}" if self.db else self.name
+        return self.name
 
     def __str__(self):
         """
@@ -100,21 +99,6 @@ class Table(BaseModel, Entity):
         """
 
         return self.full_name
-
-    @root_validator(pre=True)
-    def parse_name(cls, value: dict) -> dict:  # noqa: N805
-        name: str | None = value.get("name")
-        db: str | None = value.get("db")
-
-        if name and not db and "." in name:
-            if name.count(".") > 1:
-                raise ValueError(f"Table name should be passed in `schema.name` format, got '{name}'")
-
-            db, name = name.split(".")
-            value["name"] = name
-            value["db"] = db
-
-        return value
 
     @property
     def qualified_name(self) -> str:
@@ -134,8 +118,8 @@ class Table(BaseModel, Entity):
 
             from etl_entities import Table
 
-            table1 = Table(name="mytable", db="mydb", instance="postgres://db.host:5432")
-            table2 = Table(name="mytable", db="mydb", instance="rnd-dwh")
+            table1 = Table(name="mydb.mytable", instance="postgres://db.host:5432")
+            table2 = Table(name="mydb.mytable", instance="rnd-dwh")
 
             assert table1.qualified_name == "mydb.mytable@postgres://db.host:5432"
             assert table2.qualified_name == "mydb.mytable@rnd-dwh"

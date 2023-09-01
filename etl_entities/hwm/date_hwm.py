@@ -59,7 +59,7 @@ class DateHWM(ColumnHWM[date]):
         from etl_entities import DateHWM, Column, Table
 
         column = Column(name="id")
-        table = Table(name="mytable", db="mydb", instance="postgres://db.host:5432")
+        table = Table(name="mydb.mytable", instance="postgres://db.host:5432")
 
         hwm = DateHWM(column=column, source=table, value=date(year=2021, month=12, day=3))
     """

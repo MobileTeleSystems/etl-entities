@@ -17,7 +17,7 @@ from etl_entities.source import Column, Table
 )
 def test_column_hwm_valid_input(hwm_class, value):
     column = Column(name="some")
-    table = Table(name="another", db="abc", instance="proto://url")
+    table = Table(name="abc.another", instance="proto://url")
     process = Process(name="myprocess", host="myhost")
     modified_time = datetime.now() - timedelta(days=5)
 
@@ -88,7 +88,7 @@ def test_column_hwm_valid_input(hwm_class, value):
 )
 def test_column_hwm_wrong_input(hwm_class, value, wrong_values):
     column = Column(name="some")
-    table = Table(name="another", db="abc", instance="proto://url")
+    table = Table(name="abc.another", instance="proto://url")
 
     with pytest.raises(ValueError):
         hwm_class()
@@ -132,7 +132,7 @@ def test_column_hwm_wrong_input(hwm_class, value, wrong_values):
 )
 def test_column_hwm_set_value(hwm_class, value):
     column = Column(name="some")
-    table = Table(name="another", db="abc", instance="proto://url")
+    table = Table(name="abc.another", instance="proto://url")
     hwm = hwm_class(column=column, source=table)
 
     hwm1 = hwm.copy()
@@ -165,7 +165,7 @@ def test_column_hwm_set_value(hwm_class, value):
 )
 def test_column_hwm_frozen(hwm_class):
     column = Column(name="some")
-    table = Table(name="another", db="abc", instance="proto://url")
+    table = Table(name="abc.another", instance="proto://url")
     hwm = hwm_class(column=column, source=table)
     process = Process(name="myprocess", host="myhost")
     modified_time = datetime.now() - timedelta(days=5)
@@ -188,8 +188,8 @@ def test_column_hwm_compare(hwm_class, value, delta):  # noqa: WPS210
     column1 = Column(name="some1")
     column2 = Column(name="some2")
 
-    table1 = Table(name="another1", db="abc", instance="proto1://url1")
-    table2 = Table(name="another2", db="bcd", instance="proto1://url2")
+    table1 = Table(name="abc.another1", instance="proto1://url1")
+    table2 = Table(name="bcd.another2", instance="proto1://url2")
 
     hwm = hwm_class(column=column1, source=table1, value=value)
 
@@ -250,7 +250,7 @@ def test_column_hwm_compare(hwm_class, value, delta):  # noqa: WPS210
 )
 def test_column_hwm_covers(hwm_class, value, delta):  # noqa: WPS210
     column = Column(name="some1")
-    table = Table(name="another1", db="abc", instance="proto1://url1")
+    table = Table(name="abc.another1", instance="proto1://url1")
 
     empty_hwm = hwm_class(column=column, source=table)
 
@@ -277,7 +277,7 @@ def test_column_hwm_compare_other_type(hwm_class, value):  # noqa: WPS210
     other_types = {DateHWM, DateTimeHWM, IntHWM} - {hwm_class}
 
     column = Column(name="some")
-    table = Table(name="another", db="abc", instance="proto://url")
+    table = Table(name="abc.another", instance="proto://url")
 
     hwm = hwm_class(column=column, source=table, value=value)
 
@@ -303,7 +303,7 @@ def test_column_hwm_compare_other_type(hwm_class, value):  # noqa: WPS210
 )
 def test_column_hwm_add(hwm_class, value, delta):
     column = Column(name="some")
-    table = Table(name="another", db="abc", instance="proto://url")
+    table = Table(name="abc.another", instance="proto://url")
     hwm = hwm_class(column=column, source=table)
 
     # if something has been changed, update modified_time
@@ -338,7 +338,7 @@ def test_column_hwm_add(hwm_class, value, delta):
 )
 def test_column_hwm_sub(hwm_class, value, delta):
     column = Column(name="some")
-    table = Table(name="another", db="abc", instance="proto://url")
+    table = Table(name="abc.another", instance="proto://url")
     hwm = hwm_class(column=column, source=table)
 
     hwm1 = hwm.copy(update={"value": value})
@@ -371,7 +371,7 @@ def test_column_hwm_sub(hwm_class, value, delta):
 )
 def test_column_hwm_update(hwm_class, value, delta):
     column = Column(name="some")
-    table = Table(name="another", db="abc", instance="proto://url")
+    table = Table(name="abc.another", instance="proto://url")
     empty_hwm = hwm_class(column=column, source=table)
 
     # if both new and current values are None, do nothing
@@ -451,11 +451,11 @@ def test_column_hwm_update(hwm_class, value, delta):
     "table, table_qualified_name",
     [
         (
-            Table(name="mytable", db="mydb", instance="dbtype://host.name:1234/schema"),
+            Table(name="mydb.mytable", instance="dbtype://host.name:1234/schema"),
             "mydb.mytable@dbtype://host.name:1234/schema",
         ),
-        (Table(name="mytable", db="mydb", instance="dbtype://host.name:1234"), "mydb.mytable@dbtype://host.name:1234"),
-        (Table(name="mytable", db="mydb", instance="cluster"), "mydb.mytable@cluster"),
+        (Table(name="mydb.mytable", instance="dbtype://host.name:1234"), "mydb.mytable@dbtype://host.name:1234"),
+        (Table(name="mydb.mytable", instance="cluster"), "mydb.mytable@cluster"),
     ],
 )
 @pytest.mark.parametrize(
@@ -498,7 +498,7 @@ def test_column_hwm_qualified_name(
 )
 def test_column_hwm_serialization(hwm_class, hwm_type, value, serialized_value, wrong_values):
     column = Column(name="some")
-    table = Table(name="another", db="abc", instance="proto://url")
+    table = Table(name="abc.another", instance="proto://url")
     process = Process(name="abc", host="somehost", task="sometask", dag="somedag")
     modified_time = datetime.now()
 

@@ -22,7 +22,7 @@ from etl_entities.source import Column, Table
 )
 def test_column_hwm_parse(hwm_class, hwm_type, value, serialized_value):
     column = Column(name="some")
-    table = Table(name="another", db="abc", instance="proto://url")
+    table = Table(name="abc.another", instance="proto://url")
     process = Process(name="abc", host="somehost", task="sometask", dag="somedag")
     modified_time = datetime.now()
 

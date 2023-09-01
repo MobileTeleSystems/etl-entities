@@ -58,7 +58,7 @@ class IntHWM(ColumnHWM[StrictInt]):
         from etl_entities import IntHWM, Column, Table
 
         column = Column(name="id")
-        table = Table(name="mytable", db="mydb", instance="postgres://db.host:5432")
+        table = Table(name="mydb.mytable", instance="postgres://db.host:5432")
 
         hwm = IntHWM(column=column, source=table, value=1)
     """
