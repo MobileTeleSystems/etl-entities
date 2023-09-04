@@ -34,9 +34,9 @@ jobs:
       uses: actions/cache@v3
       with:
         path: ~/.cache/pip
-        key: ${{ runner.os }}-python-${{ env.DEFAULT_PYTHON }}-changelog-${{ hashFiles('requirements/core.txt', 'requirements/docs.txt') }}
+        key: ${{ runner.os }}-python-${{ env.DEFAULT_PYTHON }}-changelog-${{ hashFiles('requirements.txt', 'requirements-docs.txt') }}
         restore-keys: |
-          ${{ runner.os }}-python-${{ env.DEFAULT_PYTHON }}-changelog-${{ hashFiles('requirements/core.txt', 'requirements/docs.txt') }}
+          ${{ runner.os }}-python-${{ env.DEFAULT_PYTHON }}-changelog-${{ hashFiles('requirements.txt', 'requirements-docs.txt') }}
           ${{ runner.os }}-python-${{ env.DEFAULT_PYTHON }}-changelog-
 
     - name: Upgrade pip
