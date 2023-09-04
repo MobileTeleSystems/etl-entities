@@ -1,0 +1,8 @@
+1.3.0 (2023-01-16)
+------------------
+
+Breaking Changes
+^^^^^^^^^^^^^^^^
+
+- Make ``Table.db`` optional
+- Allow to pass table name in format ``table`` instead of ``schema.table`` to ``Table.name``

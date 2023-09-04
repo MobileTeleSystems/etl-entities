@@ -1,0 +1,22 @@
+1.2.1 (2022-11-30)
+------------------
+
+Features
+^^^^^^^^
+
+- Add ``__iter__`` method to ``FileListHWM``
+- Add ``__len__`` method to ``FileListHWM``
+
+Improvements
+^^^^^^^^^^^^
+
+- Add ``CONTRIBUTING.rst``
+- Add license
+- Add ``SECURITY.md``
+- Remove SonarQube integration
+- Add ``CONTRIBUTING.rst`` and ``SECURITY.rst`` to docs
+
+Bug Fixes
+^^^^^^^^^
+
+- Change ``pydantic`` version upper limit to 2.0 instead of 1.10

@@ -4,37 +4,16 @@ from etl_entities.source import Table
 
 
 @pytest.mark.parametrize("instance", ["proto://url", "proto://url/path", "cluster-name"])
-def test_table_valid_input(instance):
-    name = "some"
-    db = "another"
-
-    table1 = Table(name=name, db=db, instance=instance)
-    assert table1.name == name
-    assert table1.db == db
-    assert table1.instance == instance
-
-    assert table1.full_name == f"{db}.{name}"
-    assert str(table1) == f"{db}.{name}"
-
-    table2 = Table(name=f"{db}.{name}", instance=instance)
-    assert table2.name == name
-    assert table2.db == db
-    assert table2.instance == instance
-
-    assert table2.full_name == f"{db}.{name}"
-    assert str(table2) == f"{db}.{name}"
-
-    table3 = Table(name=name, instance=instance)
-    assert table3.name == name
-    assert not table3.db
-    assert table3.instance == instance
-
-    assert table3.full_name == name
-    assert str(table3) == name
+@pytest.mark.parametrize("name", ["name", "schema.name", "db.schema.name"])
+def test_table_valid_input(instance, name):
+    table = Table(name=name, instance=instance)
+    assert table.name == name
+    assert table.instance == instance
+    assert table.full_name == name
+    assert str(table) == name
 
 
-@pytest.mark.parametrize("invalid_name", ["wrong.name", "wrong@name", "wrong#name", []])
-@pytest.mark.parametrize("invalid_db", ["wrong.name", "wrong@name", "wrong#name", []])
+@pytest.mark.parametrize("invalid_name", ["wrong@name", "wrong#name", []])
 @pytest.mark.parametrize(
     "invalid_instance",
     [
@@ -65,10 +44,8 @@ def test_table_valid_input(instance):
         "http://some/path#fragment",
     ],
 )
-def test_table_wrong_input(invalid_name, invalid_db, invalid_instance):
+def test_table_wrong_input(invalid_name, invalid_instance):
     valid_name = "some"
-    valid_db = "another"
-    valid_instance = "proto://url"
 
     with pytest.raises(ValueError):
         Table()
@@ -77,67 +54,41 @@ def test_table_wrong_input(invalid_name, invalid_db, invalid_instance):
         Table(name=valid_name)
 
     with pytest.raises(ValueError):
-        Table(db=valid_name)
-
-    with pytest.raises(ValueError):
         Table(instance=valid_name)
 
     with pytest.raises(ValueError):
-        Table(name=valid_name, db=valid_db)
-
-    with pytest.raises(ValueError):
-        Table(name=f"{valid_db}.{valid_db}.{valid_name}", instance=valid_instance)
-
-    with pytest.raises(ValueError):
-        Table(db=valid_db, instance=valid_instance)
-
-    with pytest.raises(ValueError):
-        Table(name=invalid_name, db=valid_db, instance=valid_instance)
-
-    with pytest.raises(ValueError):
-        Table(name=valid_name, db=invalid_db, instance=valid_instance)
-
-    with pytest.raises(ValueError):
-        Table(name=valid_name, db=valid_db, instance=invalid_instance)
+        Table(name=invalid_name, instance=invalid_instance)
 
 
 def test_table_frozen():
-    name = "some"
-    db = "another"
+    name = "schema.name"
     instance = "proto://url"
 
-    table1 = Table(name=name, db=db, instance=instance)
+    table1 = Table(name=name, instance=instance)
 
-    for attr in ("name", "db", "instance"):
+    for attr in ("name", "instance"):
         for value in (1, "abc", None):
             with pytest.raises(TypeError):
                 setattr(table1, attr, value)
 
 
 def test_table_compare():
-    name1 = "some1"
-    name2 = "some2"
-
-    db1 = "db1"
-    db2 = "db2"
+    name1 = "db1.name1"
+    name2 = "db2.name2"
 
     instance1 = "proto://url1"
     instance2 = "proto://url2"
 
-    table = Table(name=name1, db=db1, instance=instance1)
+    table = Table(name=name1, instance=instance1)
 
-    table1 = Table(name=name1, db=db1, instance=instance1)
-    table2 = Table(name=name2, db=db1, instance=instance1)
-    table3 = Table(name=name1, db=db2, instance=instance1)
-    table4 = Table(name=name2, db=db2, instance=instance1)
-    table5 = Table(name=name1, db=db1, instance=instance2)
-    table6 = Table(name=name2, db=db1, instance=instance2)
-    table7 = Table(name=name1, db=db2, instance=instance2)
-    table8 = Table(name=name2, db=db2, instance=instance2)
+    table1 = Table(name=name1, instance=instance1)
+    table2 = Table(name=name2, instance=instance1)
+    table3 = Table(name=name1, instance=instance2)
+    table4 = Table(name=name2, instance=instance2)
 
     assert table == table1
 
-    items = (table1, table2, table3, table4, table5, table6, table7, table8)
+    items = (table1, table2, table3, table4)
 
     for item1 in items:
         for item2 in items:
@@ -146,25 +97,22 @@ def test_table_compare():
 
 
 def test_table_qualified_name():
-    name = "some"
-    db = "another"
+    name = "schema.name"
     instance = "http://some.url:234"
 
     table = Table(
         name=name,
-        db=db,
         instance=instance,
     )
-    assert table.qualified_name == f"{db}.{name}@{instance}"
+    assert table.qualified_name == f"{name}@{instance}"
 
 
 def test_table_serialization():
-    name = "some"
-    db = "another"
+    name = "schema.name"
     instance = "proto://url"
 
-    serialized = {"name": name, "db": db, "instance": instance}
-    table = Table(name=name, db=db, instance=instance)
+    serialized = {"name": name, "instance": instance}
+    table = Table(name=name, instance=instance)
 
     assert table.serialize() == serialized
     assert Table.deserialize(serialized) == table

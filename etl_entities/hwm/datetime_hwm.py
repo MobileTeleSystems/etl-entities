@@ -59,7 +59,7 @@ class DateTimeHWM(ColumnHWM[datetime]):
         from etl_entities import DateTimeHWM, Column, Table
 
         column = Column(name="id")
-        table = Table(name="mytable", db="mydb", instance="postgres://db.host:5432")
+        table = Table(name="mydb.mytable", instance="postgres://db.host:5432")
 
         hwm = DateTimeHWM(
             column=column,
@@ -143,7 +143,6 @@ class DateTimeHWM(ColumnHWM[datetime]):
 
         if result.lower() == "null":
             return None
-
         return datetime.fromisoformat(result)
 
     def __eq__(self, other):

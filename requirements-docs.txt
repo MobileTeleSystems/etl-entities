@@ -1,8 +1,10 @@
 furo
+importlib-resources<6
 numpydoc
 packaging
 sphinx
 sphinx-copybutton
-# ReadTheDocs uses old OpenSSL version
-# https://github.com/urllib3/urllib3/issues/2168
-urllib3<2.0
+sphinx-toolbox
+sphinxcontrib-towncrier
+towncrier
+urllib3

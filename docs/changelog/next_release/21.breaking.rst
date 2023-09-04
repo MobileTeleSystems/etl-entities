@@ -1,0 +1,1 @@
+Delete ``Table.db`` field, allow to pass any number of dots ``.`` to ``Table.name``.

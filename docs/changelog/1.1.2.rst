@@ -1,0 +1,7 @@
+1.1.2 (2022-08-17)
+------------------
+
+Bug Fixes
+^^^^^^^^^
+
+- Fix ``FileListHWM.validate_value`` method

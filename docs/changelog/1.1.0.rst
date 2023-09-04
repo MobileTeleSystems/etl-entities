@@ -1,0 +1,24 @@
+1.1.0 (2022-08-11)
+------------------
+
+Breaking Changes
+^^^^^^^^^^^^^^^^
+
+- Allow ``HWM.set_value`` and ``__add__`` mutate object
+
+Features
+^^^^^^^^
+
+- Added ``FileHWM`` base class
+- Added ``HWM.covers`` method
+
+Improvements
+^^^^^^^^^^^^
+
+- Update README
+
+Bug Fixes
+^^^^^^^^^
+
+- Limit upper version of ``pydantic``
+- Fix building documentation

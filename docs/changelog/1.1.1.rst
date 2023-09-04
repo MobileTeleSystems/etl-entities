@@ -1,0 +1,9 @@
+1.1.1 (2022-08-16)
+------------------
+
+Features
+^^^^^^^^
+
+- Add ``HWM.update`` method
+- Return HWM copy in ``__add__`` and ``__sub__`` instead of mutating value in-pace
+- Handle absolute paths in ``FileListHWM.update``
