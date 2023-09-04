@@ -1,6 +1,10 @@
 furo
+importlib-resources<6
 numpydoc
 packaging
 sphinx
 sphinx-copybutton
+sphinx-toolbox
+sphinxcontrib-towncrier
+towncrier
 urllib3

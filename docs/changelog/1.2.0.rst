@@ -1,0 +1,12 @@
+1.2.0 (2022-09-14)
+------------------
+
+Breaking Changes
+^^^^^^^^^^^^^^^^
+
+- Do not serialize files list to a string
+
+Bug Fixes
+^^^^^^^^^
+
+- Do not pass multiple names to ``register_hwm_type``

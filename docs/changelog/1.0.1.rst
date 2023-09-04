@@ -1,0 +1,7 @@
+1.0.1 (2022-02-01)
+------------------
+
+Improvements
+^^^^^^^^^^^^
+
+Add ``full_name`` property to all entities

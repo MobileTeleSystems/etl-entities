@@ -18,7 +18,9 @@ from pathlib import Path
 
 from packaging import version as Version
 
-sys.path.insert(0, os.fspath(Path(__file__).parent.parent.absolute()))
+PROJECT_ROOT_DIR = Path(__file__).parent.parent.resolve()
+
+sys.path.insert(0, os.fspath(PROJECT_ROOT_DIR))
 
 # -- Project information -----------------------------------------------------
 
@@ -47,6 +49,8 @@ extensions = [
     "sphinx_copybutton",
     "sphinx.ext.autodoc",
     "sphinx.ext.autosummary",
+    "sphinx_toolbox.github",
+    "sphinxcontrib.towncrier",  # provides `towncrier-draft-entries` directive
 ]
 numpydoc_show_class_members = True
 
@@ -91,3 +95,10 @@ todo_include_todos = False
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = "etl-entities-doc"
+
+towncrier_draft_autoversion_mode = "draft"
+towncrier_draft_include_empty = False
+towncrier_draft_working_directory = PROJECT_ROOT_DIR
+
+github_username = "MobileTeleSystems"
+github_repository = "etl-entities"
