@@ -1,0 +1,16 @@
+1.4.0 (2023-09-04)
+==================
+
+Breaking Changes
+----------------
+
+- Delete ``Table.db`` field, allow to pass any number of dots ``.`` to ``Table.name``. (:github:pull:`21`)
+
+
+Improvements
+------------
+
+- Added changelog.
+
+  Changelog is generated from separated news files using `towncrier <https://pypi.org/project/towncrier/>`_. (:github:pull:`47`)
+- Sync CI with onetl

@@ -19,7 +19,7 @@ strict_optional = true
 
 [tool.towncrier]
 name = "ETL Entities"
-package = "etl-entities"
+package = "etl_entities"
 filename = "docs/changelog/NEXT_RELEASE.rst"
 directory = "docs/changelog/next_release/"
 title_format = "{version} ({project_date})"
