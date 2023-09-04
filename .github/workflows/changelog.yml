@@ -44,7 +44,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        pip install -I  -r requirements/core.txt -r requirements/docs.txt
+        pip install -I  -r requirements.txt -r requirements-docs.txt
 
     - name: Check changelog entry exists
       run: |
