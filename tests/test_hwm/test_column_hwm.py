@@ -2,7 +2,7 @@ from datetime import date, datetime, timedelta
 
 import pytest
 
-from etl_entities.hwm import DateHWM, DateTimeHWM, IntHWM
+from etl_entities.old_hwm import DateHWM, DateTimeHWM, IntHWM
 from etl_entities.process import Process
 from etl_entities.source import Column, Table
 

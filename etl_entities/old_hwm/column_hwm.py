@@ -18,13 +18,15 @@ from functools import total_ordering
 from typing import Generic, Optional, TypeVar
 
 from etl_entities.entity import GenericModel
-from etl_entities.hwm.hwm import HWM
+from etl_entities.old_hwm.hwm import HWM
 from etl_entities.source import Column, Table
+from etl_entities.util.decorators import deprecated
 
 ColumnValueType = TypeVar("ColumnValueType")
 
 
 # see https://github.com/python/mypy/issues/5374#issuecomment-1071157357
+@deprecated(version="2.0.0")
 @total_ordering  # type: ignore[misc]
 class ColumnHWM(HWM[Optional[ColumnValueType], str], GenericModel, Generic[ColumnValueType]):
     """Base column HWM type
@@ -75,9 +77,9 @@ class ColumnHWM(HWM[Optional[ColumnValueType], str], GenericModel, Generic[Colum
             column = Column(name="id")
             table = Table(name="mydb.mytable", instance="postgres://db.host:5432")
 
-            hwm = ColumnHWM(column=column, source=table, value=val)
+            old_hwm = ColumnHWM(column=column, source=table, value=val)
 
-            assert hwm.name == "id"
+            assert old_hwm.name == "id"
         """
 
         return self.column.name
@@ -108,10 +110,10 @@ class ColumnHWM(HWM[Optional[ColumnValueType], str], GenericModel, Generic[Colum
             column = Column(name="id")
             table = Table(name="mydb.mytable", instance="postgres://db.host:5432")
 
-            hwm = ColumnHWM(column=column, source=table, value=1)
+            old_hwm = ColumnHWM(column=column, source=table, value=1)
 
             assert (
-                hwm.qualified_name
+                old_hwm.qualified_name
                 == "id#mydb.mytable@postgres://db.host:5432#currentprocess@currenthost"
             )
         """
@@ -129,12 +131,12 @@ class ColumnHWM(HWM[Optional[ColumnValueType], str], GenericModel, Generic[Colum
             column = Column(name="id")
             table = Table(name="mydb.mytable", instance="postgres://db.host:5432")
 
-            hwm = ColumnHWM(column=column, source=table, value=1)
+            old_hwm = ColumnHWM(column=column, source=table, value=1)
 
-            assert hwm.covers(0)  # 0 <= 1
-            assert hwm.covers(1)  # 1 <= 1
-            assert hwm.covers(0.5)  # 0.5 <= 1
-            assert not hwm.covers(2)  # 2 > 1
+            assert old_hwm.covers(0)  # 0 <= 1
+            assert old_hwm.covers(1)  # 1 <= 1
+            assert old_hwm.covers(0.5)  # 0.5 <= 1
+            assert not old_hwm.covers(2)  # 2 > 1
 
             empty_hwm = ColumnHWM(column=column, source=table)
 
@@ -169,13 +171,13 @@ class ColumnHWM(HWM[Optional[ColumnValueType], str], GenericModel, Generic[Colum
 
             from etl_entities import IntHWM
 
-            hwm = IntHWM(value=1, ...)
+            old_hwm = IntHWM(value=1, ...)
 
-            hwm.update(2)
-            assert hwm.value == 2
+            old_hwm.update(2)
+            assert old_hwm.value == 2
 
-            hwm.update(1)
-            assert hwm.value == 2  # value cannot decrease
+            old_hwm.update(1)
+            assert old_hwm.value == 2  # value cannot decrease
         """
 
         if self.value is None:
@@ -202,11 +204,11 @@ class ColumnHWM(HWM[Optional[ColumnValueType], str], GenericModel, Generic[Colum
 
             from etl_entities import ColumnHWM
 
-            hwm = ColumnHWM(value=1, ...)
-            assert hwm  # same as hwm.value is not None
+            old_hwm = ColumnHWM(value=1, ...)
+            assert old_hwm  # same as old_hwm.value is not None
 
-            hwm = ColumnHWM(value=None, ...)
-            assert not hwm
+            old_hwm = ColumnHWM(value=None, ...)
+            assert not old_hwm
         """
 
         return self.value is not None
@@ -290,10 +292,10 @@ class ColumnHWM(HWM[Optional[ColumnValueType], str], GenericModel, Generic[Colum
 
         Params
         -------
-        other : :obj:`etl_entities.hwm.column_hwm.ColumnHWM` or any :obj:`object`
+        other : :obj:`etl_entities.old_hwm.column_hwm.ColumnHWM` or any :obj:`object`
 
-            You can compare two :obj:`hwmlib.hwm.column_hwm.ColumnHWM` instances,
-            obj:`hwmlib.hwm.column_hwm.ColumnHWM` with an :obj:`object`,
+            You can compare two :obj:`hwmlib.old_hwm.column_hwm.ColumnHWM` instances,
+            obj:`hwmlib.old_hwm.column_hwm.ColumnHWM` with an :obj:`object`,
             if its value is comparable with the ``value`` attribute of HWM
 
         Returns
@@ -315,10 +317,10 @@ class ColumnHWM(HWM[Optional[ColumnValueType], str], GenericModel, Generic[Colum
 
         Params
         -------
-        other : :obj:`etl_entities.hwm.column_hwm.ColumnHWM` or any :obj:`object`
+        other : :obj:`etl_entities.old_hwm.column_hwm.ColumnHWM` or any :obj:`object`
 
-            You can compare two :obj:`hwmlib.hwm.column_hwm.ColumnHWM` instances,
-            obj:`hwmlib.hwm.column_hwm.ColumnHWM` with an :obj:`object`,
+            You can compare two :obj:`hwmlib.old_hwm.column_hwm.ColumnHWM` instances,
+            obj:`hwmlib.old_hwm.column_hwm.ColumnHWM` with an :obj:`object`,
             if its value is comparable with the ``value`` attribute of HWM
 
             .. warning::

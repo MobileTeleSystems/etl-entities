@@ -20,10 +20,12 @@ from pydantic import validator
 from pydantic.types import StrictInt
 from pydantic.validators import int_validator
 
-from etl_entities.hwm.column_hwm import ColumnHWM
-from etl_entities.hwm.hwm_type_registry import register_hwm_type
+from etl_entities.old_hwm.column_hwm import ColumnHWM
+from etl_entities.old_hwm.hwm_type_registry import register_hwm_type
+from etl_entities.util.decorators import deprecated
 
 
+@deprecated(version="2.0.0")
 @register_hwm_type("int")
 class IntHWM(ColumnHWM[StrictInt]):
     """Integer HWM type
@@ -60,7 +62,7 @@ class IntHWM(ColumnHWM[StrictInt]):
         column = Column(name="id")
         table = Table(name="mydb.mytable", instance="postgres://db.host:5432")
 
-        hwm = IntHWM(column=column, source=table, value=1)
+        old_hwm = IntHWM(column=column, source=table, value=1)
     """
 
     value: Optional[StrictInt] = None
@@ -88,11 +90,11 @@ class IntHWM(ColumnHWM[StrictInt]):
 
             from etl_entities import DateHWM
 
-            hwm = DateHWM(value=date(year=2021, month=12, day=31), ...)
-            assert hwm.serialize_value() == "2021-12-31"
+            old_hwm = DateHWM(value=date(year=2021, month=12, day=31), ...)
+            assert old_hwm.serialize_value() == "2021-12-31"
 
-            hwm = DateHWM(value=None, ...)
-            assert hwm.serialize_value() == "null"
+            old_hwm = DateHWM(value=None, ...)
+            assert old_hwm.serialize_value() == "null"
         """
 
         if self.value is None:
@@ -138,13 +140,13 @@ class IntHWM(ColumnHWM[StrictInt]):
 
         Params
         -------
-        other : :obj:`hwmlib.hwm.int_hwm.IntHWM` or :obj:`int`
+        other : :obj:`hwmlib.old_hwm.int_hwm.IntHWM` or :obj:`int`
 
             Should be comparable with ``value`` attribute type.
 
             You can compare two ``int`` values, but you cannot compare ``int`` with ``date`` value,
             as well as different HWM types,
-            like :obj:`hwmlib.hwm.int_hwm.IntHWM` and :obj:`hwmlib.hwm.date_hwm.DateHWM`.
+            like :obj:`hwmlib.old_hwm.int_hwm.IntHWM` and :obj:`hwmlib.old_hwm.date_hwm.DateHWM`.
 
         Returns
         --------
@@ -176,13 +178,13 @@ class IntHWM(ColumnHWM[StrictInt]):
 
         Params
         -------
-        other : :obj:`hwmlib.hwm.int_hwm.IntHWM` or :obj:`int`
+        other : :obj:`hwmlib.old_hwm.int_hwm.IntHWM` or :obj:`int`
 
             Should be comparable with ``value`` attribute type.
 
             You can compare two ``int`` values, but you cannot compare ``int`` with ``date`` value,
             as well as different HWM types,
-            like :obj:`hwmlib.hwm.int_hwm.IntHWM` and :obj:`hwmlib.hwm.date_hwm.DateHWM`.
+            like :obj:`hwmlib.old_hwm.int_hwm.IntHWM` and :obj:`hwmlib.old_hwm.date_hwm.DateHWM`.
 
             .. warning::
 

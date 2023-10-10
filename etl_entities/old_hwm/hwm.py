@@ -24,11 +24,13 @@ from pydantic import Field, validate_model
 
 from etl_entities.entity import Entity, GenericModel
 from etl_entities.process import Process, ProcessStackManager
+from etl_entities.util.decorators import deprecated
 
 ValueType = TypeVar("ValueType")
 SerializedType = TypeVar("SerializedType")
 
 
+@deprecated(version="2.0.0")
 class HWM(ABC, Entity, GenericModel, Generic[ValueType, SerializedType]):
     """Generic HWM type
 
@@ -72,10 +74,10 @@ class HWM(ABC, Entity, GenericModel, Generic[ValueType, SerializedType]):
 
             from etl_entities import IntHWM
 
-            hwm = IntHWM(value=1, ...)
+            old_hwm = IntHWM(value=1, ...)
 
-            hwm.set_value(2)
-            assert hwm.value == 2
+            old_hwm.set_value(2)
+            assert old_hwm.value == 2
         """
 
         new_value = self._check_new_value(value)
@@ -102,8 +104,8 @@ class HWM(ABC, Entity, GenericModel, Generic[ValueType, SerializedType]):
 
             from etl_entities import IntHWM
 
-            hwm = IntHWM(value=1, ...)
-            assert hwm.serialize() == {
+            old_hwm = IntHWM(value=1, ...)
+            assert old_hwm.serialize() == {
                 "value": "1",
                 "type": "int",
                 "column": {"name": ..., "partition": ...},
@@ -113,7 +115,7 @@ class HWM(ABC, Entity, GenericModel, Generic[ValueType, SerializedType]):
         """
 
         # small hack to avoid circular imports
-        from etl_entities.hwm.hwm_type_registry import HWMTypeRegistry
+        from etl_entities.old_hwm.hwm_type_registry import HWMTypeRegistry
 
         result = json.loads(self.json())
         result["value"] = self.serialize_value()
@@ -151,7 +153,7 @@ class HWM(ABC, Entity, GenericModel, Generic[ValueType, SerializedType]):
         """
 
         # small hack to avoid circular imports
-        from etl_entities.hwm.hwm_type_registry import HWMTypeRegistry
+        from etl_entities.old_hwm.hwm_type_registry import HWMTypeRegistry
 
         value = deepcopy(inp)
         typ = value.pop("type", None)
@@ -179,8 +181,8 @@ class HWM(ABC, Entity, GenericModel, Generic[ValueType, SerializedType]):
 
             from etl_entities import HWM
 
-            hwm = HWM(value=1, ...)
-            assert hwm.serialize_value() == "1"
+            old_hwm = HWM(value=1, ...)
+            assert old_hwm.serialize_value() == "1"
         """
 
     @abstractmethod

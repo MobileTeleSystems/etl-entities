@@ -20,10 +20,12 @@ from typing import Optional
 from pydantic import validator
 from pydantic.validators import strict_str_validator
 
-from etl_entities.hwm.column_hwm import ColumnHWM
-from etl_entities.hwm.hwm_type_registry import register_hwm_type
+from etl_entities.old_hwm.column_hwm import ColumnHWM
+from etl_entities.old_hwm.hwm_type_registry import register_hwm_type
+from etl_entities.util.decorators import deprecated
 
 
+@deprecated(version="2.0.0")
 @register_hwm_type("datetime")
 class DateTimeHWM(ColumnHWM[datetime]):
     """DateTime HWM type
@@ -61,7 +63,7 @@ class DateTimeHWM(ColumnHWM[datetime]):
         column = Column(name="id")
         table = Table(name="mydb.mytable", instance="postgres://db.host:5432")
 
-        hwm = DateTimeHWM(
+        old_hwm = DateTimeHWM(
             column=column,
             source=table,
             value=datetime(year=2021, month=12, day=31, hour=11, minute=22, second=33),
@@ -94,13 +96,13 @@ class DateTimeHWM(ColumnHWM[datetime]):
             from datetime import datetime
             from etl_entities import DateTimeHWM
 
-            hwm = DateTimeHWM(
+            old_hwm = DateTimeHWM(
                 value=datetime(year=2021, month=12, day=31, hour=11, minute=22, second=33), ...
             )
-            assert hwm.serialize_value() == "2021-12-31T11:22:33"
+            assert old_hwm.serialize_value() == "2021-12-31T11:22:33"
 
-            hwm = DateTimeHWM(value=None, ...)
-            assert hwm.serialize_value() == "null"
+            old_hwm = DateTimeHWM(value=None, ...)
+            assert old_hwm.serialize_value() == "null"
         """
 
         if self.value is None:
@@ -150,15 +152,15 @@ class DateTimeHWM(ColumnHWM[datetime]):
 
         Params
         -------
-        other : :obj:`etl_entities.hwm.datetime_hwm.DateTimeHWM` or :obj:`datetime.datetime`
+        other : :obj:`etl_entities.old_hwm.datetime_hwm.DateTimeHWM` or :obj:`datetime.datetime`
 
             Should be comparable with ``value`` attribute type.
 
-            You can compare two :obj:`hwmlib.hwm.datetime_hwm.DateTimeHWM` or ``datetime`` values.
+            You can compare two :obj:`hwmlib.old_hwm.datetime_hwm.DateTimeHWM` or ``datetime`` values.
 
             But you cannot compare ``datetime`` with ``int`` value,
             as well as different HWM types,
-            like :obj:`hwmlib.hwm.datetime_hwm.DateTimeHWM` and :obj:`hwmlib.hwm.int_hwm.IntHWM`.
+            like :obj:`hwmlib.old_hwm.datetime_hwm.DateTimeHWM` and :obj:`hwmlib.old_hwm.int_hwm.IntHWM`.
 
         Returns
         --------
@@ -195,15 +197,15 @@ class DateTimeHWM(ColumnHWM[datetime]):
 
         Params
         -------
-        other : :obj:`etl_entities.hwm.datetime_hwm.DateTimeHWM` or :obj:`datetime.datetime`
+        other : :obj:`etl_entities.old_hwm.datetime_hwm.DateTimeHWM` or :obj:`datetime.datetime`
 
             Should be comparable with ``value`` attribute type.
 
-            You can compare two :obj:`hwmlib.hwm.datetime_hwm.DateTimeHWM` or ``datetime`` values.
+            You can compare two :obj:`hwmlib.old_hwm.datetime_hwm.DateTimeHWM` or ``datetime`` values.
 
             But you cannot compare ``datetime`` with ``int`` value,
             as well as different HWM types,
-            like :obj:`hwmlib.hwm.datetime_hwm.DateTimeHWM` and :obj:`hwmlib.hwm.int_hwm.IntHWM`.
+            like :obj:`hwmlib.old_hwm.datetime_hwm.DateTimeHWM` and :obj:`hwmlib.old_hwm.int_hwm.IntHWM`.
 
             .. warning::
 

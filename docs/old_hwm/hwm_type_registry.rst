@@ -1,6 +1,6 @@
 Integer HWM
 =================================================================
-.. currentmodule:: etl_entities.hwm.hwm_type_registry
+.. currentmodule:: etl_entities.old_hwm.hwm_type_registry
 
 
 .. autoclass:: HWMTypeRegistry

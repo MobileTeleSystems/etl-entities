@@ -1,6 +1,6 @@
 File List HWM
 =================================================================
-.. currentmodule:: etl_entities.hwm.file_list_hwm
+.. currentmodule:: etl_entities.old_hwm.file_list_hwm
 
 .. autoclass:: FileListHWM
     :members: name, qualified_name, set_value, dict, json, copy, serialize, deserialize, covers, update

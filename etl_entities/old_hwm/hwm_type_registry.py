@@ -18,9 +18,11 @@ from typing import ClassVar
 
 from bidict import bidict
 
-from etl_entities.hwm.hwm import HWM
+from etl_entities.old_hwm.hwm import HWM
+from etl_entities.util.decorators import deprecated
 
 
+@deprecated(version="2.0.0")
 class HWMTypeRegistry:
     """Registry class for HWM types"""
 
