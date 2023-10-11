@@ -22,13 +22,13 @@ from pydantic.validators import strict_str_validator
 
 from etl_entities.old_hwm.column_hwm import ColumnHWM
 from etl_entities.old_hwm.hwm_type_registry import register_hwm_type
-from etl_entities.util.decorators import deprecated
 
 
-@deprecated(version="2.0.0")
 @register_hwm_type("datetime")
 class DateTimeHWM(ColumnHWM[datetime]):
     """DateTime HWM type
+
+    .. deprecated:: 2.0.0
 
     Parameters
     ----------

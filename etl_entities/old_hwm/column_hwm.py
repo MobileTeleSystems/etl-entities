@@ -20,16 +20,16 @@ from typing import Generic, Optional, TypeVar
 from etl_entities.entity import GenericModel
 from etl_entities.old_hwm.hwm import HWM
 from etl_entities.source import Column, Table
-from etl_entities.util.decorators import deprecated
 
 ColumnValueType = TypeVar("ColumnValueType")
 
 
 # see https://github.com/python/mypy/issues/5374#issuecomment-1071157357
-@deprecated(version="2.0.0")
 @total_ordering  # type: ignore[misc]
 class ColumnHWM(HWM[Optional[ColumnValueType], str], GenericModel, Generic[ColumnValueType]):
     """Base column HWM type
+
+    .. deprecated:: 2.0.0
 
     Parameters
     ----------

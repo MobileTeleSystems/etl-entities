@@ -24,15 +24,15 @@ from pydantic import Field, validate_model
 
 from etl_entities.entity import Entity, GenericModel
 from etl_entities.process import Process, ProcessStackManager
-from etl_entities.util.decorators import deprecated
 
 ValueType = TypeVar("ValueType")
 SerializedType = TypeVar("SerializedType")
 
 
-@deprecated(version="2.0.0")
 class HWM(ABC, Entity, GenericModel, Generic[ValueType, SerializedType]):
     """Generic HWM type
+
+    .. deprecated:: 2.0.0
 
     Parameters
     ----------

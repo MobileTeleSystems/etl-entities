@@ -22,13 +22,11 @@ from etl_entities.entity import GenericModel
 from etl_entities.instance import AbsolutePath
 from etl_entities.old_hwm.hwm import HWM
 from etl_entities.source import RemoteFolder
-from etl_entities.util.decorators import deprecated
 
 FileHWMValueType = TypeVar("FileHWMValueType")
 FileHWMSerializedType = TypeVar("FileHWMSerializedType")
 
 
-@deprecated(version="2.0.0")
 class FileHWM(
     HWM[FileHWMValueType, FileHWMSerializedType],
     GenericModel,

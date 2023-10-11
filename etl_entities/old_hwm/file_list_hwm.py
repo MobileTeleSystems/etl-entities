@@ -23,15 +23,15 @@ from pydantic import Field, validator
 from etl_entities.instance import AbsolutePath, RelativePath
 from etl_entities.old_hwm.file_hwm import FileHWM
 from etl_entities.old_hwm.hwm_type_registry import register_hwm_type
-from etl_entities.util.decorators import deprecated
 
 FileListType = FrozenSet[RelativePath]
 
 
-@deprecated(version="2.0.0")
 @register_hwm_type("file_list")
 class FileListHWM(FileHWM[FileListType, List[str]]):
     """File List HWM type
+
+    .. deprecated:: 2.0.0
 
     Parameters
     ----------

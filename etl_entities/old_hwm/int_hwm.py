@@ -22,13 +22,13 @@ from pydantic.validators import int_validator
 
 from etl_entities.old_hwm.column_hwm import ColumnHWM
 from etl_entities.old_hwm.hwm_type_registry import register_hwm_type
-from etl_entities.util.decorators import deprecated
 
 
-@deprecated(version="2.0.0")
 @register_hwm_type("int")
 class IntHWM(ColumnHWM[StrictInt]):
     """Integer HWM type
+
+    .. deprecated:: 2.0.0
 
     Parameters
     ----------
