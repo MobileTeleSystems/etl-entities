@@ -19,8 +19,8 @@ from abc import abstractmethod
 from typing import Generic, TypeVar
 
 from etl_entities.entity import GenericModel
-from etl_entities.hwm.hwm import HWM
 from etl_entities.instance import AbsolutePath
+from etl_entities.old_hwm.hwm import HWM
 from etl_entities.source import RemoteFolder
 
 FileHWMValueType = TypeVar("FileHWMValueType")
@@ -98,7 +98,7 @@ class FileHWM(
 
         Params
         -------
-        other : :obj:`hwmlib.hwm.file_hwm.FileHWM`
+        other : :obj:`hwmlib.old_hwm.file_hwm.FileHWM`
 
         Returns
         --------

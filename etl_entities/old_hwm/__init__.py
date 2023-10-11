@@ -12,11 +12,11 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
-from etl_entities.hwm.column_hwm import ColumnHWM
-from etl_entities.hwm.date_hwm import DateHWM
-from etl_entities.hwm.datetime_hwm import DateTimeHWM
-from etl_entities.hwm.file_hwm import FileHWM
-from etl_entities.hwm.file_list_hwm import FileListHWM
-from etl_entities.hwm.hwm import HWM
-from etl_entities.hwm.hwm_type_registry import HWMTypeRegistry, register_hwm_type
-from etl_entities.hwm.int_hwm import IntHWM
+from etl_entities.old_hwm.column_hwm import ColumnHWM
+from etl_entities.old_hwm.date_hwm import DateHWM
+from etl_entities.old_hwm.datetime_hwm import DateTimeHWM
+from etl_entities.old_hwm.file_hwm import FileHWM
+from etl_entities.old_hwm.file_list_hwm import FileListHWM
+from etl_entities.old_hwm.hwm import HWM
+from etl_entities.old_hwm.hwm_type_registry import HWMTypeRegistry, register_hwm_type
+from etl_entities.old_hwm.int_hwm import IntHWM

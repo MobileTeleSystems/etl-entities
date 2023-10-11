@@ -18,7 +18,7 @@ from typing import ClassVar
 
 from bidict import bidict
 
-from etl_entities.hwm.hwm import HWM
+from etl_entities.old_hwm.hwm import HWM
 
 
 class HWMTypeRegistry:

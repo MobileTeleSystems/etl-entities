@@ -3,8 +3,8 @@ from pathlib import PosixPath
 
 import pytest
 
-from etl_entities.hwm import FileListHWM
 from etl_entities.instance import AbsolutePath, RelativePath
+from etl_entities.old_hwm import FileListHWM
 from etl_entities.process import Process
 from etl_entities.source import RemoteFolder
 
