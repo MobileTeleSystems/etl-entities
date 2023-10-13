@@ -1,6 +1,6 @@
 .. _hwm_classes:
 
-Deprecated HWM classes
+HWM classes
 =============
 
 .. toctree::
@@ -11,4 +11,3 @@ Deprecated HWM classes
     int_hwm
     date_hwm
     datetime_hwm
-    file_list_hwm

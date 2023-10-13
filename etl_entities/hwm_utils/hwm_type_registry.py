@@ -14,11 +14,12 @@
 
 from __future__ import annotations
 
-from typing import ClassVar
+from typing import TYPE_CHECKING, ClassVar
 
 from bidict import bidict
 
-from etl_entities.old_hwm.hwm import HWM
+if TYPE_CHECKING:
+    from etl_entities.hwm.hwm import HWM
 
 
 class HWMTypeRegistry:

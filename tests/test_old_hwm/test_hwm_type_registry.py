@@ -2,11 +2,13 @@ from datetime import date, datetime
 
 import pytest
 
-from etl_entities.old_hwm import DateHWM, DateTimeHWM, HWMTypeRegistry, IntHWM
+from etl_entities.hwm_utils import HWMTypeRegistry
+from etl_entities.old_hwm import DateHWM, DateTimeHWM, IntHWM
 from etl_entities.process import Process
 from etl_entities.source import Column, Table
 
 
+@pytest.mark.deprecated
 @pytest.mark.parametrize(
     "hwm_class, hwm_type, value, serialized_value",
     [
