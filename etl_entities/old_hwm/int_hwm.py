@@ -20,8 +20,8 @@ from pydantic import validator
 from pydantic.types import StrictInt
 from pydantic.validators import int_validator
 
+from etl_entities.hwm_utils.hwm_type_registry import register_hwm_type
 from etl_entities.old_hwm.column_hwm import ColumnHWM
-from etl_entities.old_hwm.hwm_type_registry import register_hwm_type
 
 
 @register_hwm_type("int")
@@ -57,7 +57,8 @@ class IntHWM(ColumnHWM[StrictInt]):
 
     .. code:: python
 
-        from etl_entities import IntHWM, Column, Table
+        from etl_entities.old_hwm import IntHWM
+        from etl_entities.source import Column, Table
 
         column = Column(name="id")
         table = Table(name="mydb.mytable", instance="postgres://db.host:5432")
@@ -88,7 +89,7 @@ class IntHWM(ColumnHWM[StrictInt]):
 
         .. code:: python
 
-            from etl_entities import DateHWM
+            from etl_entities.old_hwm import DateHWM
 
             old_hwm = DateHWM(value=date(year=2021, month=12, day=31), ...)
             assert old_hwm.serialize_value() == "2021-12-31"
@@ -123,7 +124,7 @@ class IntHWM(ColumnHWM[StrictInt]):
 
         .. code:: python
 
-            from etl_entities import IntHWM
+            from etl_entities.old_hwm import IntHWM
 
             assert IntHWM.deserialize_value("123") == 123
 
@@ -159,7 +160,7 @@ class IntHWM(ColumnHWM[StrictInt]):
 
         .. code:: python
 
-            from etl_entities import IntHWM
+            from etl_entities.old_hwm import IntHWM
 
             hwm1 = IntHWM(value=1, ...)
             hwm2 = IntHWM(value=2, ...)
@@ -201,7 +202,7 @@ class IntHWM(ColumnHWM[StrictInt]):
 
         .. code:: python
 
-            from etl_entities import IntHWM
+            from etl_entities.old_hwm import IntHWM
 
             hwm1 = IntHWM(value=1, ...)
             hwm2 = IntHWM(value=2, ...)

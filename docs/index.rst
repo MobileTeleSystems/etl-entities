@@ -15,6 +15,7 @@
     :name: mastertoc
     :hidden:
 
+    hwm/index
     old_hwm/index
     source/index
     process/index

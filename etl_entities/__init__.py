@@ -12,4 +12,12 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+from etl_entities.hwm import (
+    HWM,
+    ColumnDateHWM,
+    ColumnDateTimeHWM,
+    ColumnHWM,
+    ColumnIntHWM,
+)
+from etl_entities.hwm_utils import HWMTypeRegistry, register_hwm_type
 from etl_entities.version import __version__

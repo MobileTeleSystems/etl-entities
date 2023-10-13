@@ -23,6 +23,7 @@ from typing import Generic, TypeVar
 from pydantic import Field, validate_model
 
 from etl_entities.entity import Entity, GenericModel
+from etl_entities.hwm_utils import HWMTypeRegistry
 from etl_entities.process import Process, ProcessStackManager
 
 ValueType = TypeVar("ValueType")
@@ -72,7 +73,7 @@ class HWM(ABC, Entity, GenericModel, Generic[ValueType, SerializedType]):
 
         .. code:: python
 
-            from etl_entities import IntHWM
+            from etl_entities.old_hwm import IntHWM
 
             old_hwm = IntHWM(value=1, ...)
 
@@ -102,7 +103,7 @@ class HWM(ABC, Entity, GenericModel, Generic[ValueType, SerializedType]):
 
         .. code:: python
 
-            from etl_entities import IntHWM
+            from etl_entities.old_hwm import IntHWM
 
             old_hwm = IntHWM(value=1, ...)
             assert old_hwm.serialize() == {
@@ -114,12 +115,9 @@ class HWM(ABC, Entity, GenericModel, Generic[ValueType, SerializedType]):
             }
         """
 
-        # small hack to avoid circular imports
-        from etl_entities.old_hwm.hwm_type_registry import HWMTypeRegistry
-
         result = json.loads(self.json())
         result["value"] = self.serialize_value()
-        result["type"] = HWMTypeRegistry.get_key(self.__class__)
+        result["type"] = HWMTypeRegistry.get_key(self.__class__)  # type: ignore
         return result
 
     @classmethod
@@ -137,7 +135,7 @@ class HWM(ABC, Entity, GenericModel, Generic[ValueType, SerializedType]):
 
         .. code:: python
 
-            from etl_entities import IntHWM
+            from etl_entities.old_hwm import IntHWM
 
             assert IntHWM.deserialize(
                 {
@@ -152,13 +150,10 @@ class HWM(ABC, Entity, GenericModel, Generic[ValueType, SerializedType]):
             IntHWM.deserialize({"type": "date"})  # raises ValueError
         """
 
-        # small hack to avoid circular imports
-        from etl_entities.old_hwm.hwm_type_registry import HWMTypeRegistry
-
         value = deepcopy(inp)
         typ = value.pop("type", None)
         if typ:
-            hwm_type = HWMTypeRegistry.get(typ)
+            hwm_type = HWMTypeRegistry.get(typ)  # type: ignore
             if not issubclass(cls, hwm_type):
                 raise ValueError(f"Type {typ} does not match class {cls.__name__}")
 
@@ -179,7 +174,7 @@ class HWM(ABC, Entity, GenericModel, Generic[ValueType, SerializedType]):
 
         .. code:: python
 
-            from etl_entities import HWM
+            from etl_entities.old_hwm import HWM
 
             old_hwm = HWM(value=1, ...)
             assert old_hwm.serialize_value() == "1"

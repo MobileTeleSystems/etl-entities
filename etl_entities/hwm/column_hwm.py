@@ -12,115 +12,52 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+
 from __future__ import annotations
 
-from functools import total_ordering
-from typing import Generic, Optional, TypeVar
+from typing import Any, Generic, Optional, TypeVar
+
+from pydantic import Field
 
 from etl_entities.entity import GenericModel
-from etl_entities.old_hwm.hwm import HWM
-from etl_entities.source import Column, Table
+from etl_entities.hwm.hwm import HWM
 
 ColumnValueType = TypeVar("ColumnValueType")
 
 
-# see https://github.com/python/mypy/issues/5374#issuecomment-1071157357
-@total_ordering  # type: ignore[misc]
-class ColumnHWM(HWM[Optional[ColumnValueType], str], GenericModel, Generic[ColumnValueType]):
+class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], GenericModel):
     """Base column HWM type
-
-    .. deprecated:: 2.0.0
 
     Parameters
     ----------
-    column : :obj:`etl_entities.source.db.column.Column`
+    column : ``str``
 
-        Column instance
+        Column name
 
-    source : :obj:`etl_entities.source.db.table.Table`
+    name : ``str``
 
-        Table instance
+        Table name
 
     value : ``ColumnValueType`` or ``None``, default: ``None``
 
         HWM value
 
+    description: ``str``, default: ``""``
+
+        Description of HWM
+
     modified_time : :obj:`datetime.datetime`, default: current datetime
 
         HWM value modification time
-
-    process : :obj:`etl_entities.process.process.Process`, default: current process
-
-        Process instance
     """
 
-    column: Column
-    source: Table
+    entity: str = Field(alias="column")
+    name: str
     value: Optional[ColumnValueType] = None
+    description: str = ""
+    expression: Any = None
 
-    @property
-    def name(self) -> str:
-        """
-        HWM column name
-
-        Returns
-        ----------
-        value : str
-
-            Column name
-
-        Examples
-        ----------
-
-        .. code:: python
-
-            column = Column(name="id")
-            table = Table(name="mydb.mytable", instance="postgres://db.host:5432")
-
-            old_hwm = ColumnHWM(column=column, source=table, value=val)
-
-            assert old_hwm.name == "id"
-        """
-
-        return self.column.name
-
-    def __str__(self) -> str:
-        """
-        Returns full HWM name
-        """
-
-        return f"{self.name}#{self.source.full_name}"
-
-    @property
-    def qualified_name(self) -> str:
-        """
-        Unique name of HWM
-
-        Returns
-        ----------
-        value : str
-
-            Qualified name
-
-        Examples
-        ----------
-
-        .. code:: python
-
-            column = Column(name="id")
-            table = Table(name="mydb.mytable", instance="postgres://db.host:5432")
-
-            old_hwm = ColumnHWM(column=column, source=table, value=1)
-
-            assert (
-                old_hwm.qualified_name
-                == "id#mydb.mytable@postgres://db.host:5432#currentprocess@currenthost"
-            )
-        """
-
-        return "#".join([self.column.qualified_name, self.source.qualified_name, self.process.qualified_name])
-
-    def covers(self, value: ColumnValueType) -> bool:
+    def covers(self, value: Optional[ColumnValueType]) -> bool:
         """Return ``True`` if input value is already covered by HWM
 
         Examples
@@ -128,17 +65,14 @@ class ColumnHWM(HWM[Optional[ColumnValueType], str], GenericModel, Generic[Colum
 
         .. code:: python
 
-            column = Column(name="id")
-            table = Table(name="mydb.mytable", instance="postgres://db.host:5432")
+            hwm = ColumnHWM(column="column_name", value=1)
 
-            old_hwm = ColumnHWM(column=column, source=table, value=1)
+            assert hwm.covers(0)  # 0 <= 1
+            assert hwm.covers(1)  # 1 <= 1
+            assert hwm.covers(0.5)  # 0.5 <= 1
+            assert not hwm.covers(2)  # 2 > 1
 
-            assert old_hwm.covers(0)  # 0 <= 1
-            assert old_hwm.covers(1)  # 1 <= 1
-            assert old_hwm.covers(0.5)  # 0.5 <= 1
-            assert not old_hwm.covers(2)  # 2 > 1
-
-            empty_hwm = ColumnHWM(column=column, source=table)
+            empty_hwm = ColumnHWM(column="column_name")
 
             assert not empty_hwm.covers(0)  # non comparable with None
             assert not empty_hwm.covers(1)  # non comparable with None
@@ -150,68 +84,6 @@ class ColumnHWM(HWM[Optional[ColumnValueType], str], GenericModel, Generic[Colum
             return False
 
         return self._check_new_value(value) <= self.value
-
-    def update(self, value: ColumnValueType):
-        """Updates current HWM value with some implementation-specific logic, and return HWM.
-
-        .. note::
-
-            Changes HWM value in place
-
-        Returns
-        -------
-        result : ColumnHWM
-
-            HWM copy with new value
-
-        Examples
-        ----------
-
-        .. code:: python
-
-            from etl_entities.old_hwm import IntHWM
-
-            old_hwm = IntHWM(value=1, ...)
-
-            old_hwm.update(2)
-            assert old_hwm.value == 2
-
-            old_hwm.update(1)
-            assert old_hwm.value == 2  # value cannot decrease
-        """
-
-        if self.value is None:
-            return self.set_value(value)
-
-        if self.value < value:  # type: ignore[operator]
-            return self.set_value(value)
-
-        return self
-
-    def __bool__(self):
-        """Check if HWM value is set
-
-        Returns
-        --------
-        result : bool
-
-            ``False`` if ``value`` is ``None``, ``True`` otherwise
-
-        Examples
-        ----------
-
-        .. code:: python
-
-            from etl_entities.old_hwm import ColumnHWM
-
-            old_hwm = ColumnHWM(value=1, ...)
-            assert old_hwm  # same as old_hwm.value is not None
-
-            old_hwm = ColumnHWM(value=None, ...)
-            assert not old_hwm
-        """
-
-        return self.value is not None
 
     def __add__(self, value):
         """Increase HWM value and return copy of HWM
@@ -292,10 +164,10 @@ class ColumnHWM(HWM[Optional[ColumnValueType], str], GenericModel, Generic[Colum
 
         Params
         -------
-        other : :obj:`etl_entities.old_hwm.column_hwm.ColumnHWM` or any :obj:`object`
+        other : :obj:`etl_entities.hwm.column_hwm.ColumnHWM` or any :obj:`object`
 
-            You can compare two :obj:`hwmlib.old_hwm.column_hwm.ColumnHWM` instances,
-            obj:`hwmlib.old_hwm.column_hwm.ColumnHWM` with an :obj:`object`,
+            You can compare two :obj:`hwmlib.hwm.column_hwm.ColumnHWM` instances,
+            obj:`hwmlib.hwm.column_hwm.ColumnHWM` with an :obj:`object`,
             if its value is comparable with the ``value`` attribute of HWM
 
         Returns
@@ -317,10 +189,10 @@ class ColumnHWM(HWM[Optional[ColumnValueType], str], GenericModel, Generic[Colum
 
         Params
         -------
-        other : :obj:`etl_entities.old_hwm.column_hwm.ColumnHWM` or any :obj:`object`
+        other : :obj:`etl_entities.hwm.column_hwm.ColumnHWM` or any :obj:`object`
 
-            You can compare two :obj:`hwmlib.old_hwm.column_hwm.ColumnHWM` instances,
-            obj:`hwmlib.old_hwm.column_hwm.ColumnHWM` with an :obj:`object`,
+            You can compare two :obj:`hwmlib.hwm.column_hwm.ColumnHWM` instances,
+            obj:`hwmlib.hwm.column_hwm.ColumnHWM` with an :obj:`object`,
             if its value is comparable with the ``value`` attribute of HWM
 
             .. warning::

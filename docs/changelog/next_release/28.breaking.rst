@@ -1,0 +1,1 @@
+Add classes: ``ColumnIntHWM``, ``ColumnDateHWM``, ``ColumnDateTimeHWM`` in ``etl_entitites.hwm``
