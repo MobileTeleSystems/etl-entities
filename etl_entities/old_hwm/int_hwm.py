@@ -20,11 +20,10 @@ from pydantic import validator
 from pydantic.types import StrictInt
 from pydantic.validators import int_validator
 
-from etl_entities.hwm_utils.hwm_type_registry import register_hwm_type
+from etl_entities.hwm import ColumnIntHWM
 from etl_entities.old_hwm.column_hwm import ColumnHWM
 
 
-@register_hwm_type("int")
 class IntHWM(ColumnHWM[StrictInt]):
     """Integer HWM type
 
@@ -102,6 +101,14 @@ class IntHWM(ColumnHWM[StrictInt]):
             return "null"
 
         return str(self.value)
+
+    def as_new_hwm(self):
+        return ColumnIntHWM(
+            name=self.qualified_name,
+            column=self.column.name,
+            value=self.value,
+            modified_time=self.modified_time,
+        )
 
     @classmethod
     def deserialize_value(cls, value: str) -> int | None:

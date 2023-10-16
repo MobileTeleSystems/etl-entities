@@ -20,11 +20,11 @@ from typing import Optional
 from pydantic import validator
 from pydantic.validators import strict_str_validator
 
-from etl_entities.hwm.column_hwm import ColumnHWM
-from etl_entities.hwm_utils.hwm_type_registry import register_hwm_type
+from etl_entities.hwm.column.column_hwm import ColumnHWM
+from etl_entities.hwm.hwm_type_registry import register_hwm_type
 
 
-@register_hwm_type("datetime")
+@register_hwm_type("column_datetime")
 class ColumnDateTimeHWM(ColumnHWM[datetime]):
     """DateTime HWM type
 
@@ -57,7 +57,7 @@ class ColumnDateTimeHWM(ColumnHWM[datetime]):
     .. code:: python
 
         from datetime import datetime
-        from etl_entities import ColumnDateTimeHWM
+        from etl_entities.hwm import ColumnDateTimeHWM
 
         hwm = DateTimeHWM(
             column="column_name",
@@ -71,47 +71,10 @@ class ColumnDateTimeHWM(ColumnHWM[datetime]):
     @validator("value", pre=True)
     def validate_value(cls, value):  # noqa: N805
         if isinstance(value, str):
-            return cls.deserialize_value(value)
+            return cls._deserialize_value(value)
         # we need to deserialize values, as pydantic parses fields in unexpected way:
         # https://docs.pydantic.dev/latest/api/standard_library_types/#datetimedatetime
         return value
-
-    @classmethod
-    def deserialize_value(cls, value: str) -> datetime | None:
-        """Parse string representation to get HWM value
-
-        Parameters
-        ----------
-        value : str
-
-            Serialized value
-
-        Returns
-        -------
-        result : :obj:`datetime.datetime` or ``None``
-
-            Deserialized value
-
-        Examples
-        ----------
-
-        .. code:: python
-
-            from datetime import datetime
-            from etl_entities.hwm import ColumnDateTimeHWM
-
-            assert ColumnDateTimeHWM.deserialize_value("2021-12-31T11-22-33") == datetime(
-                year=2021, month=12, day=31, hour=11, minute=22, second=33
-            )
-
-            assert ColumnDateTimeHWM.deserialize_value("null") is None
-        """
-
-        result = strict_str_validator(value).strip()
-
-        if result.lower() == "null":
-            return None
-        return datetime.fromisoformat(result)
 
     def __eq__(self, other):
         """Checks equality of two HWM instances
@@ -140,7 +103,7 @@ class ColumnDateTimeHWM(ColumnHWM[datetime]):
         .. code:: python
 
             from datetime import datetime
-            from etl_entities import ColumnDateTimeHWM
+            from etl_entities.hwm import ColumnDateTimeHWM
 
             hwm1 = ColumnDateTimeHWM(
                 value=datetime(year=2021, month=12, day=30, hour=11, minute=22, second=33), ...
@@ -189,7 +152,7 @@ class ColumnDateTimeHWM(ColumnHWM[datetime]):
         .. code:: python
 
             from datetime import datetime
-            from etl_entities import ColumnDateTimeHWMxw
+            from etl_entities.hwm import ColumnDateTimeHWMxw
 
             hwm1 = ColumnDateTimeHWM(
                 value=datetime(year=2021, month=12, day=30, hour=11, minute=22, second=33), ...
@@ -213,3 +176,40 @@ class ColumnDateTimeHWM(ColumnHWM[datetime]):
             return NotImplemented
 
         return super().__lt__(other)
+
+    @classmethod
+    def _deserialize_value(cls, value: str) -> datetime | None:
+        """Parse string representation to get HWM value
+
+        Parameters
+        ----------
+        value : str
+
+            Serialized value
+
+        Returns
+        -------
+        result : :obj:`datetime.datetime` or ``None``
+
+            Deserialized value
+
+        Examples
+        ----------
+
+        .. code:: python
+
+            from datetime import datetime
+            from etl_entities.hwm import ColumnDateTimeHWM
+
+            assert ColumnDateTimeHWM.deserialize_value("2021-12-31T11-22-33") == datetime(
+                year=2021, month=12, day=31, hour=11, minute=22, second=33
+            )
+
+            assert ColumnDateTimeHWM.deserialize_value("null") is None
+        """
+
+        result = strict_str_validator(value).strip()
+
+        if result.lower() == "null":
+            return None
+        return datetime.fromisoformat(result)

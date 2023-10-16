@@ -1,6 +1,6 @@
 Integer HWM
 =================================================================
-.. currentmodule:: etl_entities.hwm.int_hwm
+.. currentmodule:: etl_entities.hwm.column.int_hwm
 
 
 .. autoclass:: ColumnIntHWM

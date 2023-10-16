@@ -20,11 +20,10 @@ from typing import Optional
 from pydantic import validator
 from pydantic.validators import strict_str_validator
 
-from etl_entities.hwm_utils.hwm_type_registry import register_hwm_type
+from etl_entities.hwm import ColumnDateTimeHWM
 from etl_entities.old_hwm.column_hwm import ColumnHWM
 
 
-@register_hwm_type("datetime")
 class DateTimeHWM(ColumnHWM[datetime]):
     """DateTime HWM type
 
@@ -110,6 +109,14 @@ class DateTimeHWM(ColumnHWM[datetime]):
             return "null"
 
         return self.value.isoformat()
+
+    def as_new_hwm(self):
+        return ColumnDateTimeHWM(
+            name=self.qualified_name,
+            column=self.column.name,
+            value=self.value,
+            modified_time=self.modified_time,
+        )
 
     @classmethod
     def deserialize_value(cls, value: str) -> datetime | None:
