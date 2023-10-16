@@ -2,12 +2,12 @@ from datetime import date, datetime, timedelta
 
 import pytest
 
+from etl_entities.hwm import ColumnDateHWM, ColumnDateTimeHWM, ColumnIntHWM
 from etl_entities.old_hwm import DateHWM, DateTimeHWM, IntHWM
 from etl_entities.process import Process
 from etl_entities.source import Column, Table
 
 
-@pytest.mark.deprecated
 @pytest.mark.parametrize(
     "hwm_class, value",
     [
@@ -79,7 +79,6 @@ def test_column_hwm_valid_input(hwm_class, value):
     assert str(hwm5) == full_name
 
 
-@pytest.mark.deprecated
 @pytest.mark.parametrize(
     "hwm_class, value, wrong_values",
     [
@@ -124,7 +123,6 @@ def test_column_hwm_wrong_input(hwm_class, value, wrong_values):
         hwm_class(column=column, source=table, value=value, modified_time="unknown")
 
 
-@pytest.mark.deprecated
 @pytest.mark.parametrize(
     "hwm_class, value",
     [
@@ -158,7 +156,6 @@ def test_column_hwm_set_value(hwm_class, value):
         hwm.set_value(hwm1)
 
 
-@pytest.mark.deprecated
 @pytest.mark.parametrize(
     "hwm_class",
     [
@@ -180,7 +177,6 @@ def test_column_hwm_frozen(hwm_class):
                 setattr(hwm, attr, value)
 
 
-@pytest.mark.deprecated
 @pytest.mark.parametrize(  # noqa: WPS210
     "hwm_class, value, delta",
     [
@@ -245,7 +241,6 @@ def test_column_hwm_compare(hwm_class, value, delta):  # noqa: WPS210
                         assert item2 < item1
 
 
-@pytest.mark.deprecated
 @pytest.mark.parametrize(  # noqa: WPS210
     "hwm_class, value, delta",
     [
@@ -271,7 +266,6 @@ def test_column_hwm_covers(hwm_class, value, delta):  # noqa: WPS210
     assert not hwm.covers(value + delta)
 
 
-@pytest.mark.deprecated
 @pytest.mark.parametrize(
     "hwm_class, value",
     [
@@ -300,7 +294,6 @@ def test_column_hwm_compare_other_type(hwm_class, value):  # noqa: WPS210
             assert hwm < other_hwm
 
 
-@pytest.mark.deprecated
 @pytest.mark.parametrize(
     "hwm_class, value, delta",
     [
@@ -336,7 +329,6 @@ def test_column_hwm_add(hwm_class, value, delta):
         _ = hwm + delta
 
 
-@pytest.mark.deprecated
 @pytest.mark.parametrize(
     "hwm_class, value, delta",
     [
@@ -370,7 +362,6 @@ def test_column_hwm_sub(hwm_class, value, delta):
         _ = hwm - delta
 
 
-@pytest.mark.deprecated
 @pytest.mark.parametrize(
     "hwm_class, value, delta",
     [
@@ -442,7 +433,6 @@ def test_column_hwm_update(hwm_class, value, delta):
             _ = hwm1.update(delta)
 
 
-@pytest.mark.deprecated
 @pytest.mark.parametrize(
     "hwm_class",
     [
@@ -493,7 +483,6 @@ def test_column_hwm_qualified_name(
     assert hwm.qualified_name == f"{column_qualified_name}#{table_qualified_name}#{process_qualified_name}"
 
 
-@pytest.mark.deprecated
 @pytest.mark.parametrize(
     "hwm_class, hwm_type, value, serialized_value, wrong_values",
     [
@@ -516,7 +505,6 @@ def test_column_hwm_serialization(hwm_class, hwm_type, value, serialized_value, 
 
     serialized1 = {
         "value": serialized_value,
-        "type": hwm_type,
         "column": column.serialize(),
         "source": table.serialize(),
         "process": process.serialize(),
@@ -540,12 +528,24 @@ def test_column_hwm_serialization(hwm_class, hwm_type, value, serialized_value, 
         with pytest.raises((TypeError, ValueError)):
             hwm_class.deserialize_value(serialized3)
 
-    serialized4 = serialized1.copy()
-    serialized4["type"] = "unknown"
-    with pytest.raises(KeyError):
-        hwm_class.deserialize(serialized4)
 
-    serialized5 = serialized1.copy()
-    serialized5["type"] = "file_list"
-    with pytest.raises(ValueError):
-        hwm_class.deserialize(serialized5)
+@pytest.mark.parametrize(
+    "hwm_class, value, new_class",
+    [
+        (DateHWM, date.today(), ColumnDateHWM),
+        (DateTimeHWM, datetime.now(), ColumnDateTimeHWM),
+        (IntHWM, 1, ColumnIntHWM),
+    ],
+)
+def test_column_old_hwm_to_new_hwm(hwm_class, value, new_class):
+    column = Column(name="some")
+    table = Table(name="abc.another", instance="proto://url")
+    old_hwm = hwm_class(column=column, source=table)
+    new_hwm = old_hwm.as_new_hwm()
+
+    assert new_hwm.value == old_hwm.value
+    assert new_hwm.name == old_hwm.qualified_name
+    assert new_hwm.modified_time == old_hwm.modified_time
+    assert new_hwm.entity == old_hwm.column.name
+
+    assert isinstance(new_hwm, new_class)

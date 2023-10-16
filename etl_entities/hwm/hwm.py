@@ -18,12 +18,12 @@ from __future__ import annotations
 from abc import ABC, abstractmethod
 from copy import deepcopy
 from datetime import datetime
-from typing import Any, Generic, Optional, TypeVar
+from typing import Any, Generic, TypeVar
 
 from pydantic import Field, validate_model
 
 from etl_entities.entity import GenericModel
-from etl_entities.hwm_utils import HWMTypeRegistry
+from etl_entities.hwm.hwm_type_registry import HWMTypeRegistry
 
 ValueType = TypeVar("ValueType")
 
@@ -55,7 +55,7 @@ class HWM(ABC, Generic[ValueType], GenericModel):
     """
 
     name: str
-    value: Optional[ValueType]
+    value: ValueType
     description: str = ""
     entity: Any = None
     expression: Any = None
@@ -79,7 +79,7 @@ class HWM(ABC, Generic[ValueType], GenericModel):
 
         .. code:: python
 
-            from etl_entities import ColumnIntHWM
+            from etl_entities.hwm import ColumnIntHWM
 
             hwm = ColumnIntHWM(value=1, ...)
 
@@ -125,11 +125,11 @@ class HWM(ABC, Generic[ValueType], GenericModel):
         """
 
         value = deepcopy(inp)
-        typ = value.pop("type", None)
-        if typ:
-            hwm_type = HWMTypeRegistry.get(typ)
+        type_name = value.pop("type", None)
+        if type_name:
+            hwm_type = HWMTypeRegistry.get(type_name)
             if not issubclass(cls, hwm_type):
-                raise ValueError(f"Type {typ} does not match class {cls.__name__}")
+                raise ValueError(f"Type {type_name} does not match class {cls.__name__}")
 
         return super().deserialize(value)
 

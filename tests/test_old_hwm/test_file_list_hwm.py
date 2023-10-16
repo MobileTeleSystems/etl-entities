@@ -604,7 +604,6 @@ def test_file_list_hwm_serialization():
 
     serialized1 = {
         "value": serialized_value1,
-        "type": "file_list",
         "source": folder.serialize(),
         "process": process.serialize(),
         "modified_time": modified_time.isoformat(),
@@ -630,13 +629,3 @@ def test_file_list_hwm_serialization():
         serialized4["value"] = wrong_value
         with pytest.raises((TypeError, ValueError)):
             FileListHWM.deserialize_value(serialized4)
-
-    serialized5 = serialized1.copy()
-    serialized5["type"] = "unknown"
-    with pytest.raises(KeyError):
-        FileListHWM.deserialize(serialized5)
-
-    serialized6 = serialized1.copy()
-    serialized6["type"] = "int"
-    with pytest.raises(ValueError):
-        FileListHWM.deserialize(serialized6)

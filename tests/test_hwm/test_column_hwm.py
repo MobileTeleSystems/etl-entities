@@ -40,12 +40,6 @@ def test_column_hwm_wrong_input(hwm_class, value, wrong_values):
         hwm_class(column=1)
 
     with pytest.raises(ValueError):
-        hwm_class(source=1)
-
-    with pytest.raises(ValueError):
-        hwm_class(column=column, source=1)
-
-    with pytest.raises(ValueError):
         hwm_class(column=column, name=table, value="abc")
 
     with pytest.raises(ValueError):

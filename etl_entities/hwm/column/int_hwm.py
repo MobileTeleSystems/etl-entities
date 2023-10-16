@@ -18,11 +18,11 @@ from typing import Optional
 
 from pydantic.types import StrictInt
 
-from etl_entities.hwm.column_hwm import ColumnHWM
-from etl_entities.hwm_utils.hwm_type_registry import register_hwm_type
+from etl_entities.hwm.column.column_hwm import ColumnHWM
+from etl_entities.hwm.hwm_type_registry import register_hwm_type
 
 
-@register_hwm_type("int")
+@register_hwm_type("column_int")
 class ColumnIntHWM(ColumnHWM[StrictInt]):
     """Integer HWM type
 
@@ -53,7 +53,7 @@ class ColumnIntHWM(ColumnHWM[StrictInt]):
 
     .. code:: python
 
-        from etl_entities import ColumnIntHWM
+        from etl_entities.hwm import ColumnIntHWM
 
         hwm_int = ColumnIntHWM(column="column_name", value=1, name="table_name")
     """
@@ -84,7 +84,7 @@ class ColumnIntHWM(ColumnHWM[StrictInt]):
 
         .. code:: python
 
-            from etl_entities import ColumnIntHWM
+            from etl_entities.hwm import ColumnIntHWM
 
             hwm1 = ColumnIntHWM(value=1, ...)
             hwm2 = ColumnIntHWM(value=2, ...)
@@ -126,7 +126,7 @@ class ColumnIntHWM(ColumnHWM[StrictInt]):
 
         .. code:: python
 
-            from etl_entities import ColumnIntHWM
+            from etl_entities.hwm import ColumnIntHWM
 
             hwm1 = ColumnIntHWM(value=1, ...)
             hwm2 = ColumnIntHWM(value=2, ...)
