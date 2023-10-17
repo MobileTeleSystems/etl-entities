@@ -95,6 +95,36 @@ class HWM(ABC, Generic[ValueType], GenericModel):
 
         return self
 
+    def serialize(self) -> dict:
+        """Return dict representation of HWM
+
+        Returns
+        -------
+        result : dict
+
+            Serialized HWM
+
+        Examples
+        ----------
+
+        .. code:: python
+
+            from etl_entities.hwm import ColumnIntHWM
+
+            hwm = ColumnIntHWM(value=1, ...)
+            assert hwm.serialize() == {
+                "value": "1",
+                "type": "int",
+                "column": "column_name",
+                "name": "table_name",
+                "description": ...,
+            }
+        """
+
+        result = super().serialize()
+        result["type"] = HWMTypeRegistry.get_key(self.__class__)
+        return result
+
     @classmethod
     def deserialize(cls, inp: dict):
         """Return HWM from dict representation

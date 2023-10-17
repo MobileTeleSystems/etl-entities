@@ -2,7 +2,12 @@ from datetime import date, datetime, timedelta
 
 import pytest
 
-from etl_entities.hwm import ColumnDateHWM, ColumnDateTimeHWM, ColumnIntHWM
+from etl_entities.hwm import (
+    ColumnDateHWM,
+    ColumnDateTimeHWM,
+    ColumnIntHWM,
+    HWMTypeRegistry,
+)
 
 
 @pytest.mark.parametrize(
@@ -289,3 +294,66 @@ def test_column_hwm_sub(hwm_class, value, delta):
 
     with pytest.raises(TypeError):
         _ = hwm - delta
+
+
+@pytest.mark.parametrize(
+    "hwm_class, hwm_type, value, serialized_value",
+    [
+        (
+            ColumnDateHWM,
+            "column_date",
+            date(year=2021, month=12, day=1),
+            "2021-12-01",
+        ),
+        (
+            ColumnDateTimeHWM,
+            "column_datetime",
+            datetime(year=2021, month=12, day=1, hour=4, minute=20, second=33),
+            "2021-12-01T04:20:33",
+        ),
+        (ColumnIntHWM, "column_int", 1, 1),
+    ],
+)
+def test_column_hwm_serialization(hwm_class, hwm_type, value, serialized_value):
+    column = "column_name"
+    table = "table_name"
+    modified_time = datetime.now()
+
+    serialized1 = {
+        "value": serialized_value,
+        "type": hwm_type,
+        "column": column,
+        "name": table,
+        "description": "",
+        "expression": None,
+        "modified_time": modified_time.isoformat(),
+    }
+    hwm1 = hwm_class(column=column, name=table, value=value, modified_time=modified_time)
+
+    assert hwm1.serialize() == serialized1
+    assert hwm_class.deserialize(serialized1) == hwm1
+
+    serialized2 = serialized1.copy()
+    serialized2["value"] = None
+    hwm2 = hwm_class(column=column, name=table, modified_time=modified_time)
+
+    assert hwm2.serialize() == serialized2
+    assert hwm_class.deserialize(serialized2) == hwm2
+
+
+@pytest.mark.parametrize(
+    "hwm_class",
+    [
+        ColumnDateHWM,
+        ColumnDateTimeHWM,
+        ColumnIntHWM,
+    ],
+)
+def test_column_hwm_unregistered_type(hwm_class):
+    class UnregisteredHWM(hwm_class):
+        pass  # noqa: WPS604
+
+    err_msg = r"You should registered <class \'.*'> class using @register_hwm_type decorator"
+
+    with pytest.raises(KeyError, match=err_msg):
+        HWMTypeRegistry.get_key(UnregisteredHWM)
