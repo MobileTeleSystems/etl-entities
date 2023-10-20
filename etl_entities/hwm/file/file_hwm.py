@@ -15,32 +15,29 @@
 from __future__ import annotations
 
 import os
-from abc import abstractmethod
-from typing import Generic, TypeVar
+from typing import Any, Generic, TypeVar
+
+from pydantic import Field
 
 from etl_entities.entity import GenericModel
+from etl_entities.hwm.hwm import HWM
 from etl_entities.instance import AbsolutePath
-from etl_entities.old_hwm.hwm import HWM
-from etl_entities.source import RemoteFolder
 
 FileHWMValueType = TypeVar("FileHWMValueType")
-FileHWMSerializedType = TypeVar("FileHWMSerializedType")
 
 
 class FileHWM(
-    HWM[FileHWMValueType, FileHWMSerializedType],
+    HWM[FileHWMValueType],
+    Generic[FileHWMValueType],
     GenericModel,
-    Generic[FileHWMValueType, FileHWMSerializedType],
 ):
     """Basic file HWM type
 
-    .. deprecated:: 2.0.0
-
     Parameters
     ----------
-    source : :obj:`etl_entities.instance.path.remote_folder.RemoteFolder`
+    directory : :obj: `pathlib.PosixPath`
 
-        Folder instance
+        Path to directory
 
     value : ``FileHWMValueType``
 
@@ -50,57 +47,23 @@ class FileHWM(
 
         HWM value modification time
 
-    process : :obj:`etl_entities.process.process.Process`, default: current process
-
-        Process instance
     """
 
-    source: RemoteFolder
+    entity: AbsolutePath = Field(alias="directory")
     value: FileHWMValueType
+    name: str
+    description: str = ""
+    expression: Any = None
 
     class Config:  # noqa: WPS431
         json_encoders = {AbsolutePath: os.fspath}
-
-    @property
-    @abstractmethod
-    def name(self) -> str:
-        """
-        Name of HWM
-        """
-
-    def __str__(self) -> str:
-        """
-        Returns full HWM name
-        """
-
-        return f"{self.name}#{self.source.full_name}"
-
-    @property
-    def qualified_name(self) -> str:
-        """
-        Unique name of HWM
-        """
-
-        return "#".join([self.name, self.source.qualified_name, self.process.qualified_name])
-
-    def __bool__(self):
-        """Check if HWM value is set
-
-        Returns
-        --------
-        result : bool
-
-            ``False`` if ``value`` is empty, ``True`` otherwise
-        """
-
-        return bool(self.value)
 
     def __eq__(self, other):
         """Checks equality of two FileHWM instances
 
         Params
         -------
-        other : :obj:`hwmlib.old_hwm.file_hwm.FileHWM`
+        other : :obj:`hwmlib.hwm.file_hwm.FileHWM`
 
         Returns
         --------
