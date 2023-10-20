@@ -39,7 +39,7 @@ class HWM(ABC, Generic[ValueType], GenericModel):
 
     name : ``str``
 
-        Table name
+        HWM name
 
     value : ``ColumnValueType`` or ``None``, default: ``None``
 
@@ -55,9 +55,9 @@ class HWM(ABC, Generic[ValueType], GenericModel):
     """
 
     name: str
-    value: ValueType
     description: str = ""
     entity: Any = None
+    value: ValueType  # it is important to keep order of entity and value as pydantic validation relies on it!
     expression: Any = None
     modified_time: datetime = Field(default_factory=datetime.now)
 
