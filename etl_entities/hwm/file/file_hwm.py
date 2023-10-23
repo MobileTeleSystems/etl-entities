@@ -15,7 +15,8 @@
 from __future__ import annotations
 
 import os
-from typing import Any, Generic, TypeVar
+from abc import abstractmethod
+from typing import Any, Generic, Iterable, TypeVar
 
 from pydantic import Field
 
@@ -57,6 +58,10 @@ class FileHWM(
 
     class Config:  # noqa: WPS431
         json_encoders = {AbsolutePath: os.fspath}
+
+    @abstractmethod
+    def update(self, value: str | os.PathLike | Iterable[str | os.PathLike]):
+        """Updates current HWM value with some implementation-specific logic, and return HWM."""
 
     def __eq__(self, other):
         """Checks equality of two FileHWM instances
