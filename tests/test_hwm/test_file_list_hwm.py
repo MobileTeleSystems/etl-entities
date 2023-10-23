@@ -546,7 +546,7 @@ def test_file_list_hwm_serialization():
     expected = {
         "value": value,
         "type": "file_list",
-        "directory": folder,
+        "directory": "/home/user/abc",
         "modified_time": modified_time.isoformat(),
         "name": name,
         "description": "",
@@ -562,3 +562,18 @@ def test_file_list_hwm_serialization():
 
     assert hwm2.serialize() == serialized2
     assert FileListHWM.deserialize(serialized2) == hwm2
+
+
+def test_file_list_hwm_directory_error():
+    name = "file_list"
+    value = ["some/path/file.py"]
+
+    err_msg = "AbsolutePath should start with '/'"
+
+    folder = RelativePath("home/user/abc")
+    with pytest.raises(ValueError, match=err_msg):
+        FileListHWM(name=name, directory=folder, value=value)
+
+    folder = "home/user/abc"
+    with pytest.raises(ValueError, match=err_msg):
+        FileListHWM(name=name, directory=folder, value=value)

@@ -69,6 +69,10 @@ class FileListHWM(FileHWM[FileListType]):
     class Config:  # noqa: WPS431
         json_encoders = {RelativePath: os.fspath}
 
+    @validator("entity", pre=True)
+    def validate_directory(cls, value):  # noqa: N805
+        return AbsolutePath(value)
+
     @validator("value", pre=True)
     def validate_value(cls, value, values):  # noqa: N805
         directory = values.get("entity")
@@ -83,39 +87,6 @@ class FileListHWM(FileHWM[FileListType]):
             return cls._deserialize_value(value, directory)
 
         return value
-
-    def serialize(self) -> dict:
-        """Return dict representation of HWM
-
-        Returns
-        -------
-        result : dict
-
-            Serialized HWM
-
-        Examples
-        ----------
-
-        .. code:: python
-
-            from etl_entities.hwm import FileListHWM
-            from etl_entities.instance import AbsolutePath
-
-            hwm = FileListHWM(value=["path/to/file.py"], ...)
-            assert hwm.serialize() == {
-                "value": ["path/to/file.py"],
-                "type": "file_list",
-                "directory": AbsolutePath("/home/user/abc"),
-                "modified_time": "2023-10-18T14:53:46.693694",
-                "name": "name",
-                "description": "",
-                "expression": None,
-            }
-        """
-
-        result = super().serialize()
-        result["directory"] = AbsolutePath(result["directory"])
-        return result
 
     def covers(self, value: str | os.PathLike) -> bool:  # type: ignore
         """Return ``True`` if input value is already covered by HWM
