@@ -18,7 +18,7 @@ import os
 from abc import abstractmethod
 from typing import Any, Generic, Iterable, TypeVar
 
-from pydantic import Field
+from pydantic import Field, validator
 
 from etl_entities.entity import GenericModel
 from etl_entities.hwm.hwm import HWM
@@ -58,6 +58,10 @@ class FileHWM(
 
     class Config:  # noqa: WPS431
         json_encoders = {AbsolutePath: os.fspath}
+
+    @validator("entity", pre=True)
+    def validate_directory(cls, value):  # noqa: N805
+        return AbsolutePath(value)
 
     @abstractmethod
     def update(self, value: str | os.PathLike | Iterable[str | os.PathLike]):

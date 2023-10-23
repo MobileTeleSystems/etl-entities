@@ -69,10 +69,6 @@ class FileListHWM(FileHWM[FileListType]):
     class Config:  # noqa: WPS431
         json_encoders = {RelativePath: os.fspath}
 
-    @validator("entity", pre=True)
-    def validate_directory(cls, value):  # noqa: N805
-        return AbsolutePath(value)
-
     @validator("value", pre=True)
     def validate_value(cls, value, values):  # noqa: N805
         directory = values.get("entity")
