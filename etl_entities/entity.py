@@ -27,7 +27,7 @@ class BaseModel(PydanticBaseModel):
         allow_population_by_field_name = True
 
     def serialize(self) -> dict:
-        return json.loads(self.json(by_alias=True))
+        return json.loads(self.json())
 
     @classmethod
     def deserialize(cls, inp: dict):
@@ -41,7 +41,7 @@ class GenericModel(PydanticGenericModel):
         allow_population_by_field_name = True
 
     def serialize(self) -> dict:
-        return json.loads(self.json(by_alias=True))
+        return json.loads(self.json())
 
     @classmethod
     def deserialize(cls, inp: dict):

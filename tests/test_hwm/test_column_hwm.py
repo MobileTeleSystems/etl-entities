@@ -322,7 +322,7 @@ def test_column_hwm_serialization(hwm_class, hwm_type, value, serialized_value):
     serialized1 = {
         "value": serialized_value,
         "type": hwm_type,
-        "column": column,
+        "entity": column,
         "name": table,
         "description": "",
         "expression": None,

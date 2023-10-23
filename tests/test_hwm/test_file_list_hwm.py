@@ -530,7 +530,7 @@ def test_file_list_hwm_serialization():
     expected = {
         "value": value,
         "type": "file_list",
-        "directory": "/home/user/abc",
+        "entity": "/home/user/abc",
         "modified_time": modified_time.isoformat(),
         "name": name,
         "description": "",
