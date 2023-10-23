@@ -77,57 +77,12 @@ class FileListHWM(FileHWM[FileListType]):
             raise ValueError("Missing `directory` key")
 
         if isinstance(value, (os.PathLike, str)):
-            return cls.deserialize_value([value], directory)
+            return cls._deserialize_value([value], directory)
 
         if isinstance(value, Iterable):
-            return cls.deserialize_value(value, directory)
+            return cls._deserialize_value(value, directory)
 
         return value
-
-    @classmethod
-    def deserialize_value(
-        cls,
-        value: list[str],
-        remote_folder: AbsolutePath,
-    ) -> frozenset[RelativePath]:
-        """Parse JSON representation to get HWM value
-
-        Parameters
-        ----------
-        value : set[str]
-
-            Serialized value
-
-        Returns
-        -------
-        result : :obj:`frozenset` of :obj:`etl_entities.instance.path.relative_path.RelativePath`
-
-            Deserialized value
-
-        Examples
-        ----------
-
-        .. code:: python
-
-            from etl_entities.hwm import FileListHWM
-
-            assert FileListHWM.deserialize_value(["some/path.py", "another.file"]) == frozenset(
-                RelativePath("some/path.py"), RelativePath("another.file")
-            )
-
-            assert FileListHWM.deserialize_value([]) == frozenset()
-        """
-
-        result = []
-
-        for item in value:
-            path = PurePosixPath(os.fspath(item).strip())
-            if path.is_absolute():
-                path = path.relative_to(remote_folder)
-
-            result.append(RelativePath(path))
-
-        return frozenset(result)
 
     def covers(self, value: str | os.PathLike) -> bool:  # type: ignore
         """Return ``True`` if input value is already covered by HWM
@@ -146,6 +101,78 @@ class FileListHWM(FileHWM[FileListType]):
         """
 
         return value in self
+
+    def get_absolute_paths(self) -> frozenset[AbsolutePath]:
+        """Returns set of files with absolute paths
+
+        Returns
+        --------
+        result : :obj:`frosenzet` of :obj:`pathlib.PosixPath`
+
+            Copy of HWM with updated value
+
+        Examples
+        ----------
+
+        .. code:: python
+
+            from etl_entities.hwm import FileListHWM
+            from etl_entities.instance import AbsolutePath
+
+            hwm = FileListHWM(value={"some/path"}, directory=AbsolutePath("/absolute/path"), ...)
+
+            assert hwm.get_absolute_paths() == frozenset({"/absolute/path/some/path"})
+        """
+
+        return frozenset(self.entity / item for item in self.value)
+
+    def update(self, value: str | os.PathLike | Iterable[str | os.PathLike]):
+        """Updates current HWM value with some implementation-specific logic, and return HWM.
+
+        .. note::
+
+            Changes HWM value in place
+
+        Returns
+        -------
+        result : FileHWM
+
+            Self
+
+        Examples
+        ----------
+
+        .. code:: python
+
+            from etl_entities.hwm import FileListHWM
+            from etl_entities.instance import RelativePath
+
+            hwm = FileListHWM(value=["some/existing_path.py"], ...)
+
+            # new paths are appended
+            hwm.update("some/new_path.py")
+            assert hwm.value == frozenset(
+                {
+                    RelativePath("some/existing_path.py"),
+                    RelativePath("some/new_path.py"),
+                }
+            )
+
+            # existing paths do nothing
+            hwm.update("some/existing_path.py")
+            assert hwm.value == frozenset(
+                {
+                    RelativePath("some/existing_path.py"),
+                    RelativePath("some/new_path.py"),
+                }
+            )
+        """
+
+        new_value = self.value | self._check_new_value(value)
+        if self.value != new_value:
+            return self.set_value(new_value)
+
+        return self
 
     def __add__(self, value: str | os.PathLike | Iterable[str | os.PathLike]):
         """Adds path or paths to HWM value, and return copy of HWM
@@ -217,30 +244,6 @@ class FileListHWM(FileHWM[FileListType]):
 
         return self
 
-    def __abs__(self) -> frozenset[AbsolutePath]:
-        """Returns set of files with absolute paths
-
-        Returns
-        --------
-        result : :obj:`frosenzet` of :obj:`pathlib.PosixPath`
-
-            Copy of HWM with updated value
-
-        Examples
-        ----------
-
-        .. code:: python
-
-            from etl_entities.hwm import FileListHWM
-            from etl_entities.instance import AbsolutePath
-
-            hwm = FileListHWM(value={"some/path"}, directory=AbsolutePath("/absolute/path"), ...)
-
-            assert abs(hwm) == frozenset({"/absolute/path/some/path"})
-        """
-
-        return frozenset(self.entity / item for item in self.value)
-
     def __contains__(self, item):
         """Checks if path is present in value
 
@@ -267,7 +270,7 @@ class FileListHWM(FileHWM[FileListType]):
         if isinstance(item, str):
             item = RelativePath(item) if not item.startswith("/") else AbsolutePath(item)
 
-        return item in self.value or item in abs(self)
+        return item in self.value or item in self.get_absolute_paths()
 
     def __eq__(self, other):
         """Checks equality of two FileListHWM instances
@@ -300,3 +303,48 @@ class FileListHWM(FileHWM[FileListType]):
             return False
 
         return super().__eq__(other)
+
+    @classmethod
+    def _deserialize_value(
+        cls,
+        value: list[str],
+        remote_folder: AbsolutePath,
+    ) -> frozenset[RelativePath]:
+        """Parse JSON representation to get HWM value
+
+        Parameters
+        ----------
+        value : set[str]
+
+            Serialized value
+
+        Returns
+        -------
+        result : :obj:`frozenset` of :obj:`etl_entities.instance.path.relative_path.RelativePath`
+
+            Deserialized value
+
+        Examples
+        ----------
+
+        .. code:: python
+
+            from etl_entities.hwm import FileListHWM
+
+            assert FileListHWM._deserialize_value(["some/path.py", "another.file"]) == frozenset(
+                RelativePath("some/path.py"), RelativePath("another.file")
+            )
+
+            assert FileListHWM._deserialize_value([]) == frozenset()
+        """
+
+        result = []
+
+        for item in value:
+            path = PurePosixPath(os.fspath(item).strip())
+            if path.is_absolute():
+                path = path.relative_to(remote_folder)
+
+            result.append(RelativePath(path))
+
+        return frozenset(result)
