@@ -516,22 +516,6 @@ def test_file_list_hwm_update():
     assert hwm11.modified_time > hwm2.modified_time
 
 
-def test_hwm_deserialize_value():
-    remote_folder = AbsolutePath("/remote/folder")
-    serialized_value = ["some/path.py", "/remote/folder/another/file"]
-
-    deserialized_value = FileListHWM._deserialize_value(serialized_value, remote_folder)
-
-    expected_value = frozenset(  # noqa: WPS527
-        {
-            RelativePath("some/path.py"),
-            RelativePath("another/file"),
-        },
-    )  # This path is relative to remote_folder
-
-    assert deserialized_value == expected_value
-
-
 def test_file_list_hwm_serialization():
     name = "file_list"
     folder = AbsolutePath("/home/user/abc")
