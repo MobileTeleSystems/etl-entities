@@ -16,6 +16,7 @@
     :hidden:
 
     hwm/index
+    hwm_store/index
     old_hwm/index
     source/index
     process/index
