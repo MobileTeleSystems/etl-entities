@@ -1,0 +1,2 @@
+Add classes: ``BaseHWMStore``, ``HWMStoreClassRegistry``, ``register_hwm_store_class``, ``HWMStoreManager``,
+``MemoryHWMStore`` in ``etl_entities.hwm_store`` (source code was imported from ``onetl.hwm.store``)
