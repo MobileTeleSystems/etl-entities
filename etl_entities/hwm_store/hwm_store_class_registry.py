@@ -65,7 +65,7 @@ class HWMStoreClassRegistry:
         return cls._mapping.keys()
 
 
-def register_hwm_store_class(*type_names: str):
+def register_hwm_store_class(type_name: str):
     """Decorator for registering some Store class with a name
 
     Examples
@@ -90,9 +90,7 @@ def register_hwm_store_class(*type_names: str):
     """
 
     def wrapper(cls: type[BaseHWMStore]):
-        for type_name in type_names:
-            HWMStoreClassRegistry.add(type_name, cls)
-
+        HWMStoreClassRegistry.add(type_name, cls)
         return cls
 
     return wrapper

@@ -14,14 +14,15 @@
 
 from __future__ import annotations
 
+from collections import deque
 from typing import ClassVar
 
 from etl_entities.hwm_store.base_hwm_store import BaseHWMStore
 from etl_entities.hwm_store.hwm_store_class_registry import HWMStoreClassRegistry
 
 
-class HWMStoreManager:
-    _stack: ClassVar[list[BaseHWMStore]] = []
+class HWMStoreStackManager:
+    _stack: ClassVar[deque[BaseHWMStore]] = deque()
 
     @classmethod
     def push(cls, hwm_store: BaseHWMStore) -> None:

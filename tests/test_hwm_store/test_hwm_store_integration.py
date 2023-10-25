@@ -59,14 +59,14 @@ def mock_external_process():
 def test_hwm_store_get_save(hwm_delta):
     hwm_store = MemoryHWMStore()
     hwm, delta = hwm_delta
-    assert hwm_store.get(hwm.name) is None
+    assert hwm_store.get_hwm(hwm.name) is None
 
-    hwm_store.save(hwm)
-    assert hwm_store.get(hwm.name) == hwm
+    hwm_store.set_hwm(hwm)
+    assert hwm_store.get_hwm(hwm.name) == hwm
 
     hwm2 = hwm + delta
-    hwm_store.save(hwm2)
-    assert hwm_store.get(hwm.name) == hwm2
+    hwm_store.set_hwm(hwm2)
+    assert hwm_store.get_hwm(hwm.name) == hwm2
 
 
 def test_memory_hwm_store_integration(hwm_delta, mock_external_process):
@@ -74,30 +74,30 @@ def test_memory_hwm_store_integration(hwm_delta, mock_external_process):
     hwm, delta = hwm_delta
 
     def simulate_process(hwm_store, hwm, delta):
-        current_hwm = hwm_store.get(hwm.name)
+        current_hwm = hwm_store.get_hwm(hwm.name)
         assert current_hwm is None
 
         mock_external_process.run()
 
         new_hwm = mock_external_process.update_hwm(hwm, delta)
-        hwm_store.save(new_hwm)
-        assert hwm_store.get(hwm.name) == new_hwm
+        hwm_store.set_hwm(new_hwm)
+        assert hwm_store.get_hwm(hwm.name) == new_hwm
 
         another_hwm_increment = delta * 2
         newer_hwm = mock_external_process.update_hwm(new_hwm, another_hwm_increment)
-        hwm_store.save(newer_hwm)
-        assert hwm_store.get(hwm.name) == newer_hwm
+        hwm_store.set_hwm(newer_hwm)
+        assert hwm_store.get_hwm(hwm.name) == newer_hwm
 
         concurrent_process = Mock()
         concurrent_process.update_hwm = Mock(return_value=newer_hwm + delta)
         concurrent_new_hwm = concurrent_process.update_hwm(newer_hwm, delta)
-        hwm_store.save(concurrent_new_hwm)
-        assert hwm_store.get(hwm.name) == concurrent_new_hwm
+        hwm_store.set_hwm(concurrent_new_hwm)
+        assert hwm_store.get_hwm(hwm.name) == concurrent_new_hwm
 
         return concurrent_new_hwm
 
     with hwm_store:
         final_expected_hwm = simulate_process(hwm_store, hwm, delta)
 
-    final_hwm = hwm_store.get(hwm.name)
+    final_hwm = hwm_store.get_hwm(hwm.name)
     assert final_hwm == final_expected_hwm
