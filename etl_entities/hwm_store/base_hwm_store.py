@@ -20,7 +20,6 @@ from typing import Any
 
 from etl_entities.entity import BaseModel
 from etl_entities.hwm import HWM
-from etl_entities.hwm_utils import log_with_indent
 
 log = logging.getLogger(__name__)
 
@@ -41,23 +40,27 @@ class BaseHWMStore(BaseModel, ABC):
                 db_reader.run()
         """
         # hack to avoid circular imports
-        from etl_entities.hwm_store.hwm_store_manager import HWMStoreManager
+        from etl_entities.hwm_store.hwm_store_stack_manager import HWMStoreStackManager
 
-        log.debug("|%s| Entered stack at level %d", self.__class__.__name__, HWMStoreManager.get_current_level())
-        HWMStoreManager.push(self)
+        log.debug("|%s| Entered stack at level %d", self.__class__.__name__, HWMStoreStackManager.get_current_level())
+        HWMStoreStackManager.push(self)
 
         self._log_parameters()
         return self
 
     def __exit__(self, _exc_type, _exc_value, _traceback):
-        from etl_entities.hwm_store.hwm_store_manager import HWMStoreManager
+        from etl_entities.hwm_store.hwm_store_stack_manager import HWMStoreStackManager
 
-        log.debug("|%s| Exiting stack at level %d", self, HWMStoreManager.get_current_level() - 1)
-        HWMStoreManager.pop()
+        log.debug(
+            "|%s| Exiting stack at level %d",
+            self.__class__.__name__,
+            HWMStoreStackManager.get_current_level() - 1,
+        )
+        HWMStoreStackManager.pop()
         return False
 
     @abstractmethod
-    def get(self, name: str) -> HWM | None:
+    def get_hwm(self, name: str) -> HWM | None:
         """
         Get HWM by name from HWM store.
 
@@ -79,11 +82,11 @@ class BaseHWMStore(BaseModel, ABC):
 
             # just to generate name using HWM parts
             empty_hwm = ColumnIntHWM(column=..., name=..., ...)
-            real_hwm = hwm_store.get(empty_hwm.name)
+            real_hwm = hwm_store.get_hwm(empty_hwm.name)
         """
 
     @abstractmethod
-    def save(self, hwm: HWM) -> Any:
+    def set_hwm(self, hwm: HWM) -> Any:
         """
         Save HWM object to HWM Store.
 
@@ -104,7 +107,7 @@ class BaseHWMStore(BaseModel, ABC):
             from etl_entities.hwm import ColumnIntHWM
 
             hwm = ColumnIntHWM(value=..., column=..., name=...)
-            hwm_location = hwm_store.save(hwm)
+            hwm_location = hwm_store.set_hwm(hwm)
         """
 
     def _log_parameters(self) -> None:
@@ -114,4 +117,4 @@ class BaseHWMStore(BaseModel, ABC):
         if options:
             log.info("|%s| Using options:", self.__class__.__name__)
             for option, value in options.items():
-                log_with_indent(log, "%s = %r", option, value)
+                log.info("    t%s = %r", option, value)

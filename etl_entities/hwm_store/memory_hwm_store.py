@@ -23,7 +23,7 @@ from etl_entities.hwm_store.base_hwm_store import BaseHWMStore
 from etl_entities.hwm_store.hwm_store_class_registry import register_hwm_store_class
 
 
-@register_hwm_store_class("memory", "in-memory")
+@register_hwm_store_class("memory")
 class MemoryHWMStore(BaseHWMStore):
     """In-memory local store for HWM values.
 
@@ -36,56 +36,27 @@ class MemoryHWMStore(BaseHWMStore):
     --------
 
     .. code:: python
-
-        from onetl.connection import Hive, Postgres
-        from onetl.db import DBReader
-        from onetl.strategy import IncrementalStrategy
-        from pyspark.sql import SparkSession
-
         from etl_entities.hwm_store import MemoryHWMStore
+        from etl_entities.hwm import ColumnIntHWM
 
-        maven_packages = Postgres.get_packages()
-        spark = (
-            SparkSession.builder.appName("spark-app-name")
-            .config("spark.jars.packages", ",".join(maven_packages))
-            .getOrCreate()
-        )
+        hwm_store = MemoryHWMStore()
 
-        postgres = Postgres(
-            host="postgres.domain.com",
-            user="myuser",
-            password="*****",
-            database="target_database",
-            spark=spark,
-        )
+        hwm_value = ColumnIntHWM(name="example", column="sample_column", value=10)
+        hwm_store.set_hwm(hwm_value)
 
-        hive = Hive(cluster="rnd-dwh", spark=spark)
+        retrieved_hwm = hwm_store.get_hwm("example")
+        assert retrieved_hwm == hwm_value
 
-        reader = DBReader(
-            connection=postgres,
-            source="public.mydata",
-            columns=["id", "data"],
-            hwm_column="id",
-        )
-
-        writer = DBWriter(connection=hive, target="newtable")
-
-        with MemoryHWMStore():
-            with IncrementalStrategy():
-                df = reader.run()
-                writer.run(df)
-
-            # will store HWM value in RAM
-
-        # values are lost after exiting the context
+        hwm_store.clear()
+        assert hwm_store.get_hwm("example") is None
     """
 
     _data: Dict[str, HWM] = PrivateAttr(default_factory=dict)
 
-    def get(self, name: str) -> HWM | None:
+    def get_hwm(self, name: str) -> HWM | None:
         return self._data.get(name, None)
 
-    def save(self, hwm: HWM) -> None:
+    def set_hwm(self, hwm: HWM) -> None:
         self._data[hwm.name] = hwm
 
     def clear(self) -> None:
