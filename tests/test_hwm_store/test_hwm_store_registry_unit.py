@@ -7,8 +7,8 @@ def test_hwm_store_registry_add_and_get():
     class DummyStore(MemoryHWMStore):
         pass  # noqa: WPS604
 
-    HWMStoreClassRegistry.add("dummy", DummyStore)
-    assert HWMStoreClassRegistry.get("dummy") == DummyStore
+    HWMStoreClassRegistry.add("dummy_store", DummyStore)
+    assert HWMStoreClassRegistry.get("dummy_store") == DummyStore
 
     with pytest.raises(KeyError):
         HWMStoreClassRegistry.get("nonexistent")

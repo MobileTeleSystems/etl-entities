@@ -18,6 +18,7 @@ repos:
     args: [--remove]
   - id: name-tests-test
     files: ^tests/.*\.py$
+    exclude: ^tests/libs/.*\.py$
     args: [--django]
   - id: trailing-whitespace
   - id: detect-private-key

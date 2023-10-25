@@ -23,6 +23,13 @@
 
 .. toctree::
     :maxdepth: 2
+    :caption: Plugins
+    :hidden:
+
+    plugins
+
+.. toctree::
+    :maxdepth: 2
     :caption: Develop
     :name: develop
     :hidden:
