@@ -46,7 +46,7 @@ Create a Python package ``some-plugin`` with a file ``some_plugin/setup.py``:
         },
     )
 
-See `setuptools documentation for entry_points <https://setuptools.pypa.io/en/latest/userguide/entry_point.html>`_
+See `setuptools documentation for entry points <https://setuptools.pypa.io/en/latest/userguide/entry_point.html>`_
 
 
 How plugins are imported?
