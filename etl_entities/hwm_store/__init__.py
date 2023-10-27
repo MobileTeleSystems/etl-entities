@@ -15,7 +15,6 @@
 from etl_entities.hwm_store.base_hwm_store import BaseHWMStore
 from etl_entities.hwm_store.hwm_store_class_registry import (
     HWMStoreClassRegistry,
-    detect_hwm_store,
     register_hwm_store_class,
 )
 from etl_entities.hwm_store.hwm_store_detect import detect_hwm_store
