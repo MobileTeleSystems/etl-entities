@@ -24,6 +24,7 @@ class BaseModel(PydanticBaseModel):
     class Config:  # noqa: WPS431
         frozen = True
         arbitrary_types_allowed = True
+        extra = "forbid"
         allow_population_by_field_name = True
 
     def serialize(self) -> dict:
