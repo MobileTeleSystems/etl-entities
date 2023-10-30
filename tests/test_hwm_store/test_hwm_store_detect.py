@@ -7,47 +7,8 @@ from etl_entities.hwm_store import (
     HWMStoreStackManager,
     MemoryHWMStore,
     detect_hwm_store,
+    register_hwm_store_class,
 )
-
-
-@pytest.mark.parametrize(
-    "hwm_store_class, input_config, key",
-    [
-        (
-            MemoryHWMStore,
-            {"hwm_store": "memory"},
-            "hwm_store",
-        ),
-        (
-            MemoryHWMStore,
-            {"some_store": "memory"},
-            "some_store",
-        ),
-        (
-            MemoryHWMStore,
-            {"hwm_store": {"memory": None}},
-            "hwm_store",
-        ),
-        (
-            MemoryHWMStore,
-            {"hwm_store": {"memory": []}},
-            "hwm_store",
-        ),
-        (
-            MemoryHWMStore,
-            {"hwm_store": {"memory": {}}},
-            "hwm_store",
-        ),
-    ],
-)
-@pytest.mark.parametrize("config_constructor", [dict, OmegaConf.create])
-def test_detect_hwm_store_from_config(hwm_store_class, input_config, config_constructor, key):
-    @detect_hwm_store(key)
-    def main(config):
-        assert isinstance(HWMStoreStackManager.get_current(), hwm_store_class)
-
-    conf = config_constructor(input_config)
-    main(conf)
 
 
 @pytest.mark.parametrize(
@@ -160,3 +121,53 @@ def test_detect_hwm_store_wrong_options(config_constructor):
 
     with pytest.raises(ValueError, match="extra fields not permitted"):
         main(conf)
+
+
+@pytest.mark.parametrize(
+    "input_config",
+    [
+        {"hwm_store": 123},
+        {"hwm_store": ["memory", "other"]},
+        {"hwm_store": None},
+    ],
+)
+@pytest.mark.parametrize("config_constructor", [dict, OmegaConf.create])
+def test_detect_hwm_store_unsupported_value_type(input_config, config_constructor):
+    @detect_hwm_store("hwm_store")
+    def main(config):  # NOSONAR
+        pass
+
+    conf = config_constructor(input_config)
+    with pytest.raises(ValueError, match="Wrong value .* for .* config item"):
+        main(conf)
+
+
+@pytest.mark.parametrize(
+    "input_config, expected_args, expected_kwargs",
+    [
+        ({"hwm_store": {"custom": None}}, (), {}),
+        ({"hwm_store": {"custom": "one_arg"}}, ("one_arg",), {}),
+        ({"hwm_store": {"custom": ["arg1", "arg2"]}}, ("arg1", "arg2"), {}),
+        ({"hwm_store": {"custom": {"arg1": "val1", "arg2": "val2"}}}, (), {"arg1": "val1", "arg2": "val2"}),
+    ],
+)
+@pytest.mark.parametrize("config_constructor", [dict, OmegaConf.create])
+def test_detect_hwm_store_custom_class(input_config, config_constructor, expected_args, expected_kwargs):
+    @register_hwm_store_class("custom")
+    class CustomHWMStore(MemoryHWMStore):
+        args: tuple
+        kwargs: dict
+
+        def __init__(self, *args, **kwargs):
+            object.__setattr__(self, "args", args)
+            object.__setattr__(self, "kwargs", kwargs)
+
+    @detect_hwm_store("hwm_store")
+    def main(config):
+        hwm_store = HWMStoreStackManager.get_current()
+        assert isinstance(hwm_store, CustomHWMStore)
+        assert hwm_store.args == expected_args
+        assert hwm_store.kwargs == expected_kwargs
+
+    conf = config_constructor(input_config)
+    main(conf)
