@@ -1,4 +1,7 @@
+import re
+
 import pytest
+from omegaconf import OmegaConf
 
 from etl_entities.hwm_store import (
     HWMStoreStackManager,
@@ -37,8 +40,8 @@ from etl_entities.hwm_store import (
         ),
     ],
 )
-@pytest.mark.parametrize("config_constructor", [dict])
-def test_hwm_store_unit_detect(hwm_store_class, input_config, config_constructor, key):
+@pytest.mark.parametrize("config_constructor", [dict, OmegaConf.create])
+def test_detect_hwm_store_from_config(hwm_store_class, input_config, config_constructor, key):
     @detect_hwm_store(key)
     def main(config):
         assert isinstance(HWMStoreStackManager.get_current(), hwm_store_class)
@@ -48,81 +51,112 @@ def test_hwm_store_unit_detect(hwm_store_class, input_config, config_constructor
 
 
 @pytest.mark.parametrize(
-    "input_config",
+    "config_value",
     [
-        {"hwm_store": 1},
-        {"hwm_store": "unknown"},
-        {"hwm_store": {"unknown": None}},
+        {},
+        42,
+        "string",
+        None,
+        [1, 2, 3],
     ],
 )
-@pytest.mark.parametrize("config_constructor", [dict])
-def test_hwm_store_unit_detect_failure(input_config, config_constructor):
+@pytest.mark.parametrize("config_constructor", [dict, OmegaConf.create])
+def test_detect_hwm_store_invalid_configs(config_constructor, config_value):
     @detect_hwm_store("hwm_store")
     def main(config):  # NOSONAR
         pass
 
-    conf = config_constructor(input_config)
-    with pytest.raises((KeyError, ValueError)):
-        main(conf)
-
-    conf = config_constructor({"nested": input_config})
-    with pytest.raises((KeyError, ValueError)):
-        main(conf)
-
-    conf = config_constructor({"even": {"more": {"nested": input_config}}})
-    with pytest.raises((KeyError, ValueError)):
+    with pytest.raises((ValueError, TypeError)):
+        conf = config_constructor(config_value)
         main(conf)
 
 
-@pytest.mark.parametrize(
-    "input_config",
-    [
-        {"hwm_store": {"memory": 1}},
-        {"hwm_store": {"memory": {"unknown": "arg"}}},
-        {"hwm_store": {"memory": ["too_many_arg"]}},
-    ],
-)
-@pytest.mark.parametrize("config_constructor", [dict])
-def test_hwm_store_unit_wrong_options(input_config, config_constructor):
+@pytest.mark.parametrize("invalid_key", [None, 123, []], ids=["None", "int", "list"])
+def test_detect_hwm_store_invalid_key_input(invalid_key):
+    with pytest.raises(ValueError, match="key name must be a string"):
+
+        @detect_hwm_store(invalid_key)
+        def main(config):  # NOSONAR
+            pass
+
+
+def test_detect_hwm_store_empty_key_input():
+    with pytest.raises(ValueError, match="Key value must be specified"):
+
+        @detect_hwm_store("")
+        def main(config):  # NOSONAR
+            pass
+
+
+@pytest.mark.parametrize("config_constructor", [dict, OmegaConf.create])
+def test_detect_hwm_store_multiple_hwm_store_types(config_constructor):
     @detect_hwm_store("hwm_store")
-    def main(config):  # NOSONAR
+    def main(config):
         pass
 
-    conf = config_constructor(input_config)
+    # Using two known HWM store types for demonstration.
+    conf = config_constructor({"hwm_store": {"memory": None, "some_other_store": None}})
 
-    with pytest.raises((TypeError, ValueError)):
-        main(conf)
-
-    conf = config_constructor({"nested": input_config})
-    with pytest.raises((TypeError, ValueError)):
-        main(conf)
-
-    conf = config_constructor({"even": {"more": {"nested": input_config}}})
-    with pytest.raises((TypeError, ValueError)):
+    with pytest.raises(ValueError, match="Multiple HWM store types provided: .*. Only one is allowed."):
         main(conf)
 
 
 @pytest.mark.parametrize(
     "config, key",
     [
-        ({"some": "yml"}, "unknown"),
-        ({"some": "yml"}, "some.unknown"),
-        ({"some": "yml"}, "some.yaml.unknown"),
-        ({"var": {"hwm_store": "yml"}}, "var.hwm_store."),
-        ({"var": {"hwm_store": "yml"}}, "var..hwm_store"),
-        ({"some": "yml"}, 12),
-        ({}, "var.hwm_store"),
-        ({"var": {"hwm_store": "yml"}}, ""),
-        ({}, ""),
+        ({"some_hwm": "value"}, "unknown_hwm"),
+        ({"hwm1": {"hwm2": {"hwm3": "value"}}}, "hwm1.hwm2.unknown_hwm"),
+        ({"hwm1": {"hwm2": {"hwm3": "value"}}}, "unknown_hwm.hwm2.hwm3"),
+        ({"hwm1": {"hwm2": {"hwm3": "value"}}}, "hwm1.unknown_hwm.hwm3"),
+        ({"hwm1": {"hwm2": {"hwm3": "value"}}}, "hwm1..hwm2"),
+        ({"hwm1": {"hwm2": {"hwm3": "value"}}}, "..hwm1.hwm2"),
+        ({"hwm1": {"hwm2": {"hwm3": "value"}}}, "hwm1.hwm2.."),
+        ({"hwm1": {"hwm2": {"hwm3": "value"}}}, ".hwm1.hwm2"),
+        ({"hwm1": {"hwm2": {"hwm3": "value"}}}, "hwm1.hwm2."),
     ],
 )
-@pytest.mark.parametrize("config_constructor", [dict])
-def test_hwm_store_wrong_config_and_key_value_error(config_constructor, config, key):
-    with pytest.raises(ValueError):
+@pytest.mark.parametrize("config_constructor", [dict, OmegaConf.create])
+def test_detect_hwm_store_missing_key(config_constructor, config, key):
+    with pytest.raises(ValueError, match=f"The configuration does not contain a required key {key!r}"):
 
         @detect_hwm_store(key)
-        def main(config):
-            ...  # noqa:  WPS428
+        def main(input_config):
+            ...  # noqa: WPS428
 
         conf = config_constructor(config)
+        main(conf)
+
+
+@pytest.mark.parametrize(
+    "input_config",
+    [
+        {"hwm_store": "unknown"},
+        {"hwm_store": {"unknown": None}},
+    ],
+)
+@pytest.mark.parametrize("config_constructor", [dict, OmegaConf.create])
+def test_detect_hwm_store_unknown_hwm(input_config, config_constructor):
+    @detect_hwm_store("hwm_store")
+    def main(config):  # NOSONAR
+        pass
+
+    conf = config_constructor(input_config)
+    with pytest.raises(KeyError, match="Unknown HWM Store type .*"):
+        main(conf)
+
+
+@pytest.mark.parametrize("config_constructor", [dict, OmegaConf.create])
+def test_detect_hwm_store_wrong_options(config_constructor):
+    @detect_hwm_store("hwm_store")
+    def main(config):  # NOSONAR
+        pass
+
+    conf = config_constructor({"hwm_store": {"memory": ["too_many_arg"]}})
+
+    with pytest.raises(TypeError, match=re.escape("__init__() takes exactly 1 positional argument (2 given)")):
+        main(conf)
+
+    conf = config_constructor({"hwm_store": {"memory": {"unknown": "arg"}}})
+
+    with pytest.raises(ValueError, match="extra fields not permitted"):
         main(conf)

@@ -14,22 +14,27 @@
 
 from __future__ import annotations
 
+from collections.abc import Sequence
 from functools import wraps
 from typing import Any, Callable, Mapping
 
 from etl_entities.hwm_store.hwm_store_class_registry import HWMStoreClassRegistry
 
 
-def parse_config(value: Any, key: str) -> tuple[str, list, Mapping]:
+def parse_config(value: Any, key: str) -> tuple[str, Sequence, Mapping]:
     if not isinstance(value, (str, Mapping)):
         raise ValueError(f"Wrong value {value!r} for {key!r} config item")
 
     store_type = "unknown"
-    args: list[Any] = []
+    args: Sequence[Any] = []
     kwargs: Mapping[str, Any] = {}
 
     if isinstance(value, str):
         return value, args, kwargs
+
+    # If more than one store type detected, raise error
+    if len(value) > 1:
+        raise ValueError(f"Multiple HWM store types provided: {', '.join(value)}. Only one is allowed.")
 
     for item in HWMStoreClassRegistry.known_types():
         if item not in value:
@@ -43,24 +48,24 @@ def parse_config(value: Any, key: str) -> tuple[str, list, Mapping]:
     return store_type, args, kwargs
 
 
-def parse_child_item(child: Any) -> tuple[list, Mapping]:
-    store_args: list[Any] = []
+def parse_child_item(child: Any) -> tuple[Sequence, Mapping]:
+    store_args: Sequence[Any] = []
     store_kwargs: Mapping[str, Any] = {}
 
-    if not child:
+    if child is None:
         return store_args, store_kwargs
 
-    if isinstance(child, str):
-        store_args = [child]
-    elif isinstance(child, Mapping):
+    if isinstance(child, Mapping):
         store_kwargs = child
-    else:
+    elif isinstance(child, Sequence) and not isinstance(child, str):
         store_args = child
+    else:
+        store_args = [child]
 
     return store_args, store_kwargs
 
 
-def resolve_attr(conf: Mapping, hwm_key: str) -> str | Mapping:
+def resolve_attr(conf: Mapping, hwm_key: str) -> Any:
     obj = {}
 
     try:
@@ -71,16 +76,9 @@ def resolve_attr(conf: Mapping, hwm_key: str) -> str | Mapping:
                 obj = conf[name]
                 conf = obj
     except Exception as e:
-        raise ValueError("The configuration does not contain a required key") from e
+        raise ValueError(f"The configuration does not contain a required key {hwm_key!r}") from e
 
     return obj
-
-
-def dict_item_getter(key: str) -> Callable:
-    def wrapper(conf):  # noqa: WPS430
-        return resolve_attr(conf, key)
-
-    return wrapper
 
 
 def detect_hwm_store(key: str) -> Callable:
@@ -144,21 +142,16 @@ def detect_hwm_store(key: str) -> Callable:
     if not isinstance(key, str):
         raise ValueError("key name must be a string")
 
+    if not key:
+        raise ValueError("Key value must be specified")
+
     def pre_wrapper(func: Callable):  # noqa: WPS430
         @wraps(func)
         def wrapper(config: Mapping, *args, **kwargs):
             if not config:
                 raise ValueError("Config must be specified")
 
-            if not key:
-                raise ValueError("Key value must be specified")
-
-            get_hwm_spec = dict_item_getter(key)
-            root = get_hwm_spec(config)
-
-            if not root:
-                return func(config, *args, **kwargs)
-
+            root = resolve_attr(config, key)
             store_type, store_args, store_kwargs = parse_config(root, key)
             store = HWMStoreClassRegistry.get(store_type)
 
