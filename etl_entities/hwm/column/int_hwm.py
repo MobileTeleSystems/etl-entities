@@ -36,13 +36,17 @@ class ColumnIntHWM(ColumnHWM[StrictInt]):
 
         Table name
 
-    value : int or ``None``, default: ``None``
+    value : ``int`` or ``None``, default: ``None``
 
         HWM value
 
-    description: ``str``, default: ``""``
+    description :  ``str``, default: ``""``
 
         Description of HWM
+
+    expression : Any, default: ``None``
+
+        HWM expression, for example:  ``CAST(column as TYPE)``
 
     modified_time : :obj:`datetime.datetime`, default: current datetime
 

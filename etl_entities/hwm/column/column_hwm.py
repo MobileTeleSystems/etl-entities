@@ -42,9 +42,13 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], Generi
 
         HWM value
 
-    description: ``str``, default: ``""``
+    description : ``str``, default: ``""``
 
         Description of HWM
+
+    expression : Any, default: ``None``
+
+        HWM expression, for example:  ``CAST(column as TYPE)``
 
     modified_time : :obj:`datetime.datetime`, default: current datetime
 

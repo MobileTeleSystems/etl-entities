@@ -1,8 +1,8 @@
-Datetime HWM
+Column Date HWM
 =================================================================
-.. currentmodule:: etl_entities.hwm.column.datetime_hwm
+.. currentmodule:: etl_entities.hwm.column.date_hwm
 
 
-.. autoclass:: ColumnDateTimeHWM
+.. autoclass:: ColumnDateHWM
     :members: name, set_value, dict, json, copy, deserialize, covers
     :special-members: __bool__, __add__, __sub__, __eq__, __lt__

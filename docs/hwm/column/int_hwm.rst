@@ -1,4 +1,4 @@
-Integer HWM
+Column Integer HWM
 =================================================================
 .. currentmodule:: etl_entities.hwm.column.int_hwm
 

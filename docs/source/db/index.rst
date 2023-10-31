@@ -4,7 +4,7 @@ DB source classes
 ==================
 
 .. toctree::
-    :maxdepth: 3
+    :maxdepth: 2
     :caption: DB Source classes
     :name: db_source_classes
 
