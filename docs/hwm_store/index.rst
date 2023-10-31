@@ -9,6 +9,7 @@ HWM Store
 
     memory_hwm_store
     register_hwm_store_class
+    detect_hwm_store
 
 :ref:`hwm` values are persisted in HWM stores.
 

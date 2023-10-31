@@ -1,0 +1,1 @@
+Add decorator: ``detect_hwm_store`` in ``etl_entities.hwm_store`` (source code was imported from ``onetl.hwm.store``)
