@@ -10,13 +10,24 @@
     self
 
 .. toctree::
-    :maxdepth: 1
-    :caption: Contents
-    :name: mastertoc
+    :maxdepth: 2
+    :caption: HWM
     :hidden:
 
     hwm/index
+
+.. toctree::
+    :maxdepth: 2
+    :caption: HWM store
+    :hidden:
+
     hwm_store/index
+
+.. toctree::
+    :maxdepth: 2
+    :caption: Deprecated
+    :hidden:
+
     old_hwm/index
     source/index
     process/index
@@ -30,7 +41,7 @@
 
 .. toctree::
     :maxdepth: 2
-    :caption: Develop
+    :caption: Development
     :name: develop
     :hidden:
 

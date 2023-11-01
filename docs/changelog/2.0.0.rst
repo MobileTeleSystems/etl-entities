@@ -1,0 +1,17 @@
+2.0.0 (2023-10-31)
+==================
+
+Breaking Changes
+----------------
+
+- Move v1 HWM classes (like ``IntHWM``, ``DateHWM``, and so on) from module ``etl_entitites.hwm`` to ``etl_entities.old_hwm``, and mark these classes as deprecated (:github:pull:`27`)
+
+
+Features
+--------
+- Add classes: ``ColumnIntHWM``, ``ColumnDateHWM``, ``ColumnDateTimeHWM`` in ``etl_entitites.hwm`` (:github:pull:`28`)
+- Add classes: ``FileListHWM``, ``FileHWM`` in ``etl_entitites.hwm`` (:github:pull:`30`)
+- Add classes: ``BaseHWMStore``, ``HWMStoreClassRegistry``, ``register_hwm_store_class``, ``HWMStoreManager``,
+  ``MemoryHWMStore`` in ``etl_entities.hwm_store`` (source code was imported from ``onetl.hwm.store``) (:github:pull:`31`)
+- Add plugins for imports of etl-entities library objects in third-party libraries (:github:pull:`32`)
+- Add decorator: ``detect_hwm_store`` in ``etl_entities.hwm_store`` (source code was imported from ``onetl.hwm.store``) (:github:pull:`33`)

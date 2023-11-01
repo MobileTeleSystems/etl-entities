@@ -1,4 +1,4 @@
-Integer HWM
+HWM Type Registry
 =================================================================
 .. currentmodule:: etl_entities.hwm.hwm_type_registry
 

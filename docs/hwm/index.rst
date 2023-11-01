@@ -1,14 +1,16 @@
-.. _hwm_classes:
+.. _hwm:
 
-HWM classes
-=============
+HWM
+===============
 
 .. toctree::
-    :maxdepth: 3
-    :caption: HWM classes
-    :name: hwm_classes
+    :maxdepth: 2
+    :caption: Column HWM
 
-    int_hwm
-    date_hwm
-    datetime_hwm
-    file_list_hwm
+    column/index
+
+.. toctree::
+    :maxdepth: 2
+    :caption: File HWM
+
+    file/index

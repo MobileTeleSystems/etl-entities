@@ -1,10 +1,10 @@
 .. _hwm_classes:
 
-Deprecated HWM classes
+Old HWM classes
 =============
 
 .. toctree::
-    :maxdepth: 3
+    :maxdepth: 2
     :caption: HWM classes
     :name: hwm_classes
 
