@@ -53,6 +53,9 @@ class MemoryHWMStore(BaseHWMStore):
 
     _data: Dict[str, HWM] = PrivateAttr(default_factory=dict)
 
+    class Config:  # noqa: WPS431
+        extra = "forbid"
+
     def get_hwm(self, name: str) -> HWM | None:
         return self._data.get(name, None)
 
