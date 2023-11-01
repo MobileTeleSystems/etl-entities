@@ -12,5 +12,5 @@ Improvements
 
 - Added changelog.
 
-  Changelog is generated from separated news files using `towncrier <https://pypi.org/project/towncrier/>`_. (:github:pull:`47`)
+  Changelog is generated from separated news files using `towncrier <https://pypi.org/project/towncrier/>`_.
 - Sync CI with onetl

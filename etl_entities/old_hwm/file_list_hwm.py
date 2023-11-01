@@ -20,16 +20,16 @@ from typing import FrozenSet, Iterable, List
 
 from pydantic import Field, validator
 
-from etl_entities.hwm.file_hwm import FileHWM
-from etl_entities.hwm.hwm_type_registry import register_hwm_type
 from etl_entities.instance import AbsolutePath, RelativePath
+from etl_entities.old_hwm.file_hwm import FileHWM
 
 FileListType = FrozenSet[RelativePath]
 
 
-@register_hwm_type("file_list")
 class FileListHWM(FileHWM[FileListType, List[str]]):
     """File List HWM type
+
+    .. deprecated:: 2.0.0
 
     Parameters
     ----------
@@ -54,11 +54,12 @@ class FileListHWM(FileHWM[FileListType, List[str]]):
 
     .. code:: python
 
-        from etl_entities import FileListHWM, RemoteFolder
+        from etl_entities.old_hwm import FileListHWM
+        from etl_entities.source import RemoteFolder
 
         folder = RemoteFolder(name="/absolute/path", instance="ftp://ftp.server:21")
 
-        hwm = FileListHWM(
+        old_hwm = FileListHWM(
             source=folder,
             value=["some/path", "another.file"],
         )
@@ -112,13 +113,13 @@ class FileListHWM(FileHWM[FileListType, List[str]]):
 
         .. code:: python
 
-            from etl_entities import FileListHWM
+            from etl_entities.old_hwm import FileListHWM
 
-            hwm = FileListHWM(value=["some/file.py", "another.file"], ...)
-            assert hwm.serialize_value() == ["some/file.py", "another.file"]
+            old_hwm = FileListHWM(value=["some/file.py", "another.file"], ...)
+            assert old_hwm.serialize_value() == ["some/file.py", "another.file"]
 
-            hwm = FileListHWM(value=[], ...)
-            assert hwm.serialize_value() == []
+            old_hwm = FileListHWM(value=[], ...)
+            assert old_hwm.serialize_value() == []
         """
 
         return sorted(os.fspath(item) for item in self.value)
@@ -148,7 +149,7 @@ class FileListHWM(FileHWM[FileListType, List[str]]):
 
         .. code:: python
 
-            from etl_entities import FileListHWM
+            from etl_entities.old_hwm import FileListHWM
 
             assert FileListHWM.deserialize_value(["some/path.py", "another.file"]) == frozenset(
                 RelativePath("some/path.py"), RelativePath("another.file")
@@ -176,12 +177,12 @@ class FileListHWM(FileHWM[FileListType, List[str]]):
 
         .. code:: python
 
-            from etl_entities import FileListHWM
+            from etl_entities.old_hwm import FileListHWM
 
-            hwm = FileListHWM(value=["some/path.py"], ...)
+            old_hwm = FileListHWM(value=["some/path.py"], ...)
 
-            assert hwm.covers("some/path.py")  # path in HWM
-            assert not hwm.covers("another/path.py")  # path not in HWM
+            assert old_hwm.covers("some/path.py")  # path in HWM
+            assert not old_hwm.covers("another/path.py")  # path not in HWM
         """
 
         return value in self
@@ -204,20 +205,20 @@ class FileListHWM(FileHWM[FileListType, List[str]]):
 
         .. code:: python
 
-            from etl_entities import FileListHWM
+            from etl_entities.old_hwm import FileListHWM
 
-            hwm = FileListHWM(value=["some/existing_path.py"], ...)
+            old_hwm = FileListHWM(value=["some/existing_path.py"], ...)
 
             # new paths are appended
-            hwm.update("some/new_path.py")
-            assert hwm.value == [
+            old_hwm.update("some/new_path.py")
+            assert old_hwm.value == [
                 "some/existing_path.py",
                 "some/new_path.py",
             ]
 
             # existing paths do nothing
-            hwm.update("some/existing_path.py")
-            assert hwm.value == [
+            old_hwm.update("some/existing_path.py")
+            assert old_hwm.value == [
                 "some/existing_path.py",
                 "some/new_path.py",
             ]
@@ -243,13 +244,13 @@ class FileListHWM(FileHWM[FileListType, List[str]]):
 
         .. code:: python
 
-            from etl_entities import FileListHWM
+            from etl_entities.old_hwm import FileListHWM
 
-            hwm = FileListHWM(value=["some/path.py"], ...)
-            assert hwm  # same as bool(hwm.value)
+            old_hwm = FileListHWM(value=["some/path.py"], ...)
+            assert old_hwm  # same as bool(old_hwm.value)
 
-            hwm = FileListHWM(value=[], ...)
-            assert not hwm
+            old_hwm = FileListHWM(value=[], ...)
+            assert not old_hwm
         """
 
         return bool(self.value)
@@ -268,7 +269,7 @@ class FileListHWM(FileHWM[FileListType, List[str]]):
 
         .. code:: python
 
-            from etl_entities import FileListHWM
+            from etl_entities.old_hwm import FileListHWM
 
             hwm1 = FileListHWM(value=["some", "another"], ...)
             hwm2 = FileListHWM(value=[], ...)
@@ -299,7 +300,7 @@ class FileListHWM(FileHWM[FileListType, List[str]]):
 
         .. code:: python
 
-            from etl_entities import FileListHWM
+            from etl_entities.old_hwm import FileListHWM
 
             hwm1 = FileListHWM(value=["some/path"], ...)
             hwm2 = FileListHWM(value=["some/path", "another.file"], ...)
@@ -334,7 +335,7 @@ class FileListHWM(FileHWM[FileListType, List[str]]):
 
         .. code:: python
 
-            from etl_entities import FileListHWM
+            from etl_entities.old_hwm import FileListHWM
 
             hwm1 = FileListHWM(value=["some/path"], ...)
             hwm2 = FileListHWM(value=["some/path", "another.file"], ...)
@@ -363,7 +364,8 @@ class FileListHWM(FileHWM[FileListType, List[str]]):
 
         .. code:: python
 
-            from etl_entities import FileListHWM, RelativePath
+            from etl_entities.old_hwm import FileListHWM
+            from etl_entities.instance import RelativePath
 
             hwm1 = FileListHWM(value=["some", "another"], ...)
             hwm2 = FileListHWM(value=[], ...)
@@ -388,11 +390,15 @@ class FileListHWM(FileHWM[FileListType, List[str]]):
 
         .. code:: python
 
-            from etl_entities import FileListHWM, Folder, AbsolutePath
+            from etl_entities.old_hwm import FileListHWM
+            from etl_entities.source import RemoteFolder
+            from etl_entities.instance import AbsolutePath
 
-            hwm = FileListHWM(value=["some/path"], source=Folder(name="/absolute/path", ...), ...)
+            old_hwm = FileListHWM(
+                value=["some/path"], source=RemoteFolder(name="/absolute/path", ...), ...
+            )
 
-            assert abs(hwm) == frozenset(AbsolutePath("/absolute/path/some/path"))
+            assert abs(old_hwm) == frozenset(AbsolutePath("/absolute/path/some/path"))
         """
 
         return frozenset(self.source / item for item in self.value)
@@ -411,12 +417,16 @@ class FileListHWM(FileHWM[FileListType, List[str]]):
 
         .. code:: python
 
-            from etl_entities import FileListHWM, Folder, AbsolutePath
+            from etl_entities.old_hwm import FileListHWM
+            from etl_entities.source import RemoteFolder
+            from etl_entities.instance import AbsolutePath
 
-            hwm = FileListHWM(value=["some/path"], source=Folder(name="/absolute/path", ...), ...)
+            old_hwm = FileListHWM(
+                value=["some/path"], source=Folder(name="/absolute/path", ...), ...
+            )
 
-            assert "some/path" in hwm
-            assert "/absolute/path/some/path" in hwm
+            assert "some/path" in old_hwm
+            assert "/absolute/path/some/path" in old_hwm
         """
 
         if not isinstance(item, os.PathLike):
@@ -429,7 +439,7 @@ class FileListHWM(FileHWM[FileListType, List[str]]):
 
         Params
         -------
-        other : :obj:`hwmlib.hwm.file_list_hwm.FileListHWM`
+        other : :obj:`hwmlib.old_hwm.file_list_hwm.FileListHWM`
 
         Returns
         --------
@@ -442,7 +452,7 @@ class FileListHWM(FileHWM[FileListType, List[str]]):
 
         .. code:: python
 
-            from etl_entities import FileListHWM
+            from etl_entities.old_hwm import FileListHWM
 
             hwm1 = FileListHWM(value=["some"], ...)
             hwm2 = FileListHWM(value=["another"], ...)

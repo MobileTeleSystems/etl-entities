@@ -12,47 +12,60 @@
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
 
+
 from __future__ import annotations
 
-import json
 from abc import ABC, abstractmethod
 from copy import deepcopy
 from datetime import datetime
-from typing import Generic, TypeVar
+from typing import Any, Generic, TypeVar
 
 from pydantic import Field, validate_model
 
-from etl_entities.entity import Entity, GenericModel
-from etl_entities.process import Process, ProcessStackManager
+from etl_entities.entity import GenericModel
+from etl_entities.hwm.hwm_type_registry import HWMTypeRegistry
 
 ValueType = TypeVar("ValueType")
-SerializedType = TypeVar("SerializedType")
 
 
-class HWM(ABC, Entity, GenericModel, Generic[ValueType, SerializedType]):
+class HWM(ABC, Generic[ValueType], GenericModel):
     """Generic HWM type
 
     Parameters
     ----------
-    value : Any
+    column : ``str``
 
-        HWM value of any type
+        Column name
+
+    name : ``str``
+
+        HWM name
+
+    value : ``ColumnValueType`` or ``None``, default: ``None``
+
+        HWM value
+
+    description : ``str``, default: ``""``
+
+        Description of HWM
+
+    expression : Any, default: ``None``
+
+        HWM expression, for example:  ``CAST(column as TYPE)``
 
     modified_time : :obj:`datetime.datetime`, default: current datetime
 
         HWM value modification time
-
-    process : :obj:`etl_entities.process.process.Process`, default: current process
-
-        Process instance
     """
 
-    source: Entity
-    value: ValueType
+    name: str
+    description: str = ""
+    entity: Any = None
+    value: ValueType  # it is important to keep order of entity and value as pydantic validation relies on it!
+    expression: Any = None
     modified_time: datetime = Field(default_factory=datetime.now)
-    process: Process = Field(default_factory=ProcessStackManager.get_current)
 
-    def set_value(self, value: ValueType) -> HWM:
+    def set_value(self, value: ValueType | None) -> HWM:
         """Replaces current HWM value with the passed one, and return HWM.
 
         .. note::
@@ -70,9 +83,9 @@ class HWM(ABC, Entity, GenericModel, Generic[ValueType, SerializedType]):
 
         .. code:: python
 
-            from etl_entities import IntHWM
+            from etl_entities.hwm import ColumnIntHWM
 
-            hwm = IntHWM(value=1, ...)
+            hwm = ColumnIntHWM(value=1, ...)
 
             hwm.set_value(2)
             assert hwm.value == 2
@@ -100,23 +113,19 @@ class HWM(ABC, Entity, GenericModel, Generic[ValueType, SerializedType]):
 
         .. code:: python
 
-            from etl_entities import IntHWM
+            from etl_entities.hwm import ColumnIntHWM
 
-            hwm = IntHWM(value=1, ...)
+            hwm = ColumnIntHWM(value=1, ...)
             assert hwm.serialize() == {
                 "value": "1",
                 "type": "int",
-                "column": {"name": ..., "partition": ...},
-                "source": ...,
-                "process": ...,
+                "column": "column_name",
+                "name": "table_name",
+                "description": ...,
             }
         """
 
-        # small hack to avoid circular imports
-        from etl_entities.hwm.hwm_type_registry import HWMTypeRegistry
-
-        result = json.loads(self.json())
-        result["value"] = self.serialize_value()
+        result = super().serialize()
         result["type"] = HWMTypeRegistry.get_key(self.__class__)
         return result
 
@@ -135,61 +144,32 @@ class HWM(ABC, Entity, GenericModel, Generic[ValueType, SerializedType]):
 
         .. code:: python
 
-            from etl_entities import IntHWM
+            from etl_entities.hwm import ColumnIntHWM
 
-            assert IntHWM.deserialize(
+            assert ColumnIntHWM.deserialize(
                 {
                     "value": "1",
                     "type": "int",
-                    "column": {"name": ..., "partition": ...},
-                    "source": ...,
-                    "process": ...,
+                    "column": "column_name",
+                    "name": "name",
                 }
-            ) == IntHWM(value=1, ...)
+            ) == ColumnIntHWM(value=1, ...)
 
-            IntHWM.deserialize({"type": "date"})  # raises ValueError
+            ColumnIntHWM.deserialize({"type": "date"})  # raises ValueError
         """
 
-        # small hack to avoid circular imports
-        from etl_entities.hwm.hwm_type_registry import HWMTypeRegistry
-
         value = deepcopy(inp)
-        typ = value.pop("type", None)
-        if typ:
-            hwm_type = HWMTypeRegistry.get(typ)
+        type_name = value.pop("type", None)
+        if type_name:
+            hwm_type = HWMTypeRegistry.get(type_name)
             if not issubclass(cls, hwm_type):
-                raise ValueError(f"Type {typ} does not match class {cls.__name__}")
+                raise ValueError(f"Type {type_name} does not match class {cls.__name__}")
 
         return super().deserialize(value)
 
     @abstractmethod
-    def serialize_value(self) -> SerializedType:
-        """Return string representation of HWM value
-
-        Returns
-        -------
-        result : json
-
-            Serialized value
-
-        Examples
-        ----------
-
-        .. code:: python
-
-            from etl_entities import HWM
-
-            hwm = HWM(value=1, ...)
-            assert hwm.serialize_value() == "1"
-        """
-
-    @abstractmethod
-    def covers(self, value) -> bool:
+    def covers(self, value: ValueType) -> bool:
         """Return ``True`` if input value is already covered by HWM"""
-
-    @abstractmethod
-    def update(self, value):
-        """Update current HWM value with some implementation-specific logic, and return HWM"""
 
     def _check_new_value(self, value):
         validated_dict, _, validation_error = validate_model(

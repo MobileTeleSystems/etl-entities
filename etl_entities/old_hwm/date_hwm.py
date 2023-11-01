@@ -20,13 +20,14 @@ from typing import Optional
 from pydantic import validator
 from pydantic.validators import strict_str_validator
 
-from etl_entities.hwm.column_hwm import ColumnHWM
-from etl_entities.hwm.hwm_type_registry import register_hwm_type
+from etl_entities.hwm import ColumnDateHWM
+from etl_entities.old_hwm.column_hwm import ColumnHWM
 
 
-@register_hwm_type("date")
 class DateHWM(ColumnHWM[date]):
     """Date HWM type
+
+    .. deprecated:: 2.0.0
 
     Parameters
     ----------
@@ -56,12 +57,12 @@ class DateHWM(ColumnHWM[date]):
     .. code:: python
 
         from datetime import date
-        from etl_entities import DateHWM, Column, Table
+        from etl_entities.old_hwm import DateHWM, Column, Table
 
         column = Column(name="id")
         table = Table(name="mydb.mytable", instance="postgres://db.host:5432")
 
-        hwm = DateHWM(column=column, source=table, value=date(year=2021, month=12, day=3))
+        old_hwm = DateHWM(column=column, source=table, value=date(year=2021, month=12, day=3))
     """
 
     value: Optional[date] = None
@@ -87,19 +88,27 @@ class DateHWM(ColumnHWM[date]):
 
         .. code:: python
 
-            from etl_entities import DateHWM
+            from etl_entities.old_hwm import DateHWM
 
-            hwm = DateHWM(value=date(year=2021, month=12, day=31), ...)
-            assert hwm.serialize_value() == "2021-12-31"
+            old_hwm = DateHWM(value=date(year=2021, month=12, day=31), ...)
+            assert old_hwm.serialize_value() == "2021-12-31"
 
-            hwm = DateHWM(value=None, ...)
-            assert hwm.serialize_value() == "null"
+            old_hwm = DateHWM(value=None, ...)
+            assert old_hwm.serialize_value() == "null"
         """
 
         if self.value is None:
             return "null"
 
         return self.value.isoformat()
+
+    def as_new_hwm(self):
+        return ColumnDateHWM(
+            name=self.qualified_name,
+            column=self.column.name,
+            value=self.value,
+            modified_time=self.modified_time,
+        )
 
     @classmethod
     def deserialize_value(cls, value: str) -> date | None:
@@ -122,7 +131,7 @@ class DateHWM(ColumnHWM[date]):
 
         .. code:: python
 
-            from etl_entities import DateHWM
+            from etl_entities.old_hwm import DateHWM
 
             assert DateHWM.deserialize_value("2021-12-31") == date(year=2021, month=12, day=31)
             assert DateHWM.deserialize_value("null") is None
@@ -139,15 +148,15 @@ class DateHWM(ColumnHWM[date]):
 
         Params
         -------
-        other : :obj:`etl_entities.hwm.date_hwm.DateHWM` or :obj:`datetime.date`
+        other : :obj:`etl_entities.old_hwm.date_hwm.DateHWM` or :obj:`datetime.date`
 
             Should be comparable with ``value`` attribute type.
 
-            You can compare two :obj:`hwmlib.hwm.date_hwm.DateHWM` or ``date`` values.
+            You can compare two :obj:`hwmlib.old_hwm.date_hwm.DateHWM` or ``date`` values.
 
             But you cannot compare ``date`` with ``int`` value,
             as well as different HWM types,
-            like :obj:`hwmlib.hwm.date_hwm.DateHWM` and :obj:`hwmlib.hwm.int_hwm.IntHWM`.
+            like :obj:`hwmlib.old_hwm.date_hwm.DateHWM` and :obj:`hwmlib.old_hwm.int_hwm.IntHWM`.
 
         Returns
         --------
@@ -161,7 +170,7 @@ class DateHWM(ColumnHWM[date]):
         .. code:: python
 
             from datetime import date
-            from etl_entities import DateHWM
+            from etl_entities.old_hwm import DateHWM
 
             hwm1 = DateHWM(value=date(year=2021, month=12, day=30), ...)
             hwm2 = DateHWM(value=date(year=2021, month=12, day=31), ...)
@@ -180,15 +189,15 @@ class DateHWM(ColumnHWM[date]):
 
         Params
         -------
-        other : :obj:`etl_entities.hwm.date_hwm.DateHWM` or :obj:`datetime.date`
+        other : :obj:`etl_entities.old_hwm.date_hwm.DateHWM` or :obj:`datetime.date`
 
             Should be comparable with ``value`` attribute type.
 
-            You can compare two :obj:`hwmlib.hwm.date_hwm.DateHWM` or ``date`` values.
+            You can compare two :obj:`hwmlib.old_hwm.date_hwm.DateHWM` or ``date`` values.
 
             But you cannot compare ``date`` with ``int`` value,
             as well as different HWM types,
-            like :obj:`hwmlib.hwm.date_hwm.DateHWM` and :obj:`hwmlib.hwm.int_hwm.IntHWM`.
+            like :obj:`hwmlib.old_hwm.date_hwm.DateHWM` and :obj:`hwmlib.old_hwm.int_hwm.IntHWM`.
 
             .. warning::
 
@@ -206,7 +215,7 @@ class DateHWM(ColumnHWM[date]):
         .. code:: python
 
             from datetime import date
-            from etl_entities import DateHWM
+            from etl_entities.old_hwm import DateHWM
 
             hwm1 = DateHWM(value=date(year=2021, month=12, day=30), ...)
             hwm2 = DateHWM(value=date(year=2021, month=12, day=31), ...)

@@ -24,10 +24,11 @@ class BaseModel(PydanticBaseModel):
     class Config:  # noqa: WPS431
         frozen = True
         arbitrary_types_allowed = True
+        extra = "forbid"
         allow_population_by_field_name = True
 
     def serialize(self) -> dict:
-        return json.loads(self.json(by_alias=True))
+        return json.loads(self.json())
 
     @classmethod
     def deserialize(cls, inp: dict):
@@ -41,7 +42,7 @@ class GenericModel(PydanticGenericModel):
         allow_population_by_field_name = True
 
     def serialize(self) -> dict:
-        return json.loads(self.json(by_alias=True))
+        return json.loads(self.json())
 
     @classmethod
     def deserialize(cls, inp: dict):

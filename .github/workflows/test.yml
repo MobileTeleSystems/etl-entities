@@ -59,7 +59,7 @@ jobs:
       run: |
         mkdir reports/ || echo "Directory exists"
         pip install -e . --no-build-isolation
-        ./pytest_runner.sh
+        ./run_tests.sh
 
     - name: Upload coverage results
       uses: actions/upload-artifact@v3

@@ -26,14 +26,11 @@ What is ETL Entities?
 Collection of classes used for handling High Water Mark (HWM) and gathering Lineage graph.
 
 Currently implemented:
-    * ``IntHWM``
-    * ``DateHWM``
-    * ``DateTimeHWM``
+    * ``ColumnIntHWM``
+    * ``ColumnDateHWM``
+    * ``ColumnDateTimeHWM``
     * ``FileListHWM``
-    * ``Column``
-    * ``Table``
-    * ``RemoteFolder``
-    * ``Process``
+    * ``ColumnHWM``
 
 .. installation
 

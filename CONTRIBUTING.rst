@@ -6,15 +6,6 @@ reports, improving documentation, submitting feature requests, reviewing
 new submissions, or contributing code that can be incorporated into the
 project.
 
-Limitations
------------
-
-We should keep close to these items during development:
-
-* Some companies still use old Spark versions, like 2.3.0. So it is required to keep compatibility if possible, e.g. adding branches for different Spark versions.
-* Different users uses etl-entities in different ways - some uses only DB connectors, some only files. Connector-specific dependencies should be optional.
-* Instead of creating classes with a lot of different options, prefer splitting them into smaller classes, e.g. options class, context manager, etc, and using composition.
-
 Initial setup for local development
 -----------------------------------
 
