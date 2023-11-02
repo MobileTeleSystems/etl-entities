@@ -1,0 +1,7 @@
+2.0.2 (2023-11-02)
+==================
+
+Bug Fixes
+---------
+
+- Add ``etl_entities/hwm/file/__init__.py`` to manage ``hwm.file`` module import (:github:pull:`43`)
