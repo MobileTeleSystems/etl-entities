@@ -1,0 +1,8 @@
+2.0.1 (2023-11-02)
+==================
+
+Bug Fixes
+---------
+
+- Restrict extra fields in ``MemoryHWMStore`` and allow in ``BaseModel`` as classes ``Table``, ``Process`` are inherited from ``BaseModel`` (as we keep compatibility) (:github:pull:`38`)
+- Return ``qualified_name`` to new ``etl_entities.hwm.HWM`` class as old hwm classes use this attribute to get value from ``MemoryHWMStore`` (:github:pull:`39`)
