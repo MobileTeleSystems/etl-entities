@@ -65,6 +65,11 @@ class HWM(ABC, Generic[ValueType], GenericModel):
     expression: Any = None
     modified_time: datetime = Field(default_factory=datetime.now)
 
+    # TODO: remove qualified_name in future version
+    @property
+    def qualified_name(self) -> str:
+        return self.name
+
     def set_value(self, value: ValueType | None) -> HWM:
         """Replaces current HWM value with the passed one, and return HWM.
 

@@ -117,4 +117,4 @@ class BaseHWMStore(BaseModel, ABC):
         if options:
             log.info("|%s| Using options:", self.__class__.__name__)
             for option, value in options.items():
-                log.info("    t%s = %r", option, value)
+                log.info("    %s = %r", option, value)
