@@ -60,7 +60,8 @@ class MemoryHWMStore(BaseHWMStore):
         return self._data.get(name, None)
 
     def set_hwm(self, hwm: HWM) -> None:
-        self._data[hwm.name] = hwm
+        # TODO: replace with hwm.name after removing property "qualified_name" in HWM class
+        self._data[hwm.qualified_name] = hwm
 
     def clear(self) -> None:
         """
