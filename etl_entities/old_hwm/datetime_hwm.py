@@ -20,10 +20,11 @@ from typing import Optional
 from pydantic import validator
 from pydantic.validators import strict_str_validator
 
-from etl_entities.hwm import ColumnDateTimeHWM
+from etl_entities.hwm import ColumnDateTimeHWM, register_hwm_type
 from etl_entities.old_hwm.column_hwm import ColumnHWM
 
 
+@register_hwm_type("old_column_datetime")
 class DateTimeHWM(ColumnHWM[datetime]):
     """DateTime HWM type
 

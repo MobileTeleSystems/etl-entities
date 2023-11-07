@@ -486,15 +486,15 @@ def test_column_hwm_qualified_name(
 @pytest.mark.parametrize(
     "hwm_class, hwm_type, value, serialized_value, wrong_values",
     [
-        (DateHWM, "date", date(year=2021, month=12, day=1), "2021-12-01", ["1", DateHWM, "unknown", []]),
+        (DateHWM, "old_column_date", date(year=2021, month=12, day=1), "2021-12-01", ["1", DateHWM, "unknown", []]),
         (
             DateTimeHWM,
-            "datetime",
+            "old_column_datetime",
             datetime(year=2021, month=12, day=1, hour=4, minute=20, second=33),
             "2021-12-01T04:20:33",
             ["1", DateTimeHWM, "unknown", []],
         ),
-        (IntHWM, "int", 1, "1", ["1.0", IntHWM, "unknown", []]),
+        (IntHWM, "old_column_int", 1, "1", ["1.0", IntHWM, "unknown", []]),
     ],
 )
 def test_column_hwm_serialization(hwm_class, hwm_type, value, serialized_value, wrong_values):
@@ -509,6 +509,7 @@ def test_column_hwm_serialization(hwm_class, hwm_type, value, serialized_value, 
         "source": table.serialize(),
         "process": process.serialize(),
         "modified_time": modified_time.isoformat(),
+        "type": hwm_type,
     }
     hwm1 = hwm_class(column=column, source=table, value=value, process=process, modified_time=modified_time)
 
