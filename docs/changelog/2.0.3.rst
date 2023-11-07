@@ -1,0 +1,7 @@
+2.0.3 (2023-11-07)
+==================
+
+Bug Fixes
+---------
+
+- Add ``@register_hwm_type`` decorator to ``old_hwm`` classes to keep compatibility with use of ``hwm_type`` from ``onetl`` library (:github:pull:`46`)

@@ -607,6 +607,7 @@ def test_file_list_hwm_serialization():
         "source": folder.serialize(),
         "process": process.serialize(),
         "modified_time": modified_time.isoformat(),
+        "type": "old_file_list",
     }
     hwm1 = FileListHWM(source=folder, value=value, process=process, modified_time=modified_time)
 

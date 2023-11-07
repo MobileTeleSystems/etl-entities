@@ -23,6 +23,7 @@ from typing import Generic, TypeVar
 from pydantic import Field, validate_model
 
 from etl_entities.entity import Entity, GenericModel
+from etl_entities.hwm import HWMTypeRegistry
 from etl_entities.process import Process, ProcessStackManager
 
 ValueType = TypeVar("ValueType")
@@ -115,6 +116,7 @@ class HWM(ABC, Entity, GenericModel, Generic[ValueType, SerializedType]):
         """
 
         result = json.loads(self.json())
+        result["type"] = HWMTypeRegistry.get_key(self.__class__)  # type: ignore
         result["value"] = self.serialize_value()
         return result
 

@@ -20,12 +20,14 @@ from typing import FrozenSet, Iterable, List
 
 from pydantic import Field, validator
 
+from etl_entities.hwm import register_hwm_type
 from etl_entities.instance import AbsolutePath, RelativePath
 from etl_entities.old_hwm.file_hwm import FileHWM
 
 FileListType = FrozenSet[RelativePath]
 
 
+@register_hwm_type("old_file_list")
 class FileListHWM(FileHWM[FileListType, List[str]]):
     """File List HWM type
 
