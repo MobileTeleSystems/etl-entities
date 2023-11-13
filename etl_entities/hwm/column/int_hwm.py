@@ -16,14 +16,12 @@ from __future__ import annotations
 
 from typing import Optional
 
-from pydantic.types import StrictInt
-
 from etl_entities.hwm.column.column_hwm import ColumnHWM
 from etl_entities.hwm.hwm_type_registry import register_hwm_type
 
 
 @register_hwm_type("column_int")
-class ColumnIntHWM(ColumnHWM[StrictInt]):
+class ColumnIntHWM(ColumnHWM[int]):
     """Integer HWM type
 
     Parameters
@@ -62,7 +60,7 @@ class ColumnIntHWM(ColumnHWM[StrictInt]):
         hwm_int = ColumnIntHWM(column="column_name", value=1, name="table_name")
     """
 
-    value: Optional[StrictInt] = None
+    value: Optional[int] = None
 
     def __eq__(self, other):
         """Checks equality of two HWM instances
