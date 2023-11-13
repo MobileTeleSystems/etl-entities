@@ -1,0 +1,1 @@
+Change ``value`` type in ``ColumnIntHWM`` from ``StrictInt`` to ``int``, validation for ``float`` values will be added separately
