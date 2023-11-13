@@ -1,0 +1,7 @@
+2.0.4 (2023-11-13)
+==================
+
+Features
+--------
+
+- Change ``value`` type in ``ColumnIntHWM`` from ``StrictInt`` to ``int``, validation for ``float`` values will be added separately (:github:pull:`49`)
