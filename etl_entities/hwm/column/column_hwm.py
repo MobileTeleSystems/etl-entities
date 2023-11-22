@@ -104,7 +104,7 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], Generi
         --------
         result : ColumnHWM
 
-            HWM copy with new value
+            HWM with new value
 
         Examples
         ----------
@@ -187,6 +187,43 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], Generi
             return isinstance(other, ColumnHWM) and self_fields == other_fields
 
         return self.value == other
+
+    def update(self, value: ColumnValueType):
+        """Updates current HWM value with some implementation-specific logic, and return HWM.
+
+        .. note::
+
+            Changes HWM value in place
+
+        Returns
+        -------
+        result : ColumnHWM
+
+            HWM copy with new value
+
+        Examples
+        ----------
+
+        .. code:: python
+
+            from etl_entities.hwm import ColumnIntHWM
+
+            hwm = ColumnIntHWM(value=1, ...)
+
+            hwm.update(2)
+            assert hwm.value == 2
+
+            hwm.update(1)
+            assert hwm.value == 2  # value cannot decrease
+        """
+
+        if self.value is None:
+            return self.set_value(value)
+
+        if self.value < value:  # type: ignore[operator]
+            return self.set_value(value)
+
+        return self
 
     def __lt__(self, other):
         """Checks current HWM value is less than another one

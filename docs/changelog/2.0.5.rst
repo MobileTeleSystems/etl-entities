@@ -1,0 +1,7 @@
+2.0.5 (2023-11-22)
+==================
+
+Features
+--------
+
+- Add ``HWM.update`` method due to some implementation-specific logic in each hwm class (:github:pull:`50`)

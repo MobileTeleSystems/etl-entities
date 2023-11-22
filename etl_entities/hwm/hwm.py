@@ -173,6 +173,10 @@ class HWM(ABC, Generic[ValueType], GenericModel):
         return super().deserialize(value)
 
     @abstractmethod
+    def update(self, value):
+        """Update current HWM value with some implementation-specific logic, and return HWM"""
+
+    @abstractmethod
     def covers(self, value: ValueType) -> bool:
         """Return ``True`` if input value is already covered by HWM"""
 
