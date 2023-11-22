@@ -410,7 +410,7 @@ def test_column_hwm_update(hwm_class, value, delta):
     assert hwm4.modified_time == hwm3.modified_time == hwm1.modified_time
 
     # if current value is less than input, use input as a new value and update modified_time
-    hwm5 = hwm1.copy().copy(update={"value": value + delta})
+    hwm5 = hwm1.copy(update={"value": value + delta})
 
     old_hwm6 = hwm1.copy()
     hwm6 = old_hwm6.update(value + delta)
