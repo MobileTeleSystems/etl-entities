@@ -29,9 +29,9 @@ def test_column_hwm_valid_input(hwm_class, value):
 @pytest.mark.parametrize(
     "hwm_class, value, wrong_values",
     [
-        (ColumnDateHWM, date.today(), ["abc", "1.1", "1", "2021-01-01T11:22:33", ColumnDateHWM]),
-        (ColumnDateTimeHWM, datetime.now(), ["abc", "1.1", "1", ColumnDateTimeHWM]),
-        (ColumnIntHWM, 1, ["abc", ColumnIntHWM]),
+        (ColumnDateHWM, date.today(), ["abc", "1.1", "1", "2021-01-01T11:22:33", 1111, [], ColumnDateHWM]),
+        (ColumnDateTimeHWM, datetime.now(), ["abc", "1.1", "1", 1111, [], ColumnDateTimeHWM]),
+        (ColumnIntHWM, 1, ["abc", [], ColumnIntHWM]),
     ],
 )
 def test_column_hwm_wrong_input(hwm_class, value, wrong_values):
@@ -43,12 +43,6 @@ def test_column_hwm_wrong_input(hwm_class, value, wrong_values):
 
     with pytest.raises(ValueError):
         hwm_class(column=1)
-
-    with pytest.raises(ValueError):
-        hwm_class(column=column, name=table, value="abc")
-
-    with pytest.raises(ValueError):
-        hwm_class(column=column, name=table, value=[])
 
     for wrong_value in wrong_values:
         with pytest.raises(ValueError):

@@ -1,0 +1,7 @@
+2.0.6 (2023-11-24)
+==================
+
+Features
+--------
+
+- Restrict passing ``int`` values in ``ColumnDateHWM`` and ``ColumnDatetimeHWM`` classes (:github:pull:`53`)
