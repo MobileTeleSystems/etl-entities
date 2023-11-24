@@ -71,7 +71,7 @@ class ColumnDateHWM(ColumnHWM[date]):
 
     @validator("value", pre=True)
     def validate_value(cls, value):  # noqa: N805
-        if isinstance(value, str):
+        if isinstance(value, (str, int)):
             return cls._deserialize_value(value)
         # we need to deserialize values, as pydantic parses fields in unexpected way:
         # https://docs.pydantic.dev/latest/api/standard_library_types/#datetimedatetime
