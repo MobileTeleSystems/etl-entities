@@ -19,6 +19,7 @@ from typing import Dict
 from pydantic import PrivateAttr
 
 from etl_entities.hwm import HWM
+from etl_entities.hwm.hwm_type_registry import HWMTypeRegistry
 from etl_entities.hwm_store.base_hwm_store import BaseHWMStore
 from etl_entities.hwm_store.hwm_store_class_registry import register_hwm_store_class
 
@@ -51,17 +52,20 @@ class MemoryHWMStore(BaseHWMStore):
         assert hwm_store.get_hwm("example") is None
     """
 
-    _data: Dict[str, HWM] = PrivateAttr(default_factory=dict)
+    _data: Dict[str, dict] = PrivateAttr(default_factory=dict)
 
     class Config:  # noqa: WPS431
         extra = "forbid"
 
     def get_hwm(self, name: str) -> HWM | None:
-        return self._data.get(name, None)
+        if name not in self._data:
+            return None
+
+        return HWMTypeRegistry.parse(self._data[name])
 
     def set_hwm(self, hwm: HWM) -> None:
         # TODO: replace with hwm.name after removing property "qualified_name" in HWM class
-        self._data[hwm.qualified_name] = hwm
+        self._data[hwm.qualified_name] = hwm.serialize()
 
     def clear(self) -> None:
         """
