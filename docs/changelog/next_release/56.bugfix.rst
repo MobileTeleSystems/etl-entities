@@ -1,0 +1,1 @@
+MemoryHWMStore now stores serialized data to avoid implicit updates using ``hwm.update(...)`` method.
