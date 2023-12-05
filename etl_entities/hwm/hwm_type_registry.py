@@ -83,7 +83,7 @@ class HWMTypeRegistry:
 
         result = cls._mapping.inverse.get(klass)
         if not result:
-            raise KeyError(f"You should registered {klass} class using @register_hwm_type decorator")
+            raise KeyError(f"You should register {klass} class using @register_hwm_type decorator")
 
         return result
 

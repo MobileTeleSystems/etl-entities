@@ -14,7 +14,10 @@
 
 from __future__ import annotations
 
+from decimal import Decimal, InvalidOperation
 from typing import Optional
+
+from pydantic import StrictInt, validator
 
 from etl_entities.hwm.column.column_hwm import ColumnHWM
 from etl_entities.hwm.hwm_type_registry import register_hwm_type
@@ -60,7 +63,26 @@ class ColumnIntHWM(ColumnHWM[int]):
         hwm_int = ColumnIntHWM(column="column_name", value=1, name="table_name")
     """
 
-    value: Optional[int] = None
+    value: Optional[StrictInt] = None
+
+    @validator("value", pre=True)
+    def validate_value(cls, raw_value):  # noqa: N805
+        if raw_value is None:
+            return None
+
+        if isinstance(raw_value, str):
+            try:
+                raw_value = Decimal(raw_value)
+            except InvalidOperation:
+                # pydantic will raise validation error
+                return raw_value
+
+        real_value = int(raw_value)
+        if raw_value == real_value:
+            return real_value
+
+        # pydantic will raise validation error
+        return raw_value
 
     def __eq__(self, other):
         """Checks equality of two HWM instances

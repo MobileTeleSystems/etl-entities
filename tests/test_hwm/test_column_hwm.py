@@ -1,4 +1,5 @@
 from datetime import date, datetime, timedelta
+from decimal import Decimal
 
 import pytest
 
@@ -11,15 +12,30 @@ from etl_entities.hwm import (
 
 
 @pytest.mark.parametrize(
-    "hwm_class, value",
+    "hwm_class, input_value, value",
     [
-        (ColumnDateHWM, date.today()),
-        (ColumnDateTimeHWM, datetime.now()),
-        (ColumnIntHWM, 1),
+        (ColumnDateHWM, date(2023, 12, 30), date(2023, 12, 30)),
+        (ColumnDateHWM, "2023-12-30", date(2023, 12, 30)),
+        (
+            ColumnDateTimeHWM,
+            datetime(2023, 12, 30, 11, 22, 33, 555000),
+            datetime(2023, 12, 30, 11, 22, 33, 555000),
+        ),
+        (
+            ColumnDateTimeHWM,
+            "2023-12-30T11:22:33.555",
+            datetime(2023, 12, 30, 11, 22, 33, 555000),
+        ),
+        (ColumnIntHWM, 1, 1),
+        (ColumnIntHWM, "1", 1),
+        (ColumnIntHWM, Decimal("1"), 1),
+        (ColumnIntHWM, 1.0, 1),
+        (ColumnIntHWM, "1.0", 1),
+        (ColumnIntHWM, Decimal("1.0"), 1),
     ],
 )
-def test_column_hwm_valid_input(hwm_class, value):
-    hwm_instance = hwm_class(name="test", value=value, column="column_name")
+def test_column_hwm_valid_input(hwm_class, input_value, value):
+    hwm_instance = hwm_class(name="test", value=input_value, column="column_name")
 
     assert hwm_instance.name == "test"
     assert hwm_instance.value == value
@@ -31,7 +47,7 @@ def test_column_hwm_valid_input(hwm_class, value):
     [
         (ColumnDateHWM, date.today(), ["abc", "1.1", "1", "2021-01-01T11:22:33", 1111, [], ColumnDateHWM]),
         (ColumnDateTimeHWM, datetime.now(), ["abc", "1.1", "1", 1111, [], ColumnDateTimeHWM]),
-        (ColumnIntHWM, 1, ["abc", [], ColumnIntHWM]),
+        (ColumnIntHWM, 1, ["1.23", Decimal("1.23"), "abc", [], ColumnIntHWM]),
     ],
 )
 def test_column_hwm_wrong_input(hwm_class, value, wrong_values):
@@ -347,7 +363,7 @@ def test_column_hwm_unregistered_type(hwm_class):
     class UnregisteredHWM(hwm_class):
         pass  # noqa: WPS604
 
-    err_msg = r"You should registered <class \'.*'> class using @register_hwm_type decorator"
+    err_msg = r"You should register <class \'.*'> class using @register_hwm_type decorator"
 
     with pytest.raises(KeyError, match=err_msg):
         HWMTypeRegistry.get_key(UnregisteredHWM)
