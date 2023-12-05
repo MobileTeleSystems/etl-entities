@@ -64,8 +64,8 @@ class MemoryHWMStore(BaseHWMStore):
         return HWMTypeRegistry.parse(self._data[name])
 
     def set_hwm(self, hwm: HWM) -> None:
-        # TODO: replace with hwm.name after removing property "qualified_name" in HWM class
-        self._data[hwm.qualified_name] = hwm.serialize()
+        # avoid storing raw HWM objects because they can be changed implicitly
+        self._data[hwm.name] = hwm.serialize()
 
     def clear(self) -> None:
         """
