@@ -1,1 +1,0 @@
-Allow to pass float and Decimal values as valid input for ``ColumnIntHWM`` (but only if value does contain only ``0`` after decimal part).
