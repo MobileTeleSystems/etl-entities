@@ -20,6 +20,7 @@ from typing import FrozenSet, Iterable, List
 
 from pydantic import Field, validator
 
+from etl_entities.hwm import FileListHWM as NewFileListHWM
 from etl_entities.hwm import register_hwm_type
 from etl_entities.instance import AbsolutePath, RelativePath
 from etl_entities.old_hwm.file_hwm import FileHWM
@@ -86,6 +87,14 @@ class FileListHWM(FileHWM[FileListType, List[str]]):
             return cls.deserialize_value(value, source.name)
 
         return value
+
+    def as_new_hwm(self):
+        return NewFileListHWM(
+            name=self.qualified_name,
+            directory=self.source.name,
+            value=abs(self),
+            modified_time=self.modified_time,
+        )
 
     @property
     def name(self) -> str:
@@ -441,7 +450,7 @@ class FileListHWM(FileHWM[FileListType, List[str]]):
 
         Params
         -------
-        other : :obj:`hwmlib.old_hwm.file_list_hwm.FileListHWM`
+        other : :obj:`etl_entities.old_hwm.file_list_hwm.FileListHWM`
 
         Returns
         --------

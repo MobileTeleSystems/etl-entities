@@ -33,10 +33,9 @@ from etl_entities.hwm_store import MemoryHWMStore
         (
             FileListHWM(
                 name=secrets.token_hex(5),
-                directory=f"/absolute/{secrets.token_hex(5)}",
-                value=["some/path", "another.file"],
+                value=["/some/path", "/another.file"],
             ),
-            "third.file",
+            "/third.file",
         ),
     ],
 )
