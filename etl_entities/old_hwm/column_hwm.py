@@ -294,8 +294,8 @@ class ColumnHWM(HWM[Optional[ColumnValueType], str], GenericModel, Generic[Colum
         -------
         other : :obj:`etl_entities.old_hwm.column_hwm.ColumnHWM` or any :obj:`object`
 
-            You can compare two :obj:`hwmlib.old_hwm.column_hwm.ColumnHWM` instances,
-            obj:`hwmlib.old_hwm.column_hwm.ColumnHWM` with an :obj:`object`,
+            You can compare two :obj:`etl_entities.old_hwm.column_hwm.ColumnHWM` instances,
+            obj:`etl_entities.old_hwm.column_hwm.ColumnHWM` with an :obj:`object`,
             if its value is comparable with the ``value`` attribute of HWM
 
         Returns
@@ -319,8 +319,8 @@ class ColumnHWM(HWM[Optional[ColumnValueType], str], GenericModel, Generic[Colum
         -------
         other : :obj:`etl_entities.old_hwm.column_hwm.ColumnHWM` or any :obj:`object`
 
-            You can compare two :obj:`hwmlib.old_hwm.column_hwm.ColumnHWM` instances,
-            obj:`hwmlib.old_hwm.column_hwm.ColumnHWM` with an :obj:`object`,
+            You can compare two :obj:`etl_entities.old_hwm.column_hwm.ColumnHWM` instances,
+            obj:`etl_entities.old_hwm.column_hwm.ColumnHWM` with an :obj:`object`,
             if its value is comparable with the ``value`` attribute of HWM
 
             .. warning::

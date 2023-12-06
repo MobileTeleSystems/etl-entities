@@ -1,3 +1,4 @@
+import secrets
 from datetime import date, datetime, timedelta
 from decimal import Decimal
 
@@ -35,11 +36,31 @@ from etl_entities.hwm import (
     ],
 )
 def test_column_hwm_valid_input(hwm_class, input_value, value):
-    hwm_instance = hwm_class(name="test", value=input_value, column="column_name")
+    hwm_minimal = hwm_class(name="test", value=input_value)
 
-    assert hwm_instance.name == "test"
-    assert hwm_instance.value == value
-    assert hwm_instance.entity == "column_name"
+    assert hwm_minimal.name == "test"
+    assert hwm_minimal.value == value
+    assert hwm_minimal.description == ""
+    assert hwm_minimal.entity is None
+    assert hwm_minimal.expression is None
+    assert hwm_minimal.modified_time is not None
+
+    mtime = datetime.now() - timedelta(days=5)
+    hwm = hwm_class(
+        name="test",
+        description="my hwm",
+        value=input_value,
+        source="table",
+        expression="CAST(column as TYPE)",
+        modified_time=mtime,
+    )
+
+    assert hwm.name == "test"
+    assert hwm.value == value
+    assert hwm.description == "my hwm"
+    assert hwm.entity == "table"
+    assert hwm.expression == "CAST(column as TYPE)"
+    assert hwm.modified_time == mtime
 
 
 @pytest.mark.parametrize(
@@ -51,8 +72,7 @@ def test_column_hwm_valid_input(hwm_class, input_value, value):
     ],
 )
 def test_column_hwm_wrong_input(hwm_class, value, wrong_values):
-    column = "column_name"
-    table = "table_name"
+    name = secrets.token_hex(8)
 
     with pytest.raises(ValueError):
         hwm_class()
@@ -62,10 +82,10 @@ def test_column_hwm_wrong_input(hwm_class, value, wrong_values):
 
     for wrong_value in wrong_values:
         with pytest.raises(ValueError):
-            hwm_class(column=column, name=table, value=wrong_value)
+            hwm_class(name=name, value=wrong_value)
 
     with pytest.raises(ValueError):
-        hwm_class(column=column, name=table, value=value, modified_time="unknown")
+        hwm_class(name=name, value=value, modified_time="unknown")
 
 
 @pytest.mark.parametrize(
@@ -77,9 +97,8 @@ def test_column_hwm_wrong_input(hwm_class, value, wrong_values):
     ],
 )
 def test_column_hwm_set_value(hwm_class, value):
-    column = "column_name"
-    table = "table_name"
-    hwm = hwm_class(column=column, name=table)
+    name = secrets.token_hex(8)
+    hwm = hwm_class(name=name)
 
     hwm1 = hwm.copy()
     hwm1.set_value(value)
@@ -92,10 +111,7 @@ def test_column_hwm_set_value(hwm_class, value):
     assert hwm2.modified_time > hwm.modified_time
 
     with pytest.raises((TypeError, ValueError)):
-        hwm.set_value("unknown")
-
-    with pytest.raises(ValueError):
-        hwm.set_value(column)
+        hwm.set_value("invalid")
 
     with pytest.raises(ValueError):
         hwm.set_value(hwm1)
@@ -110,13 +126,12 @@ def test_column_hwm_set_value(hwm_class, value):
     ],
 )
 def test_column_hwm_frozen(hwm_class):
-    column = "column_name"
-    table = "table_name"
-    hwm = hwm_class(column=column, name=table)
+    name = secrets.token_hex(8)
+    hwm = hwm_class(name=name)
     modified_time = datetime.now() - timedelta(days=5)
 
-    for attr in ("value", "name", "description", "expression", "modified_time"):
-        for value in (1, "abc", date.today(), datetime.now(), None, column, table, modified_time):
+    for attr in ("value", "name", "description", "entity", "expression", "modified_time"):
+        for value in (1, "abc", date.today(), datetime.now(), None, name, modified_time):
             with pytest.raises(TypeError):
                 setattr(hwm, attr, value)
 
@@ -130,33 +145,44 @@ def test_column_hwm_frozen(hwm_class):
     ],
 )
 def test_column_hwm_compare(hwm_class, value, delta):  # noqa: WPS210
-    column1 = "column_name_1"
-    column2 = "column_name_2"
+    entity1 = "column_name_1"
+    entity2 = "column_name_2"
 
-    table1 = "table_name_1"
-    table2 = "table_name_2"
+    name1 = secrets.token_hex(8)
+    name2 = secrets.token_hex(8)
 
-    hwm = hwm_class(column=column1, name=table1, value=value)
-
-    # modified_time is ignored while comparing HWMs
-    modified_time = datetime.now() - timedelta(days=5)
-    hwm1 = hwm_class(column=column1, name=table1, value=value, modified_time=modified_time)
-    hwm2 = hwm_class(column=column2, name=table1, value=value)
-    hwm3 = hwm_class(column=column1, name=table2, value=value)
-    hwm4 = hwm_class(column=column2, name=table2, value=value)
+    hwm1 = hwm_class(source=entity1, name=name1, value=value)
+    hwm2 = hwm_class(source=entity2, name=name1, value=value)
+    hwm3 = hwm_class(source=entity1, name=name2, value=value)
+    hwm4 = hwm_class(source=entity2, name=name2, value=value)
 
     next_value = value + delta
 
-    hwm5 = hwm_class(column=column1, name=table1, value=next_value)
-    hwm6 = hwm_class(column=column2, name=table1, value=next_value)
-    hwm7 = hwm_class(column=column1, name=table2, value=next_value)
-    hwm8 = hwm_class(column=column2, name=table2, value=next_value)
+    hwm5 = hwm_class(source=entity1, name=name1, value=next_value)
+    hwm6 = hwm_class(source=entity2, name=name1, value=next_value)
+    hwm7 = hwm_class(source=entity1, name=name2, value=next_value)
+    hwm8 = hwm_class(source=entity2, name=name2, value=next_value)
+
+    hwm_without_source = hwm_class(name=name1, value=value)
+
+    # modified_time is ignored while comparing HWMs
+    assert hwm1 != hwm_without_source
+
+    modified_time = datetime.now() - timedelta(days=5)
+    hwm_with_different_mtime = hwm_class(source=entity1, name=name1, value=value, modified_time=modified_time)
+
+    # modified_time is ignored while comparing HWMs
+    assert hwm1 == hwm_with_different_mtime
 
     items = (hwm1, hwm2, hwm3, hwm4)
     next_items = (hwm5, hwm6, hwm7, hwm8)
     valid_pairs = list(zip(items, next_items))
 
-    assert hwm == hwm1
+    # items with different attribute values (except modified_time) are not equal
+    for item1 in items + next_items:
+        for item2 in items:
+            if item1 is not item2:
+                assert item1 != item2
 
     for item in items:
         assert item == value
@@ -168,21 +194,20 @@ def test_column_hwm_compare(hwm_class, value, delta):  # noqa: WPS210
         assert item != value
         assert item.value > value
 
+    # items with same attribute values can be compared using < and >
     for item1, item2 in valid_pairs:
         assert item1 < item2
         assert item2 > item1
 
     for item1 in items + next_items:
         for item2 in items:
-            if item1 is not item2:
-                assert item1 != item2
+            # items with different attribute values (except value and modified_time) cannot be compared using < and >
+            if item1 is not item2 and (item1, item2) not in valid_pairs and (item2, item1) not in valid_pairs:
+                with pytest.raises(NotImplementedError):
+                    assert item1 > item2
 
-                if (item1, item2) not in valid_pairs and (item2, item1) not in valid_pairs:
-                    with pytest.raises(NotImplementedError):
-                        assert item1 > item2
-
-                    with pytest.raises(NotImplementedError):
-                        assert item2 < item1
+                with pytest.raises(NotImplementedError):
+                    assert item2 < item1
 
 
 @pytest.mark.parametrize(  # noqa: WPS210
@@ -194,16 +219,15 @@ def test_column_hwm_compare(hwm_class, value, delta):  # noqa: WPS210
     ],
 )
 def test_column_hwm_covers(hwm_class, value, delta):  # noqa: WPS210
-    column = "column_name"
-    table = "table_name"
+    name = secrets.token_hex(8)
 
-    empty_hwm = hwm_class(column=column, name=table)
+    empty_hwm = hwm_class(name=name)
 
     assert not empty_hwm.covers(value)
     assert not empty_hwm.covers(value - delta)
     assert not empty_hwm.covers(value + delta)
 
-    hwm = hwm_class(column=column, name=table, value=value)
+    hwm = hwm_class(name=name, value=value)
 
     assert hwm.covers(value)
     assert hwm.covers(value - delta)
@@ -247,9 +271,8 @@ def test_column_hwm_compare_other_type(hwm_class, value):  # noqa: WPS210
     ],
 )
 def test_column_hwm_add(hwm_class, value, delta):
-    column = "column_name"
-    table = "table_name"
-    hwm = hwm_class(column=column, name=table)
+    name = secrets.token_hex(8)
+    hwm = hwm_class(name=name)
 
     # if something has been changed, update modified_time
     hwm1 = hwm.copy(update={"value": value})
@@ -282,9 +305,8 @@ def test_column_hwm_add(hwm_class, value, delta):
     ],
 )
 def test_column_hwm_sub(hwm_class, value, delta):
-    column = "column_name"
-    table = "table_name"
-    hwm = hwm_class(column=column, name=table)
+    name = secrets.token_hex(8)
+    hwm = hwm_class(name=name)
 
     hwm1 = hwm.copy(update={"value": value})
     hwm2 = hwm.copy(update={"value": value - delta})
@@ -325,27 +347,39 @@ def test_column_hwm_sub(hwm_class, value, delta):
     ],
 )
 def test_column_hwm_serialization(hwm_class, hwm_type, value, serialized_value):
-    column = "column_name"
-    table = "table_name"
+    name = secrets.token_hex()
     modified_time = datetime.now()
+    entity = "table"
+    expression = "column"
+    description = "my hwm"
 
     serialized1 = {
-        "value": serialized_value,
         "type": hwm_type,
-        "entity": column,
-        "name": table,
-        "description": "",
-        "expression": None,
+        "name": name,
+        "value": serialized_value,
+        "entity": entity,
+        "expression": expression,
+        "description": description,
         "modified_time": modified_time.isoformat(),
     }
-    hwm1 = hwm_class(column=column, name=table, value=value, modified_time=modified_time)
+    hwm1 = hwm_class(
+        name=name,
+        value=value,
+        source=entity,
+        expression=expression,
+        description=description,
+        modified_time=modified_time,
+    )
 
     assert hwm1.serialize() == serialized1
     assert hwm_class.deserialize(serialized1) == hwm1
 
     serialized2 = serialized1.copy()
     serialized2["value"] = None
-    hwm2 = hwm_class(column=column, name=table, modified_time=modified_time)
+    serialized2["entity"] = None
+    serialized2["expression"] = None
+    serialized2["description"] = ""
+    hwm2 = hwm_class(name=name, modified_time=modified_time)
 
     assert hwm2.serialize() == serialized2
     assert hwm_class.deserialize(serialized2) == hwm2
@@ -378,9 +412,8 @@ def test_column_hwm_unregistered_type(hwm_class):
     ],
 )
 def test_column_hwm_update(hwm_class, value, delta):
-    column = "some"
     name = "some_hwm_name"
-    empty_hwm = hwm_class(name=name, column=column)
+    empty_hwm = hwm_class(name=name)
 
     # if both new and current values are None, do nothing
     old_hwm = empty_hwm.copy()

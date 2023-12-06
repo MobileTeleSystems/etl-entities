@@ -1,7 +1,7 @@
 Column Date HWM
-=================================================================
-.. currentmodule:: etl_entities.hwm.column.date_hwm
+===============
 
+.. currentmodule:: etl_entities.hwm.column.date_hwm
 
 .. autoclass:: ColumnDateHWM
     :members: name, set_value, dict, json, copy, deserialize, covers

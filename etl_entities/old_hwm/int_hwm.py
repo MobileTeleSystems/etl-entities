@@ -106,7 +106,8 @@ class IntHWM(ColumnHWM[StrictInt]):
     def as_new_hwm(self):
         return ColumnIntHWM(
             name=self.qualified_name,
-            column=self.column.name,
+            source=self.source.name,
+            expression=self.column.name,
             value=self.value,
             modified_time=self.modified_time,
         )
@@ -149,13 +150,13 @@ class IntHWM(ColumnHWM[StrictInt]):
 
         Params
         -------
-        other : :obj:`hwmlib.old_hwm.int_hwm.IntHWM` or :obj:`int`
+        other : :obj:`etl_entities.old_hwm.int_hwm.IntHWM` or :obj:`int`
 
             Should be comparable with ``value`` attribute type.
 
             You can compare two ``int`` values, but you cannot compare ``int`` with ``date`` value,
             as well as different HWM types,
-            like :obj:`hwmlib.old_hwm.int_hwm.IntHWM` and :obj:`hwmlib.old_hwm.date_hwm.DateHWM`.
+            like :obj:`etl_entities.old_hwm.int_hwm.IntHWM` and :obj:`etl_entities.old_hwm.date_hwm.DateHWM`.
 
         Returns
         --------
@@ -187,13 +188,13 @@ class IntHWM(ColumnHWM[StrictInt]):
 
         Params
         -------
-        other : :obj:`hwmlib.old_hwm.int_hwm.IntHWM` or :obj:`int`
+        other : :obj:`etl_entities.old_hwm.int_hwm.IntHWM` or :obj:`int`
 
             Should be comparable with ``value`` attribute type.
 
             You can compare two ``int`` values, but you cannot compare ``int`` with ``date`` value,
             as well as different HWM types,
-            like :obj:`hwmlib.old_hwm.int_hwm.IntHWM` and :obj:`hwmlib.old_hwm.date_hwm.DateHWM`.
+            like :obj:`etl_entities.old_hwm.int_hwm.IntHWM` and :obj:`etl_entities.old_hwm.date_hwm.DateHWM`.
 
             .. warning::
 

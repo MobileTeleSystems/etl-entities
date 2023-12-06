@@ -29,13 +29,9 @@ class ColumnIntHWM(ColumnHWM[int]):
 
     Parameters
     ----------
-    column : ``str``
-
-        Column name
-
     name : ``str``
 
-        Table name
+        HWM unique name
 
     value : ``int`` or ``None``, default: ``None``
 
@@ -45,9 +41,13 @@ class ColumnIntHWM(ColumnHWM[int]):
 
         Description of HWM
 
+    source : Any, default: ``None``
+
+        HWM source, e.g. table name
+
     expression : Any, default: ``None``
 
-        HWM expression, for example:  ``CAST(column as TYPE)``
+        Expression used to generate HWM value, e.g. ``column``, ``CAST(column as TYPE)``
 
     modified_time : :obj:`datetime.datetime`, default: current datetime
 
@@ -60,7 +60,12 @@ class ColumnIntHWM(ColumnHWM[int]):
 
         from etl_entities.hwm import ColumnIntHWM
 
-        hwm_int = ColumnIntHWM(column="column_name", value=1, name="table_name")
+        hwm_int = ColumnIntHWM(
+            name="long_unique_name",
+            source="myschema.mytable",
+            expression="my_int_column",
+            value=1,
+        )
     """
 
     value: Optional[StrictInt] = None

@@ -1,7 +1,7 @@
 Column Integer HWM
-=================================================================
-.. currentmodule:: etl_entities.hwm.column.int_hwm
+==================
 
+.. currentmodule:: etl_entities.hwm.column.int_hwm
 
 .. autoclass:: ColumnIntHWM
     :members: name, set_value, dict, json, copy, deserialize, covers
