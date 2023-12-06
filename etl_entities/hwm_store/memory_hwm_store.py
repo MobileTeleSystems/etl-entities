@@ -42,14 +42,20 @@ class MemoryHWMStore(BaseHWMStore):
 
         hwm_store = MemoryHWMStore()
 
-        hwm_value = ColumnIntHWM(name="example", column="sample_column", value=10)
+        # not found
+        retrieved_hwm = hwm_store.get_hwm("long_unique_name")
+        assert hwm_store.get_hwm("long_unique_name") is None
+
+        hwm = ColumnIntHWM(name="long_unique_name", value=10)
         hwm_store.set_hwm(hwm_value)
 
-        retrieved_hwm = hwm_store.get_hwm("example")
-        assert retrieved_hwm == hwm_value
+        # found
+        retrieved_hwm = hwm_store.get_hwm("long_unique_name")
+        assert retrieved_hwm == hwm
 
         hwm_store.clear()
-        assert hwm_store.get_hwm("example") is None
+        # not found again
+        assert hwm_store.get_hwm("long_unique_name") is None
     """
 
     _data: Dict[str, dict] = PrivateAttr(default_factory=dict)

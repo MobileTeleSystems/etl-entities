@@ -30,13 +30,9 @@ class ColumnDateHWM(ColumnHWM[date]):
 
     Parameters
     ----------
-    column : ``str``
-
-        Column name
-
     name : ``str``
 
-        Table name
+        HWM unique name
 
     value : :obj:`datetime.date` or ``None``, default: ``None``
 
@@ -46,9 +42,13 @@ class ColumnDateHWM(ColumnHWM[date]):
 
         Description of HWM
 
+    source : Any, default: ``None``
+
+        HWM source, e.g. table name
+
     expression : Any, default: ``None``
 
-        HWM expression, for example:  ``CAST(column as TYPE)``
+        Expression used to generate HWM value, e.g. ``column``, ``CAST(column as TYPE)``
 
     modified_time : :obj:`datetime.datetime`, default: current datetime
 
@@ -63,7 +63,10 @@ class ColumnDateHWM(ColumnHWM[date]):
         from etl_entities.hwm import ColumnDateHWM
 
         hwm = ColumnDateHWM(
-            column="column_name", value=date(year=2021, month=12, day=3), name="table_name"
+            name="long_unique_name",
+            source="myschema.mytable",
+            expression="my_date_column",
+            value=date(year=2021, month=12, day=3),
         )
     """
 

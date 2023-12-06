@@ -15,7 +15,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Generic, Optional, TypeVar
+from typing import Generic, Optional, TypeVar
 
 from pydantic import Field
 
@@ -30,13 +30,9 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], Generi
 
     Parameters
     ----------
-    column : ``str``
-
-        Column name
-
     name : ``str``
 
-        Table name
+        HWM unique name
 
     value : ``ColumnValueType`` or ``None``, default: ``None``
 
@@ -46,20 +42,21 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], Generi
 
         Description of HWM
 
+    source : Any, default: ``None``
+
+        HWM source, e.g. table name
+
     expression : Any, default: ``None``
 
-        HWM expression, for example:  ``CAST(column as TYPE)``
+        Expression used to generate HWM value, e.g. ``column``, ``CAST(column as TYPE)``
 
     modified_time : :obj:`datetime.datetime`, default: current datetime
 
         HWM value modification time
     """
 
-    entity: str = Field(alias="column")
-    name: str
+    entity: Optional[str] = Field(alias="source")
     value: Optional[ColumnValueType] = None
-    description: str = ""
-    expression: Any = None
 
     def covers(self, value: Optional[ColumnValueType]) -> bool:
         """Return ``True`` if input value is already covered by HWM
@@ -69,19 +66,20 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], Generi
 
         .. code:: python
 
-            hwm = ColumnHWM(column="column_name", value=1)
+            hwm = ColumnIntHWM(name="somename", value=1)
 
             assert hwm.covers(0)  # 0 <= 1
             assert hwm.covers(1)  # 1 <= 1
             assert hwm.covers(0.5)  # 0.5 <= 1
             assert not hwm.covers(2)  # 2 > 1
 
-            empty_hwm = ColumnHWM(column="column_name")
+            empty_hwm = ColumnIntHWM(name="somename")
 
-            assert not empty_hwm.covers(0)  # non comparable with None
-            assert not empty_hwm.covers(1)  # non comparable with None
-            assert not empty_hwm.covers(0.5)  # non comparable with None
-            assert not empty_hwm.covers(2)  # non comparable with None
+            # None does not cover anything
+            assert not empty_hwm.covers(0)
+            assert not empty_hwm.covers(1)
+            assert not empty_hwm.covers(0.5)
+            assert not empty_hwm.covers(2)
         """
 
         if self.value is None:
@@ -168,10 +166,10 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], Generi
 
         Params
         -------
-        other : :obj:`etl_entities.hwm.column_hwm.ColumnHWM` or any :obj:`object`
+        other : :obj:`etl_entities.hwm.column_hwm.ColumnHWM`
 
-            You can compare two :obj:`hwmlib.hwm.column_hwm.ColumnHWM` instances,
-            obj:`hwmlib.hwm.column_hwm.ColumnHWM` with an :obj:`object`,
+            You can compare two :obj:`etl_entities.hwm.column_hwm.ColumnHWM` instances,
+            obj:`etl_entities.hwm.column_hwm.ColumnHWM` with an :obj:`object`,
             if its value is comparable with the ``value`` attribute of HWM
 
         Returns
@@ -232,8 +230,8 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], Generi
         -------
         other : :obj:`etl_entities.hwm.column_hwm.ColumnHWM` or any :obj:`object`
 
-            You can compare two :obj:`hwmlib.hwm.column_hwm.ColumnHWM` instances,
-            obj:`hwmlib.hwm.column_hwm.ColumnHWM` with an :obj:`object`,
+            You can compare two :obj:`etl_entities.hwm.column_hwm.ColumnHWM` instances,
+            obj:`etl_entities.hwm.column_hwm.ColumnHWM` with an :obj:`object`,
             if its value is comparable with the ``value`` attribute of HWM
 
             .. warning::

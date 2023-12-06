@@ -67,7 +67,7 @@ class BaseHWMStore(BaseModel, ABC):
         Parameters
         ----------
         name : str
-            HWM name
+            HWM unique name
 
         Returns
         -------
@@ -80,9 +80,7 @@ class BaseHWMStore(BaseModel, ABC):
 
             from etl_entities.hwm import ColumnIntHWM
 
-            # just to generate name using HWM parts
-            empty_hwm = ColumnIntHWM(column=..., name=..., ...)
-            real_hwm = hwm_store.get_hwm(empty_hwm.name)
+            real_hwm = hwm_store.get_hwm(hwm_unique_name)
         """
 
     @abstractmethod
@@ -106,7 +104,7 @@ class BaseHWMStore(BaseModel, ABC):
 
             from etl_entities.hwm import ColumnIntHWM
 
-            hwm = ColumnIntHWM(value=..., column=..., name=...)
+            hwm = ColumnIntHWM(name=..., value=...)
             hwm_location = hwm_store.set_hwm(hwm)
         """
 

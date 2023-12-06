@@ -531,22 +531,23 @@ def test_column_hwm_serialization(hwm_class, hwm_type, value, serialized_value, 
 
 
 @pytest.mark.parametrize(
-    "hwm_class, value, new_class",
+    "hwm_class, new_class, value",
     [
-        (DateHWM, date.today(), ColumnDateHWM),
-        (DateTimeHWM, datetime.now(), ColumnDateTimeHWM),
-        (IntHWM, 1, ColumnIntHWM),
+        (DateHWM, ColumnDateHWM, date.today()),
+        (DateTimeHWM, ColumnDateTimeHWM, datetime.now()),
+        (IntHWM, ColumnIntHWM, 1),
     ],
 )
-def test_column_old_hwm_to_new_hwm(hwm_class, value, new_class):
+def test_column_old_hwm_to_new_hwm(hwm_class, new_class, value):
     column = Column(name="some")
     table = Table(name="abc.another", instance="proto://url")
-    old_hwm = hwm_class(column=column, source=table)
+    old_hwm = hwm_class(column=column, source=table, value=value)
     new_hwm = old_hwm.as_new_hwm()
 
-    assert new_hwm.value == old_hwm.value
-    assert new_hwm.name == old_hwm.qualified_name
-    assert new_hwm.modified_time == old_hwm.modified_time
-    assert new_hwm.entity == old_hwm.column.name
-
-    assert isinstance(new_hwm, new_class)
+    assert new_hwm == new_class(
+        name=old_hwm.qualified_name,
+        source=old_hwm.source.name,
+        expression=old_hwm.column.name,
+        value=value,
+        modified_time=old_hwm.modified_time,
+    )
