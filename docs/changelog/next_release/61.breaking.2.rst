@@ -1,1 +1,0 @@
-Disallow passing extra fields to HWM class constructors instead of silently ignore them.

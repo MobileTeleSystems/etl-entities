@@ -1,3 +1,0 @@
-Rename attribute ``ColumnHWM.column`` to ``ColumnHWM.source``. This is not required anymore, and should contain table/collection/topic name instead of column.
-
-Use attribute ``ColumnHWM.expression`` to store column name.
