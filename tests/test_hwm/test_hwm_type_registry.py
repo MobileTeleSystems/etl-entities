@@ -1,3 +1,4 @@
+import secrets
 from datetime import date, datetime
 
 import pytest
@@ -24,24 +25,24 @@ from etl_entities.hwm import (
     ],
 )
 def test_column_hwm_parse(hwm_class, hwm_type, value, serialized_value):
-    column = "column_name"
-    name = "table_name"
+    name = secrets.token_hex()
+    table = "table_name"
     modified_time = datetime.now()
 
     serialized1 = {
         "value": serialized_value,
         "type": hwm_type,
-        "column": column,
+        "source": table,
         "name": name,
         "modified_time": modified_time.isoformat(),
     }
-    hwm1 = hwm_class(column=column, name=name, value=value, modified_time=modified_time)
+    hwm1 = hwm_class(name=name, source=table, value=value, modified_time=modified_time)
 
     assert HWMTypeRegistry.parse(serialized1) == hwm1
 
     serialized2 = serialized1.copy()
     serialized2["value"] = None
-    hwm2 = hwm_class(column=column, name=name, modified_time=modified_time)
+    hwm2 = hwm_class(name=name, source=table, modified_time=modified_time)
 
     assert HWMTypeRegistry.parse(serialized2) == hwm2
 

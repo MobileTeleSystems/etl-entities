@@ -71,8 +71,8 @@ class ColumnIntHWM(ColumnHWM[int]):
     value: Optional[StrictInt] = None
 
     @validator("value", pre=True)
-    def validate_value(cls, raw_value):  # noqa: N805
-        if raw_value is None:
+    def _validate_value(cls, raw_value):  # noqa: N805
+        if raw_value is None or raw_value == "null":
             return None
 
         if isinstance(raw_value, str):
@@ -88,90 +88,3 @@ class ColumnIntHWM(ColumnHWM[int]):
 
         # pydantic will raise validation error
         return raw_value
-
-    def __eq__(self, other):
-        """Checks equality of two HWM instances
-
-        Params
-        -------
-        other : :obj:`hwmlib.hwm.int_hwm.ColumnIntHWM` or :obj:`int`
-
-            Should be comparable with ``value`` attribute type.
-
-            You can compare two ``int`` values, but you cannot compare ``int`` with ``date`` value,
-            as well as different HWM types,
-            like :obj:`hwmlib.hwm.int_hwm.ColumnIntHWM` and :obj:`hwmlib.hwm.date_hwm.ColumnDateHWM`.
-
-        Returns
-        --------
-        result : bool
-
-            ``True`` if both inputs are the same, ``False`` otherwise.
-
-        Examples
-        ----------
-
-        .. code:: python
-
-            from etl_entities.hwm import ColumnIntHWM
-
-            hwm1 = ColumnIntHWM(value=1, ...)
-            hwm2 = ColumnIntHWM(value=2, ...)
-
-            assert hwm1 == hwm1
-            assert hwm1 != hwm2
-        """
-
-        if isinstance(other, ColumnHWM) and not isinstance(other, ColumnIntHWM):
-            return False
-
-        return super().__eq__(other)
-
-    def __lt__(self, other):
-        """Checks current ColumnIntHWM value is less than another one
-
-        Params
-        -------
-        other : :obj:`hwmlib.hwm.int_hwm.ColumnIntHWM` or :obj:`int`
-
-            Should be comparable with ``value`` attribute type.
-
-            You can compare two ``int`` values, but you cannot compare ``int`` with ``date`` value,
-            as well as different HWM types,
-            like :obj:`hwmlib.hwm.int_hwm.ColumnIntHWM` and :obj:`hwmlib.hwm.date_hwm.ColumnDateHWM`.
-
-            .. warning::
-
-                You cannot compare HWMs if one of them has None value
-
-        Returns
-        --------
-        result : bool
-
-            ``True`` if current HWM value is less than provided value, ``False`` otherwise.
-
-        Examples
-        ----------
-
-        .. code:: python
-
-            from etl_entities.hwm import ColumnIntHWM
-
-            hwm1 = ColumnIntHWM(value=1, ...)
-            hwm2 = ColumnIntHWM(value=2, ...)
-
-            assert hwm1 < hwm2
-            assert hwm1 > hwm2
-
-            assert hwm1 < 2
-            assert hwm1 > 0
-
-            hwm3 = ColumnIntHWM(value=None, ...)
-            assert hwm1 < hwm3  # will raise TypeError
-            assert hwm1 < None  # same thing
-        """
-
-        if isinstance(other, ColumnHWM) and not isinstance(other, ColumnIntHWM):
-            return NotImplemented
-
-        return super().__lt__(other)
