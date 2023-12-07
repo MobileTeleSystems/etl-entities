@@ -100,7 +100,7 @@ class FileHWM(
 
         Params
         -------
-        other : :obj:`hwmlib.old_hwm.file_hwm.FileHWM`
+        other : :obj:`etl_entities.old_hwm.file_hwm.FileHWM`
 
         Returns
         --------

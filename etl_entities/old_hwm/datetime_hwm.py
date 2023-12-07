@@ -114,7 +114,8 @@ class DateTimeHWM(ColumnHWM[datetime]):
     def as_new_hwm(self):
         return ColumnDateTimeHWM(
             name=self.qualified_name,
-            column=self.column.name,
+            source=self.source.name,
+            expression=self.column.name,
             value=self.value,
             modified_time=self.modified_time,
         )
@@ -165,11 +166,11 @@ class DateTimeHWM(ColumnHWM[datetime]):
 
             Should be comparable with ``value`` attribute type.
 
-            You can compare two :obj:`hwmlib.old_hwm.datetime_hwm.DateTimeHWM` or ``datetime`` values.
+            You can compare two :obj:`etl_entities.old_hwm.datetime_hwm.DateTimeHWM` or ``datetime`` values.
 
             But you cannot compare ``datetime`` with ``int`` value,
             as well as different HWM types,
-            like :obj:`hwmlib.old_hwm.datetime_hwm.DateTimeHWM` and :obj:`hwmlib.old_hwm.int_hwm.IntHWM`.
+            like :obj:`etl_entities.old_hwm.datetime_hwm.DateTimeHWM` and :obj:`etl_entities.old_hwm.int_hwm.IntHWM`.
 
         Returns
         --------
@@ -210,11 +211,11 @@ class DateTimeHWM(ColumnHWM[datetime]):
 
             Should be comparable with ``value`` attribute type.
 
-            You can compare two :obj:`hwmlib.old_hwm.datetime_hwm.DateTimeHWM` or ``datetime`` values.
+            You can compare two :obj:`etl_entities.old_hwm.datetime_hwm.DateTimeHWM` or ``datetime`` values.
 
             But you cannot compare ``datetime`` with ``int`` value,
             as well as different HWM types,
-            like :obj:`hwmlib.old_hwm.datetime_hwm.DateTimeHWM` and :obj:`hwmlib.old_hwm.int_hwm.IntHWM`.
+            like :obj:`etl_entities.old_hwm.datetime_hwm.DateTimeHWM` and :obj:`etl_entities.old_hwm.int_hwm.IntHWM`.
 
             .. warning::
 

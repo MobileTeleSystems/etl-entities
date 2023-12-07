@@ -15,8 +15,7 @@
 from __future__ import annotations
 
 import os
-from abc import abstractmethod
-from typing import Any, Generic, Iterable, TypeVar
+from typing import Generic, Optional, TypeVar
 
 from pydantic import Field, validator
 
@@ -36,13 +35,25 @@ class FileHWM(
 
     Parameters
     ----------
-    directory : :obj: `pathlib.PosixPath`
+    name : ``str``
 
-        Path to directory
+        HWM unique name
 
     value : ``FileHWMValueType``
 
         HWM value
+
+    directory : :obj:`pathlib.Path`, default: ``None``
+
+        Directory HWM value is bound to. Should be an absolute path.
+
+    description : ``str``, default: ``""``
+
+        Description of HWM
+
+    expression : Any, default: ``None``
+
+        Expression used to generate HWM value
 
     modified_time : :obj:`datetime.datetime`, default: current datetime
 
@@ -50,29 +61,18 @@ class FileHWM(
 
     """
 
-    entity: AbsolutePath = Field(alias="directory")
+    entity: Optional[AbsolutePath] = Field(default=None, alias="directory")
     value: FileHWMValueType
-    name: str
-    description: str = ""
-    expression: Any = None
 
     class Config:  # noqa: WPS431
         json_encoders = {AbsolutePath: os.fspath}
-
-    @validator("entity", pre=True)
-    def validate_directory(cls, value):  # noqa: N805
-        return AbsolutePath(value)
-
-    @abstractmethod
-    def update(self, value: str | os.PathLike | Iterable[str | os.PathLike]):
-        """Updates current HWM value with some implementation-specific logic, and return HWM."""
 
     def __eq__(self, other):
         """Checks equality of two FileHWM instances
 
         Params
         -------
-        other : :obj:`hwmlib.hwm.file_hwm.FileHWM`
+        other : :obj:`etl_entities.hwm.file_hwm.FileHWM`
 
         Returns
         --------
@@ -81,10 +81,16 @@ class FileHWM(
             ``True`` if both inputs are the same, ``False`` otherwise
         """
 
-        if not isinstance(other, FileHWM):
-            return False
+        if not isinstance(other, type(self)):
+            return NotImplemented
 
         self_fields = self.dict(exclude={"modified_time"})
         other_fields = other.dict(exclude={"modified_time"})
 
         return self_fields == other_fields
+
+    @validator("entity", pre=True)
+    def _validate_directory(cls, value):  # noqa: N805
+        if value is None:
+            return None
+        return AbsolutePath(value)

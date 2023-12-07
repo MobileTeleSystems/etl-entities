@@ -1,0 +1,2 @@
+Disallow comparison ``hwm < raw_value`` and ``hwm > raw_value`` where ``raw_value`` is a primitive type value, like int.
+This now raises ``TypeError``.

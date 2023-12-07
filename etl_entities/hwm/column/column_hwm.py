@@ -15,7 +15,7 @@
 
 from __future__ import annotations
 
-from typing import Any, Generic, Optional, TypeVar
+from typing import Generic, Optional, TypeVar
 
 from pydantic import Field
 
@@ -23,6 +23,7 @@ from etl_entities.entity import GenericModel
 from etl_entities.hwm.hwm import HWM
 
 ColumnValueType = TypeVar("ColumnValueType")
+ColumnHWMType = TypeVar("ColumnHWMType", bound="ColumnHWM")
 
 
 class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], GenericModel):
@@ -30,13 +31,9 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], Generi
 
     Parameters
     ----------
-    column : ``str``
-
-        Column name
-
     name : ``str``
 
-        Table name
+        HWM unique name
 
     value : ``ColumnValueType`` or ``None``, default: ``None``
 
@@ -46,20 +43,21 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], Generi
 
         Description of HWM
 
+    source : Any, default: ``None``
+
+        HWM source, e.g. table name
+
     expression : Any, default: ``None``
 
-        HWM expression, for example:  ``CAST(column as TYPE)``
+        Expression used to generate HWM value, e.g. ``column``, ``CAST(column as TYPE)``
 
     modified_time : :obj:`datetime.datetime`, default: current datetime
 
         HWM value modification time
     """
 
-    entity: str = Field(alias="column")
-    name: str
+    entity: Optional[str] = Field(alias="source")
     value: Optional[ColumnValueType] = None
-    description: str = ""
-    expression: Any = None
 
     def covers(self, value: Optional[ColumnValueType]) -> bool:
         """Return ``True`` if input value is already covered by HWM
@@ -69,19 +67,20 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], Generi
 
         .. code:: python
 
-            hwm = ColumnHWM(column="column_name", value=1)
+            hwm = ColumnIntHWM(name="somename", value=1)
 
             assert hwm.covers(0)  # 0 <= 1
             assert hwm.covers(1)  # 1 <= 1
             assert hwm.covers(0.5)  # 0.5 <= 1
             assert not hwm.covers(2)  # 2 > 1
 
-            empty_hwm = ColumnHWM(column="column_name")
+            empty_hwm = ColumnIntHWM(name="somename")
 
-            assert not empty_hwm.covers(0)  # non comparable with None
-            assert not empty_hwm.covers(1)  # non comparable with None
-            assert not empty_hwm.covers(0.5)  # non comparable with None
-            assert not empty_hwm.covers(2)  # non comparable with None
+            # None does not cover anything
+            assert not empty_hwm.covers(0)
+            assert not empty_hwm.covers(1)
+            assert not empty_hwm.covers(0.5)
+            assert not empty_hwm.covers(2)
         """
 
         if self.value is None:
@@ -89,7 +88,7 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], Generi
 
         return self._check_new_value(value) <= self.value
 
-    def __add__(self, value):
+    def __add__(self: ColumnHWMType, value: ColumnValueType) -> ColumnHWMType:
         """Increase HWM value and return copy of HWM
 
         Params
@@ -120,13 +119,13 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], Generi
             assert hwm1 + inc == hwm2
         """
 
-        new_value = self.value + value
+        new_value = self.value + value  # type: ignore[operator]
         if self.value != new_value:
             return self.copy().set_value(new_value)
 
         return self
 
-    def __sub__(self, value):
+    def __sub__(self: ColumnHWMType, value: ColumnValueType) -> ColumnHWMType:
         """Decrease HWM value, and return copy of HWM
 
         Params
@@ -157,7 +156,7 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], Generi
             assert hwm1 - dec == hwm2
         """
 
-        new_value = self.value - value
+        new_value = self.value - value  # type: ignore[operator]
         if self.value != new_value:
             return self.copy().set_value(new_value)
 
@@ -168,10 +167,10 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], Generi
 
         Params
         -------
-        other : :obj:`etl_entities.hwm.column_hwm.ColumnHWM` or any :obj:`object`
+        other : :obj:`etl_entities.hwm.column_hwm.ColumnHWM`
 
-            You can compare two :obj:`hwmlib.hwm.column_hwm.ColumnHWM` instances,
-            obj:`hwmlib.hwm.column_hwm.ColumnHWM` with an :obj:`object`,
+            You can compare two :obj:`etl_entities.hwm.column_hwm.ColumnHWM` instances,
+            obj:`etl_entities.hwm.column_hwm.ColumnHWM` with an :obj:`object`,
             if its value is comparable with the ``value`` attribute of HWM
 
         Returns
@@ -181,14 +180,14 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], Generi
             ``True`` if both inputs are the same, ``False`` otherwise.
         """
 
-        if isinstance(other, HWM):
-            self_fields = self.dict(exclude={"modified_time"})
-            other_fields = other.dict(exclude={"modified_time"})
-            return isinstance(other, ColumnHWM) and self_fields == other_fields
+        if not isinstance(other, type(self)):
+            return NotImplemented
 
-        return self.value == other
+        self_fields = self.dict(exclude={"modified_time"})
+        other_fields = other.dict(exclude={"modified_time"})
+        return self_fields == other_fields
 
-    def update(self, value: ColumnValueType):
+    def update(self: ColumnHWMType, value: ColumnValueType) -> ColumnHWMType:
         """Updates current HWM value with some implementation-specific logic, and return HWM.
 
         .. note::
@@ -226,38 +225,30 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], Generi
         return self
 
     def __lt__(self, other):
-        """Checks current HWM value is less than another one
-
-        Params
-        -------
-        other : :obj:`etl_entities.hwm.column_hwm.ColumnHWM` or any :obj:`object`
-
-            You can compare two :obj:`hwmlib.hwm.column_hwm.ColumnHWM` instances,
-            obj:`hwmlib.hwm.column_hwm.ColumnHWM` with an :obj:`object`,
-            if its value is comparable with the ``value`` attribute of HWM
-
-            .. warning::
-
-                You cannot compare HWMs if one of them has None value
+        """Checks current HWM value is less than another one.
 
         Returns
         --------
         result : bool
 
             ``True`` if current HWM value is less than provided value, ``False`` otherwise.
+
+        Raises
+        ------
+        NotImplementedError:
+
+            If someone tries to compare HWMs with different fields,
+            like :obj:`name`, :obj:`source` or :obj:`expression`
         """
 
-        if isinstance(other, HWM):
-            if isinstance(other, ColumnHWM):
-                self_fields = self.dict(exclude={"value", "modified_time"})
-                other_fields = other.dict(exclude={"value", "modified_time"})
-                if self_fields == other_fields:
-                    return self.value < other.value
-
-                raise NotImplementedError(  # NOSONAR
-                    "Cannot compare ColumnHWM with different column, source or process",
-                )
-
+        if not isinstance(other, type(self)):
             return NotImplemented
 
-        return self.value < other
+        self_fields = self.dict(exclude={"value", "modified_time"})
+        other_fields = other.dict(exclude={"value", "modified_time"})
+        if self_fields != other_fields:
+            raise NotImplementedError(
+                "Cannot compare ColumnHWM with different entity or expression",
+            )
+
+        return self.value < other.value

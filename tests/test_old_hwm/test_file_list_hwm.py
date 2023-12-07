@@ -3,6 +3,7 @@ from pathlib import PosixPath
 
 import pytest
 
+from etl_entities.hwm import FileListHWM as NewFileListHWM
 from etl_entities.instance import AbsolutePath, RelativePath
 from etl_entities.old_hwm import FileListHWM
 from etl_entities.process import Process
@@ -630,3 +631,31 @@ def test_file_list_hwm_serialization():
         serialized4["value"] = wrong_value
         with pytest.raises((TypeError, ValueError)):
             FileListHWM.deserialize_value(serialized4)
+
+
+def test_file_list_old_hwm_to_new_hwm():
+    folder = RemoteFolder(name="/home/user/abc", instance="ftp://my.domain:23")
+    process = Process(name="abc", host="somehost", task="sometask", dag="somedag")
+
+    old_hwm = FileListHWM(
+        source=folder,
+        process=process,
+        value=[
+            RelativePath("some/path/file.py"),
+            RelativePath("another.csv"),
+            RelativePath("some.orc"),
+        ],
+    )
+    new_hwm = old_hwm.as_new_hwm()
+
+    assert new_hwm == NewFileListHWM(
+        name=old_hwm.qualified_name,
+        directory=folder.name,
+        expression=None,
+        value=[
+            AbsolutePath("/home/user/abc/some/path/file.py"),
+            AbsolutePath("/home/user/abc/another.csv"),
+            AbsolutePath("/home/user/abc/some.orc"),
+        ],
+        modified_time=old_hwm.modified_time,
+    )

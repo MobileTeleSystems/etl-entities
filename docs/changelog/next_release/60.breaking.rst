@@ -1,0 +1,2 @@
+Make attribute ``FileHWM.directory`` optional.
+All paths in ``FileListHWM.value`` are now absolute instead of relative.
