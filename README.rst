@@ -30,7 +30,6 @@ Currently implemented:
     * ``ColumnDateHWM``
     * ``ColumnDateTimeHWM``
     * ``FileListHWM``
-    * ``ColumnHWM``
 
 .. installation
 
