@@ -15,7 +15,7 @@
 from __future__ import annotations
 
 import os
-from typing import FrozenSet, Iterable
+from typing import FrozenSet, Iterable, TypeVar
 
 from pydantic import Field, validator
 
@@ -24,6 +24,7 @@ from etl_entities.hwm.hwm_type_registry import register_hwm_type
 from etl_entities.instance import AbsolutePath
 
 FileListType = FrozenSet[AbsolutePath]
+FileListHWMType = TypeVar("FileListHWMType", bound="FileListHWM")
 
 
 @register_hwm_type("file_list")
@@ -90,7 +91,7 @@ class FileListHWM(FileHWM[FileListType]):
 
         return value in self
 
-    def update(self, value: str | os.PathLike | Iterable[str | os.PathLike]):
+    def update(self: FileListHWMType, value: str | os.PathLike | Iterable[str | os.PathLike]) -> FileListHWMType:
         """Updates current HWM value with some implementation-specific logic, and return HWM.
 
         .. note::
@@ -138,7 +139,7 @@ class FileListHWM(FileHWM[FileListType]):
 
         return self
 
-    def __add__(self, value: str | os.PathLike | Iterable[str | os.PathLike]):
+    def __add__(self: FileListHWMType, value: str | os.PathLike | Iterable[str | os.PathLike]) -> FileListHWMType:
         """Adds path or paths to HWM value, and return copy of HWM
 
         Params
@@ -173,7 +174,7 @@ class FileListHWM(FileHWM[FileListType]):
 
         return self
 
-    def __sub__(self, value: str | os.PathLike | Iterable[str | os.PathLike]):
+    def __sub__(self: FileListHWMType, value: str | os.PathLike | Iterable[str | os.PathLike]) -> FileListHWMType:
         """Remove path or paths from HWM value, and return copy of HWM
 
         Params
@@ -228,7 +229,7 @@ class FileListHWM(FileHWM[FileListType]):
             hwm = FileListHWM(value={"/some/path"}, ...)
 
             assert "/some/path" in hwm
-            assert "/another/path" in hwm
+            assert "/another/path" not in hwm
         """
 
         if isinstance(item, str):
@@ -238,38 +239,6 @@ class FileListHWM(FileHWM[FileListType]):
             item = AbsolutePath(item)
 
         return item in self.value
-
-    def __eq__(self, other):
-        """Checks equality of two FileListHWM instances
-
-        Params
-        -------
-        other : :obj:`etl_entities.hwm.file_list_hwm.FileListHWM`
-
-        Returns
-        --------
-        result : bool
-
-            ``True`` if both inputs are the same, ``False`` otherwise.
-
-        Examples
-        ----------
-
-        .. code:: python
-
-            from etl_entities.hwm import FileListHWM
-
-            hwm1 = FileListHWM(value={"/some"}, ...)
-            hwm2 = FileListHWM(value={"/another"}, ...)
-
-            assert hwm1 == hwm1
-            assert hwm1 != hwm2
-        """
-
-        if not isinstance(other, FileListHWM):
-            return False
-
-        return super().__eq__(other)
 
     @validator("value", pre=True)
     def _validate_value(cls, value, values: dict):  # noqa: N805

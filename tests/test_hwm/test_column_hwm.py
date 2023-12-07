@@ -75,10 +75,12 @@ def test_column_hwm_wrong_input(hwm_class, value, wrong_values):
     name = secrets.token_hex(8)
 
     with pytest.raises(ValueError):
+        # missing name
         hwm_class()
 
     with pytest.raises(ValueError):
-        hwm_class(column=1)
+        # missing name
+        hwm_class(source=1)
 
     for wrong_value in wrong_values:
         with pytest.raises(ValueError):
@@ -86,6 +88,10 @@ def test_column_hwm_wrong_input(hwm_class, value, wrong_values):
 
     with pytest.raises(ValueError):
         hwm_class(name=name, value=value, modified_time="unknown")
+
+    with pytest.raises(ValueError):
+        # extra fields not allowed
+        hwm_class(name=name, unknown="unknown")
 
 
 @pytest.mark.parametrize(
@@ -184,15 +190,15 @@ def test_column_hwm_compare(hwm_class, value, delta):  # noqa: WPS210
             if item1 is not item2:
                 assert item1 != item2
 
-    for item in items:
-        assert item == value
-        assert item != next_value
-        assert item < next_value
+    # this was true until 2.1.x, but not anymore
+    for item in items + next_items:
+        assert item != item.value
 
-    for item in next_items:
-        assert item == next_value
-        assert item != value
-        assert item.value > value
+        with pytest.raises(TypeError):
+            assert item > item.value
+
+        with pytest.raises(TypeError):
+            assert item > item.value
 
     # items with same attribute values can be compared using < and >
     for item1, item2 in valid_pairs:
@@ -235,31 +241,41 @@ def test_column_hwm_covers(hwm_class, value, delta):  # noqa: WPS210
 
 
 @pytest.mark.parametrize(
-    "hwm_class, value",
+    "hwm_class",
     [
-        (ColumnDateHWM, date.today()),
-        (ColumnDateTimeHWM, datetime.now()),
-        (ColumnIntHWM, 1),
+        ColumnDateHWM,
+        ColumnDateTimeHWM,
+        ColumnIntHWM,
     ],
 )
-def test_column_hwm_compare_other_type(hwm_class, value):  # noqa: WPS210
+def test_column_hwm_compare_other_type(hwm_class):  # noqa: WPS210
+    name = secrets.token_hex(8)
     other_types = {ColumnDateHWM, ColumnDateTimeHWM, ColumnIntHWM} - {hwm_class}
-
-    column = "column_name"
     table = "table_name"
 
-    hwm = hwm_class(column=column, name=table, value=value)
+    hwm = hwm_class(name=name)
+    hwm_with_source = hwm_class(name=name, source=table)
 
     for other_type in other_types:
-        other_hwm = other_type(column=column, name=table)
+        # HWM of different types are never equal
+        other_hwm = other_type(name=name)
+        other_hwm_with_same_source = other_type(name=name, source=table)
 
-        assert hwm != other_hwm
+        assert other_hwm != hwm
+        assert other_hwm_with_same_source != hwm_with_source
 
+        # and cannot be compared with > or <
         with pytest.raises(TypeError):
             assert hwm > other_hwm
 
         with pytest.raises(TypeError):
+            assert hwm_with_source > other_hwm_with_same_source
+
+        with pytest.raises(TypeError):
             assert hwm < other_hwm
+
+        with pytest.raises(TypeError):
+            assert hwm_with_source < other_hwm_with_same_source
 
 
 @pytest.mark.parametrize(
@@ -382,6 +398,9 @@ def test_column_hwm_serialization(hwm_class, hwm_type, value, serialized_value):
     hwm2 = hwm_class(name=name, modified_time=modified_time)
 
     assert hwm2.serialize() == serialized2
+    assert hwm_class.deserialize(serialized2) == hwm2
+
+    serialized2["value"] = "null"
     assert hwm_class.deserialize(serialized2) == hwm2
 
 

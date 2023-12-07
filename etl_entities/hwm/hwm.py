@@ -26,6 +26,7 @@ from etl_entities.entity import GenericModel
 from etl_entities.hwm.hwm_type_registry import HWMTypeRegistry
 
 ValueType = TypeVar("ValueType")
+HWMType = TypeVar("HWMType", bound="HWM")
 
 
 class HWM(ABC, Generic[ValueType], GenericModel):
@@ -39,7 +40,7 @@ class HWM(ABC, Generic[ValueType], GenericModel):
 
     name : ``str``
 
-        HWM name
+        HWM unique name
 
     value : ``ColumnValueType`` or ``None``, default: ``None``
 
@@ -65,7 +66,10 @@ class HWM(ABC, Generic[ValueType], GenericModel):
     expression: Any = None
     modified_time: datetime = Field(default_factory=datetime.now)
 
-    def set_value(self, value: ValueType | None) -> HWM:
+    class Config:  # noqa: WPS431
+        extra = "forbid"
+
+    def set_value(self: HWMType, value: ValueType | None) -> HWMType:
         """Replaces current HWM value with the passed one, and return HWM.
 
         .. note::
@@ -130,7 +134,7 @@ class HWM(ABC, Generic[ValueType], GenericModel):
         return result
 
     @classmethod
-    def deserialize(cls, inp: dict):
+    def deserialize(cls: type[HWMType], inp: dict) -> HWMType:
         """Return HWM from dict representation
 
         Returns
@@ -168,7 +172,7 @@ class HWM(ABC, Generic[ValueType], GenericModel):
         return super().deserialize(value)
 
     @abstractmethod
-    def update(self, value):
+    def update(self: HWMType, value: Any) -> HWMType:
         """Update current HWM value with some implementation-specific logic, and return HWM"""
 
     @abstractmethod

@@ -15,8 +15,7 @@
 from __future__ import annotations
 
 import os
-from abc import abstractmethod
-from typing import Generic, Iterable, Optional, TypeVar
+from typing import Generic, Optional, TypeVar
 
 from pydantic import Field, validator
 
@@ -68,10 +67,6 @@ class FileHWM(
     class Config:  # noqa: WPS431
         json_encoders = {AbsolutePath: os.fspath}
 
-    @abstractmethod
-    def update(self, value: str | os.PathLike | Iterable[str | os.PathLike]):
-        """Updates current HWM value with some implementation-specific logic, and return HWM."""
-
     def __eq__(self, other):
         """Checks equality of two FileHWM instances
 
@@ -86,8 +81,8 @@ class FileHWM(
             ``True`` if both inputs are the same, ``False`` otherwise
         """
 
-        if not isinstance(other, FileHWM):
-            return False
+        if not isinstance(other, type(self)):
+            return NotImplemented
 
         self_fields = self.dict(exclude={"modified_time"})
         other_fields = other.dict(exclude={"modified_time"})

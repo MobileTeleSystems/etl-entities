@@ -92,6 +92,10 @@ def test_file_list_hwm_wrong_input(invalid_file):
         # value does not match directory
         FileListHWM(name=name, value="/some/path/file.py", directory="/another/path")
 
+    with pytest.raises(ValueError):
+        # extra fields not allowed
+        FileListHWM(name=name, unknown="unknown")
+
 
 def test_file_list_hwm_set_value():
     file1 = "/some/path/file.py"
@@ -192,6 +196,10 @@ def test_file_list_hwm_compare():
         for item2 in items:
             if item1 is not item2:
                 assert item1 != item2
+
+    # this was true until 2.1.x, but not anymore
+    for item in items:
+        assert item != item.value
 
 
 def test_file_list_hwm_covers():
