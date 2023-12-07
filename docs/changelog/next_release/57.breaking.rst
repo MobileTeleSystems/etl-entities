@@ -1,1 +1,0 @@
-Drop ``HWM.qualified_name`` attribute, it is not used anymore.

@@ -1,0 +1,15 @@
+2.1.0 (2023-12-07)
+==================
+
+Breaking Changes
+----------------
+
+- Drop ``HWM.qualified_name`` attribute, it is not used anymore. (:github:pull:`57`)
+- Rename attribute ``ColumnHWM.column`` to ``ColumnHWM.source``. This is not required anymore, and should contain table/collection/topic name instead of column.
+
+  Use attribute ``ColumnHWM.expression`` to store column name. (:github:pull:`59`)
+- Make attribute ``FileHWM.directory`` optional.
+  All paths in ``FileListHWM.value`` are now absolute instead of relative. (:github:pull:`60`)
+- Disallow comparison ``hwm < raw_value`` and ``hwm > raw_value`` where ``raw_value`` is a primitive type value, like int.
+  This now raises ``TypeError``. (:github:pull:`61`)
+- Disallow passing extra fields to HWM class constructors instead of silently ignore them. (:github:pull:`61`)
