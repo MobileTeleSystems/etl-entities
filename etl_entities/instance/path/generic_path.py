@@ -32,7 +32,7 @@ class GenericPath(PurePosixPath):
         # In Python 3.12 and later, paths are stored in _raw_paths.
         # For earlier versions, fall back to _parts.
         if sys.version_info >= (3, 12):
-            parts_check = [part for path in self._raw_paths for part in path.split('/')]
+            parts_check = [part for path in self._raw_paths for part in path.split("/")]
         else:
             parts_check = self._parts
 
