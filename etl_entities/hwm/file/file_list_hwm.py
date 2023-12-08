@@ -15,7 +15,7 @@
 from __future__ import annotations
 
 import os
-from pathlib import Path
+import sys
 from typing import FrozenSet, Iterable, TypeVar
 
 from pydantic import Field, validator
@@ -265,14 +265,11 @@ class FileListHWM(FileHWM[FileListType]):
                 item = AbsolutePath(item)
 
             if directory:
-                item_path = Path(item).resolve()
-                directory_path = Path(directory).resolve()
-
-                # use relative_to for Python 3.7 compatibility
-                try:
-                    item_path.relative_to(directory_path)
-                except ValueError:
-                    raise ValueError(f"Item {item} is not within directory {directory}")
+                if sys.version_info >= (3, 9):
+                    if not item.is_relative_to(directory):
+                        raise ValueError(f"Item {item} is not within directory {directory}")  # noqa: WPS220
+                else:
+                    item.relative_to(directory)
 
             data.append(item)
 

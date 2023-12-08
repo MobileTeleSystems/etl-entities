@@ -20,21 +20,30 @@ from pathlib import PurePosixPath
 
 
 class GenericPath(PurePosixPath):
-    """Generic path representation
+    """Generic path representation without '..' and '~'."""
 
-    Same as :obj:`pathlib.PurePosixPath`, but `..` are not allowed
-    """
-
-    def __init__(self, *args):
-        # Call the parent class __init__ method
-        super().__init__(*args)
-
-        # In Python 3.12 and later, paths are stored in _raw_paths.
-        # For earlier versions, fall back to _parts.
+    def __new__(cls, *args):
         if sys.version_info >= (3, 12):
-            parts_check = [part for path in self._raw_paths for part in path.split("/")]
+            # for Python 3.12 and later
+            self = super().__new__(cls)
+            self._initialize_path_3_12(*args)
         else:
-            parts_check = self._parts
+            self = super().__new__(cls, *args)
 
+        # Validate the path parts
+        parts_check = self.parts if sys.version_info >= (3, 12) else self._parts
         if ".." in parts_check or "~" in parts_check:
-            raise ValueError(f"{self.__class__.__name__} cannot contain '..' or '~'")
+            raise ValueError(f"{cls.__name__} cannot contain '..' or '~'")
+
+        return self
+
+    def _initialize_path_3_12(self, *args):  # noqa: WPS114
+        # Path initialization specifically for Python 3.12+
+        paths = []
+        for arg in args:
+            if isinstance(arg, PurePosixPath):
+                paths.extend(arg._raw_paths)  # noqa: WPS437
+            else:
+                path = str(os.fspath(arg)) if not isinstance(arg, str) else arg
+                paths.append(path)
+        self._raw_paths = paths

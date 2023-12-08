@@ -23,11 +23,13 @@ class RelativePath(GenericPath):
     Same as :obj:`pathlib.PurePosixPath`, but path cannot start with ``/``
     """
 
-    def __init__(self, *args):
-        super().__init__(*args)
+    def __new__(cls, *args):
+        self = super().__new__(cls, *args)
 
         if self.is_absolute():
-            raise ValueError(f"{self.__class__.__name__} cannot start with '/'")
+            raise ValueError(f"{cls.__name__} cannot start with '/'")
 
         if not self.parts:
-            raise ValueError(f"{self.__class__.__name__} cannot be empty")
+            raise ValueError(f"{cls.__name__} cannot be empty")
+
+        return self
