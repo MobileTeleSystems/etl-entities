@@ -1,5 +1,3 @@
-import re
-
 import pytest
 from omegaconf import OmegaConf
 
@@ -114,7 +112,8 @@ def test_detect_hwm_store_wrong_options(config_constructor):
 
     conf = config_constructor({"hwm_store": {"memory": ["too_many_arg"]}})
 
-    with pytest.raises(TypeError, match=re.escape("__init__() takes exactly 1 positional argument (2 given)")):
+    # text error in python 3.12 version changed
+    with pytest.raises(TypeError, match="1 positional argument"):
         main(conf)
 
     conf = config_constructor({"hwm_store": {"memory": {"unknown": "arg"}}})
