@@ -4,6 +4,7 @@
 
     DRAFT
     NEXT_RELEASE
+    2.1.1
     2.1.0
     2.0.8
     2.0.7

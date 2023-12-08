@@ -14,6 +14,8 @@
 
 from __future__ import annotations
 
+import sys
+
 from etl_entities.instance.path.generic_path import GenericPath
 
 
@@ -23,13 +25,14 @@ class RelativePath(GenericPath):
     Same as :obj:`pathlib.PurePosixPath`, but path cannot start with ``/``
     """
 
-    def __new__(cls, *args):
-        self = super().__new__(cls, *args)
+    def __init__(self, *args):
+        if sys.version_info >= (3, 12):
+            super().__init__(*args)
+        else:
+            super().__init__()
 
         if self.is_absolute():
-            raise ValueError(f"{cls.__name__} cannot start with '/'")
+            raise ValueError(f"{self.__class__.__name__} cannot start with '/'")
 
         if not self.parts:
-            raise ValueError(f"{cls.__name__} cannot be empty")
-
-        return self
+            raise ValueError(f"{self.__class__.__name__} cannot be empty")
