@@ -12,6 +12,15 @@ from etl_entities.hwm_store import MemoryHWMStore
         (
             ColumnIntHWM(
                 name=secrets.token_hex(5),
+                # no source
+                value=10,
+            ),
+            5,
+        ),
+        (
+            ColumnIntHWM(
+                name=secrets.token_hex(5),
+                source=secrets.token_hex(5),
                 value=10,
             ),
             5,
@@ -19,6 +28,7 @@ from etl_entities.hwm_store import MemoryHWMStore
         (
             ColumnDateHWM(
                 name=secrets.token_hex(5),
+                source=secrets.token_hex(5),
                 value=date(year=2023, month=8, day=15),
             ),
             timedelta(days=31),
@@ -26,6 +36,7 @@ from etl_entities.hwm_store import MemoryHWMStore
         (
             ColumnDateTimeHWM(
                 name=secrets.token_hex(5),
+                source=secrets.token_hex(5),
                 value=datetime(year=2023, month=8, day=15, hour=11, minute=22, second=33),
             ),
             timedelta(seconds=50),
@@ -33,9 +44,18 @@ from etl_entities.hwm_store import MemoryHWMStore
         (
             FileListHWM(
                 name=secrets.token_hex(5),
+                # no directory
                 value=["/some/path", "/another.file"],
             ),
             "/third.file",
+        ),
+        (
+            FileListHWM(
+                name=secrets.token_hex(5),
+                directory="/absolute/path",
+                value=["/absolute/path/file1", "/absolute/path/file2"],
+            ),
+            "/absolute/path/file3",
         ),
     ],
 )

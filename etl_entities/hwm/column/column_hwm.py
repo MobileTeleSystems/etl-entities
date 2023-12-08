@@ -56,7 +56,7 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], Generi
         HWM value modification time
     """
 
-    entity: Optional[str] = Field(alias="source")
+    entity: Optional[str] = Field(default=None, alias="source")
     value: Optional[ColumnValueType] = None
 
     def covers(self, value: Optional[ColumnValueType]) -> bool:
