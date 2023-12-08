@@ -14,7 +14,6 @@
 
 from __future__ import annotations
 
-import os
 import sys
 from pathlib import PurePosixPath
 
@@ -22,28 +21,15 @@ from pathlib import PurePosixPath
 class GenericPath(PurePosixPath):
     """Generic path representation without '..' and '~'."""
 
-    def __new__(cls, *args):
+    def __init__(self, *args):
+        # Call the parent class __init__ method
+
+        # In Python 3.12 and later, paths are stored in _raw_paths.
+        # For earlier versions, fall back to _parts.
         if sys.version_info >= (3, 12):
-            # for Python 3.12 and later
-            self = super().__new__(cls)
-            self._initialize_path_3_12(*args)
+            super().__init__(*args)
         else:
-            self = super().__new__(cls, *args)
+            super().__init__()
 
-        # Validate the path parts
-        parts_check = self.parts if sys.version_info >= (3, 12) else self._parts
-        if ".." in parts_check or "~" in parts_check:
-            raise ValueError(f"{cls.__name__} cannot contain '..' or '~'")
-
-        return self
-
-    def _initialize_path_3_12(self, *args):  # noqa: WPS114
-        # Path initialization specifically for Python 3.12+
-        paths = []
-        for arg in args:
-            if isinstance(arg, PurePosixPath):
-                paths.extend(arg._raw_paths)  # noqa: WPS437
-            else:
-                path = str(os.fspath(arg)) if not isinstance(arg, str) else arg
-                paths.append(path)
-        self._raw_paths = paths
+        if ".." in self.parts or "~" in self.parts:
+            raise ValueError(f"{self.__class__.__name__} cannot contain '..' or '~'")

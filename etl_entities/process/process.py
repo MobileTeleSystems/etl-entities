@@ -176,6 +176,6 @@ class Process(BaseModel, Entity):
     def __exit__(self, exc_type, _exc_value, _traceback):
         from etl_entities.process.process_stack_manager import ProcessStackManager
 
-        log.debug(f"{self.__class__.__name__}: Exiting stack at level {ProcessStackManager.get_current_level()-1}")
+        log.debug(f"{self.__class__.__name__}: Exiting stack at level {ProcessStackManager.get_current_level() - 1}")
         ProcessStackManager.pop()
         return False
