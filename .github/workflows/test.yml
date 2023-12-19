@@ -12,6 +12,9 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
   cancel-in-progress: true
 
+env:
+  DEFAULT_PYTHON: '3.12'
+
 jobs:
   tests:
     name: Run tests (${{ matrix.python-version }} on ${{ matrix.os }})
@@ -76,19 +79,19 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v3
 
-    - name: Set up Python 3.11
+    - name: Set up Python ${{ env.DEFAULT_PYTHON }}
       uses: actions/setup-python@v4
       with:
-        python-version: '3.11'
+        python-version: ${{ env.DEFAULT_PYTHON }}
 
     - name: Cache pip
       uses: actions/cache@v3
       with:
         path: ~/.cache/pip
-        key: ${{ runner.os }}-python-3.11-coverage-${{ hashFiles('requirements*.txt') }}
+        key: ${{ runner.os }}-python-${{ env.DEFAULT_PYTHON }}-coverage-${{ hashFiles('requirements*.txt') }}
         restore-keys: |
-          ${{ runner.os }}-python-3.11-coverage-${{ hashFiles('requirements*.txt') }}
-          ${{ runner.os }}-python-3.11-coverage-
+          ${{ runner.os }}-python-${{ env.DEFAULT_PYTHON }}-coverage-${{ hashFiles('requirements*.txt') }}
+          ${{ runner.os }}-python-${{ env.DEFAULT_PYTHON }}-coverage-
           ${{ runner.os }}-python
           ${{ runner.os }}-
 

@@ -13,6 +13,10 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.head_ref || github.ref }}
   cancel-in-progress: true
 
+env:
+  # flake8-commas is failing on Python 3.12
+  DEFAULT_PYTHON: '3.11'
+
 jobs:
   linters:
     name: Linters
@@ -26,19 +30,19 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Set up Python 3.11
+    - name: Set up Python ${{ env.DEFAULT_PYTHON }}
       uses: actions/setup-python@v4
       with:
-        python-version: '3.11'
+        python-version: ${{ env.DEFAULT_PYTHON }}
 
     - name: Cache pip
       uses: actions/cache@v3
       with:
         path: ~/.cache/pip
-        key: ${{ runner.os }}-python-3.11-codeql-${{ hashFiles('requirements*.txt') }}
+        key: ${{ runner.os }}-python-${{ env.DEFAULT_PYTHON }}-codeql-${{ hashFiles('requirements*.txt') }}
         restore-keys: |
-          ${{ runner.os }}-python-3.11-codeql-${{ hashFiles('requirements*.txt') }}
-          ${{ runner.os }}-python-3.11-codeql-
+          ${{ runner.os }}-python-${{ env.DEFAULT_PYTHON }}-codeql-${{ hashFiles('requirements*.txt') }}
+          ${{ runner.os }}-python-${{ env.DEFAULT_PYTHON }}-codeql-
           ${{ runner.os }}-python
           ${{ runner.os }}-
 
@@ -71,10 +75,10 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v3
 
-    - name: Set up Python 3.11
+    - name: Set up Python ${{ env.DEFAULT_PYTHON }}
       uses: actions/setup-python@v4
       with:
-        python-version: '3.11'
+        python-version: ${{ env.DEFAULT_PYTHON }}
 
     # Initializes the CodeQL tools for scanning.
     - name: Initialize CodeQL
