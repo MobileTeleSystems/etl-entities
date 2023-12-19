@@ -1,7 +1,8 @@
 .. title
 
-ETL Entities lib
-================
+ETL Entities
+============
+
 |Repo Status| |PyPI| |PyPI License| |PyPI Python Version|
 |Documentation| |Build Status| |Coverage|
 
@@ -23,13 +24,15 @@ ETL Entities lib
 What is ETL Entities?
 -----------------------
 
-Collection of classes used for handling High Water Mark (HWM) and gathering Lineage graph.
+Collection of classes & decorators used for handling High Water Mark (HWM).
 
 Currently implemented:
     * ``ColumnIntHWM``
     * ``ColumnDateHWM``
     * ``ColumnDateTimeHWM``
     * ``FileListHWM``
+    * ``MemoryHWMStore``
+    * ``BaseHWMStore`` (interface for third-party HWM store implementations)
 
 .. installation
 
