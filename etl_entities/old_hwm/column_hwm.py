@@ -30,6 +30,7 @@ class ColumnHWM(HWM[Optional[ColumnValueType], str], GenericModel, Generic[Colum
     """Base column HWM type
 
     .. deprecated:: 2.0.0
+        Use :obj:`etl_entities.hwm.column.column_hwm.ColumnHWM>` instead
 
     Parameters
     ----------

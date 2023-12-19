@@ -17,6 +17,7 @@ from __future__ import annotations
 import re
 from typing import Union
 
+import typing_extensions
 from pydantic import ConstrainedStr
 
 from etl_entities.entity import BaseModel, Entity
@@ -28,8 +29,14 @@ class TableDBName(ConstrainedStr):
     regex = re.compile("^[^@#]+$")
 
 
+@typing_extensions.deprecated(
+    "Deprecated in v2.0, will be removed in v3.0",
+    category=UserWarning,
+)
 class Table(BaseModel, Entity):
     """DB table representation
+
+    .. deprecated:: 2.0.0
 
     Parameters
     ----------

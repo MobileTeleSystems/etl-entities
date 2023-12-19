@@ -16,6 +16,8 @@ import os
 from etl_entities.plugins import import_plugins
 from etl_entities.version import __version__
 
+__all__ = ["__version__"]
+
 
 def plugins_auto_import():
     """

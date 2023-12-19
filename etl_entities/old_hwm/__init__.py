@@ -19,3 +19,10 @@ from etl_entities.old_hwm.file_hwm import FileHWM
 from etl_entities.old_hwm.file_list_hwm import FileListHWM
 from etl_entities.old_hwm.hwm import HWM
 from etl_entities.old_hwm.int_hwm import IntHWM
+
+__all__ = [
+    "DateHWM",
+    "DateTimeHWM",
+    "FileListHWM",
+    "IntHWM",
+]
