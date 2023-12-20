@@ -2,3 +2,4 @@ bidict
 importlib_metadata>=3.6.0
 psutil
 pydantic<2
+typing-extensions>=4.5.0

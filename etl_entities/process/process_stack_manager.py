@@ -17,13 +17,21 @@ from __future__ import annotations
 from dataclasses import dataclass
 from typing import ClassVar
 
+import typing_extensions
+
 from etl_entities.process.process import Process
 
 
+@typing_extensions.deprecated(
+    "Deprecated in v2.0, will be removed in v3.0",
+    category=UserWarning,
+)
 @dataclass
 class ProcessStackManager:
     """
     Handles current stack of processes
+
+    .. deprecated:: 2.0.0
     """
 
     default: ClassVar[Process] = Process()  # noqa: WPS462

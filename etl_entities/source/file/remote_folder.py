@@ -17,6 +17,7 @@ from __future__ import annotations
 import os
 from typing import Union
 
+import typing_extensions
 from pydantic import validator
 
 from etl_entities.entity import BaseModel, Entity
@@ -26,8 +27,14 @@ from etl_entities.instance import AbsolutePath, Cluster, GenericPath, GenericURL
 PROHIBITED_PATH_SYMBOLS = "@#"
 
 
+@typing_extensions.deprecated(
+    "Deprecated in v2.0, will be removed in v3.0",
+    category=UserWarning,
+)
 class RemoteFolder(BaseModel, Entity):
     """Remote folder representation
+
+    .. deprecated:: 2.0.0
 
     Parameters
     ----------

@@ -17,6 +17,7 @@ from __future__ import annotations
 import re
 from typing import OrderedDict
 
+import typing_extensions
 from pydantic import ConstrainedStr, Field, validator
 
 from etl_entities.entity import BaseModel, Entity
@@ -27,8 +28,14 @@ class ColumnName(ConstrainedStr):
     regex = re.compile(r"^[^\|/=@#]+$")
 
 
+@typing_extensions.deprecated(
+    "Deprecated in v2.0, will be removed in v3.0",
+    category=UserWarning,
+)
 class Column(BaseModel, Entity):
     """DB column representation
+
+    .. deprecated:: 2.0.0
 
     Parameters
     ----------

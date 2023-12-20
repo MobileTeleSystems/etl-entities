@@ -34,6 +34,7 @@ class HWM(ABC, Entity, GenericModel, Generic[ValueType, SerializedType]):
     """Generic HWM type
 
     .. deprecated:: 2.0.0
+        Use :obj:`etl_entities.hwm.HWM` instead
 
     Parameters
     ----------
