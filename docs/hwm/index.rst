@@ -14,3 +14,9 @@ HWM
     :caption: File HWM
 
     file/index
+
+.. toctree::
+    :maxdepth: 2
+    :caption: KeyValue HWM
+
+    key_value/index

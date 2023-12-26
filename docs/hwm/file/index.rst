@@ -10,7 +10,7 @@ File HWM
 
     file_list_hwm
 
-What is HWM?
+What is File HWM?
 -------------
 
 Sometimes it's necessary to read/download only new files from a source folder.
