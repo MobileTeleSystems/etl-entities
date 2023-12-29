@@ -15,7 +15,7 @@
 from __future__ import annotations
 
 from frozendict import frozendict
-from pydantic import Field
+from pydantic import Field, validator
 
 from etl_entities.hwm.hwm_type_registry import register_hwm_type
 from etl_entities.hwm.key_value.key_value_hwm import KeyValueHWM
@@ -70,3 +70,16 @@ class KeyValueIntHWM(KeyValueHWM[int]):
     """
 
     value: frozendict = Field(default_factory=frozendict)
+
+    @validator("value", pre=True)
+    def _validate_int_values(cls, key_value):  # noqa: N805
+        if key_value is None:
+            return key_value
+        new_key_value = {}
+        for key, value in key_value.items():
+            if not isinstance(value, (int, str)):
+                raise ValueError
+            else:
+                new_key_value[key] = int(value)
+
+        return frozendict(new_key_value)

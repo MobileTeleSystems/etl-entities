@@ -11,10 +11,10 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
-from typing import Generic, TypeVar
+from typing import Generic, Optional, TypeVar
 
 from frozendict import frozendict
-from pydantic import Field
+from pydantic import Field, validator
 
 from etl_entities.entity import GenericModel
 from etl_entities.hwm.hwm import HWM
@@ -53,7 +53,7 @@ class KeyValueHWM(HWM[frozendict], Generic[KeyValueHWMValueType], GenericModel):
         HWM value modification time
     """
 
-    entity: str = Field(alias="topic")
+    entity: Optional[str] = Field(default=None, alias="topic")
     # value: frozendict with Any type for keys and KeyValueHWMValueType type for values.
     # Direct type specification for frozendict contents (e.g., frozendict[KeyType, ValueType])
     # is supported only from Python 3.9 onwards.
@@ -136,3 +136,9 @@ class KeyValueHWM(HWM[frozendict], Generic[KeyValueHWMValueType], GenericModel):
         self_fields = self.dict(exclude={"modified_time"})
         other_fields = other.dict(exclude={"modified_time"})
         return self_fields == other_fields
+
+    @validator("value", pre=True, always=True)
+    def _convert_dict_to_frozendict(cls, v):  # noqa: N805
+        if isinstance(v, dict):
+            return frozendict(v)
+        return v
