@@ -241,6 +241,31 @@ def test_column_hwm_compare(hwm_class, value, delta):  # noqa: WPS210
                         assert item2 < item1
 
 
+@pytest.mark.parametrize(  # noqa: WPS210
+    "hwm_class, value, delta",
+    [
+        (DateHWM, date.today(), timedelta(days=2)),
+        (DateTimeHWM, datetime.now(), timedelta(seconds=2)),
+        (IntHWM, 1, 2),
+    ],
+)
+def test_column_hwm_covers(hwm_class, value, delta):  # noqa: WPS210
+    column = Column(name="some1")
+    table = Table(name="abc.another1", instance="proto1://url1")
+
+    empty_hwm = hwm_class(column=column, source=table)
+
+    assert not empty_hwm.covers(value)
+    assert not empty_hwm.covers(value - delta)
+    assert not empty_hwm.covers(value + delta)
+
+    hwm = hwm_class(column=column, source=table, value=value)
+
+    assert hwm.covers(value)
+    assert hwm.covers(value - delta)
+    assert not hwm.covers(value + delta)
+
+
 @pytest.mark.parametrize(
     "hwm_class, value",
     [

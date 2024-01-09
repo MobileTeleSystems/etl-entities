@@ -1,5 +1,5 @@
 KeyValue Int HWM
-=============
+================
 
 .. currentmodule:: etl_entities.hwm.key_value.key_value_int_hwm
 

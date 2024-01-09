@@ -11,6 +11,8 @@
 #  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 #  See the License for the specific language governing permissions and
 #  limitations under the License.
+from __future__ import annotations
+
 from typing import Generic, Optional, TypeVar
 
 from frozendict import frozendict
@@ -32,7 +34,7 @@ class KeyValueHWM(HWM[frozendict], Generic[KeyValueHWMValueType], GenericModel):
 
         HWM unique name
 
-    value : ``frozendict[Any, KeyValueHWMValueType]]]`` , default: ``frozendict``
+    value : ``frozendict[Any, KeyValueHWMValueType]`` , default: ``frozendict``
 
         HWM value
 
@@ -59,7 +61,7 @@ class KeyValueHWM(HWM[frozendict], Generic[KeyValueHWMValueType], GenericModel):
     # is supported only from Python 3.9 onwards.
     value: frozendict = Field(default_factory=frozendict)
 
-    def update(self, new_data: dict) -> "KeyValueHWM[KeyValueHWMValueType]":
+    def update(self: KeyValueHWMType, new_data: dict) -> KeyValueHWMType:
         """
         Updates the HWM value based on provided new key-value data. This method only updates
         the value if the new value is greater than the current valur for a given key

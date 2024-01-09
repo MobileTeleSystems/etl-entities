@@ -31,7 +31,7 @@ class KeyValueIntHWM(KeyValueHWM[int]):
 
         HWM unique name
 
-    value : ``frozendict[Any, KeyValueHWMValueType]]]``, default: ``frozendict``
+    value : ``frozendict[Any, KeyValueHWMValueType]``, default: ``frozendict``
 
         HWM value
 

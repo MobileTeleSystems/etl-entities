@@ -1,7 +1,7 @@
 .. _key_value_hwm_classes:
 
 KeyValue HWM
-========
+============
 
 .. toctree::
     :maxdepth: 2
@@ -11,16 +11,16 @@ KeyValue HWM
     key_value_int_hwm
 
 What is KeyValue HWM?
-----------------------
+---------------------
 
 The KeyValue High Water Mark (HWM) is a specialized class designed to manage and track incremental data changes in systems where data is stored or represented as key-value pairs, such as in message queues like Kafka.
 
 Use Case
-----------------------
+--------
 
-The ``KeyValueHWM`` class is particularly beneficial in scenarios where there is a need to `incrementally <https://onetl.readthedocs.io/en/0.10.0/strategy/incremental_strategy.html>`_ upload data in an ETL process.
+The ``KeyValueHWM`` class is particularly beneficial in scenarios where there is a need to `incrementally <https://onetl.readthedocs.io/en/stable/strategy/incremental_strategy.html>`_ upload data in an ETL process.
 
-For instance, in typical ETL processes using `Spark with Kafka <https://spark.apache.org/docs/latest/structured-streaming-kafka-integration.html>`_, data re-written entirely from all partitions in topics starting from **zero** offset. This approach can be inefficient, time-consuming and create duplicates in target. By leveraging the ``KeyValueIntHWM`` class, it becomes possible to track the last offset of data processed. This enables the ETL process to only write new data increments, significantly reducing the amount of data transferred during each run.
+For instance, in typical ETL processes using `Spark with Kafka <https://spark.apache.org/docs/latest/structured-streaming-kafka-integration.html>`_, data re-written entirely from all partitions in topics starting from **zero** offset. This approach can be inefficient, time-consuming and create duplicates in target. By leveraging the ``KeyValueIntHWM`` class, it becomes possible to track the last offset of data processed. This enables the ETL process to read data appended to topic since previous run instead of reading the entire topic content each time.
 
 Example Usage with Kafka Messages
 ---------------------------------
@@ -73,4 +73,4 @@ Restrictions
 
 - **Non-Decreasing Values**: The ``KeyValueHWM`` class is designed to handle only non-decreasing values. During the update process, if the new offset provided for a given partition is less than the current offset, the value will not be updated.
 
-- **Incomplete Key Updates**: If a key is not included in new hwm value, its value remains unchanged. This is essential because keys in systems like Kafka (partitions) cannot be deleted, and their last known
+- **Incomplete Key Updates**: If a key is not included in new hwm value, its value remains unchanged. This is essential because keys in systems like Kafka (partitions) cannot be deleted, and their last known position is left intact.
