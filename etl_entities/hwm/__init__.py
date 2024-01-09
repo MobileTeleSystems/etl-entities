@@ -20,6 +20,8 @@ from etl_entities.hwm.file.file_hwm import FileHWM
 from etl_entities.hwm.file.file_list_hwm import FileListHWM
 from etl_entities.hwm.hwm import HWM
 from etl_entities.hwm.hwm_type_registry import HWMTypeRegistry, register_hwm_type
+from etl_entities.hwm.key_value.key_value_hwm import KeyValueHWM
+from etl_entities.hwm.key_value.key_value_int_hwm import KeyValueIntHWM
 
 __all__ = [
     "HWM",
@@ -29,6 +31,8 @@ __all__ = [
     "ColumnIntHWM",
     "FileHWM",
     "FileListHWM",
+    "KeyValueHWM",
+    "KeyValueIntHWM",
     "HWMTypeRegistry",
     "register_hwm_type",
 ]

@@ -175,10 +175,6 @@ class HWM(ABC, Generic[ValueType], GenericModel):
     def update(self: HWMType, value: Any) -> HWMType:
         """Update current HWM value with some implementation-specific logic, and return HWM"""
 
-    @abstractmethod
-    def covers(self, value: ValueType) -> bool:
-        """Return ``True`` if input value is already covered by HWM"""
-
     def _check_new_value(self, value):
         validated_dict, _, validation_error = validate_model(
             self.__class__,

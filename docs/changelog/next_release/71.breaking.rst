@@ -1,0 +1,1 @@
+Remove ``cover`` method from base ``HWM`` class, it only remains in ``FileHWM`` class
