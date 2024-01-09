@@ -69,6 +69,8 @@ class KeyValueIntHWM(KeyValueHWM[int]):
         )
     """
 
+    # employing frozendict without specifying `frozendict[Any, int]`
+    # due to the lack of support for generic dict annotations in Python 3.7.
     value: frozendict = Field(default_factory=frozendict)
 
     def serialize(self) -> dict:

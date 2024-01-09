@@ -15,6 +15,7 @@
 from __future__ import annotations
 
 import os
+from abc import abstractmethod
 from typing import Generic, Optional, TypeVar
 
 from pydantic import Field, validator
@@ -66,6 +67,10 @@ class FileHWM(
 
     class Config:  # noqa: WPS431
         json_encoders = {AbsolutePath: os.fspath}
+
+    @abstractmethod
+    def covers(self, value: FileHWMValueType) -> bool:
+        """Return ``True`` if input value is already covered by HWM"""
 
     def __eq__(self, other):
         """Checks equality of two FileHWM instances
