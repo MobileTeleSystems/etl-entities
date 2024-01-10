@@ -210,27 +210,38 @@ Release Process
 
 Before making a release from the ``develop`` branch, follow these steps:
 
+1. Backup ``NEXT_RELEASE.rst``
+
 .. code:: bash
 
-    # Step 0: Backup NEXT_RELEASE.rst
     cp docs/changelog/NEXT_RELEASE.rst docs/changelog/temp_NEXT_RELEASE.rst
 
-    # Step 1: Build the Package with Towncrier
-    towncrier build  --version=<version_value>
+2. Build the Release notes with Towncrier
 
-    # Step 2: Update Changelog
-    # Rename NEXT_RELEASE.rst to the new version number
-    mv docs/changelog/NEXT_RELEASE.rst docs/changelog/<version_value>.rst
-    # Edit the <version_value>.rst file to remove content above the version number heading
+.. code:: bash
 
-    # Step 3: Update Changelog Index
-    # Add the new version to the index.rst file in docs/changelog
-    awk '/NEXT_RELEASE/{print;print "    <version_value>";next}1' docs/changelog/index.rst > temp && mv temp docs/changelog/index.rst
+    export VERSION=$(cat etl_entities/VERSION)
+    towncrier build  --version=${VERSION}
 
-    # Step 4: Reset NEXT_RELEASE File
-    # Restore NEXT_RELEASE.rst from the temporary backup
-    cp docs/changelog/temp_NEXT_RELEASE.rst docs/changelog/NEXT_RELEASE.rst
-    # Delete the temporary backup file
-    rm docs/changelog/temp_NEXT_RELEASE.rst
+3. Update Changelog
 
-Update Patch Version in ``develop`` branch **after merge**. Increment the patch version in the ``VERSION`` file
+.. code:: bash
+
+    mv docs/changelog/NEXT_RELEASE.rst docs/changelog/${VERSION}.rst
+
+4. Edit the ``${VERSION}.rst`` file
+Remove content above the version number heading in the ``${VERSION}.rst`` file.
+
+5. Update Changelog Index
+
+.. code:: bash
+
+    awk -v version=${VERSION} '/NEXT_RELEASE/{print;print "    " version;next}1' docs/changelog/index.rst > temp && mv temp docs/changelog/index.rst
+
+6. Reset ``NEXT_RELEASE.rst`` file
+
+.. code:: bash
+
+    mv docs/changelog/temp_NEXT_RELEASE.rst docs/changelog/NEXT_RELEASE.rst
+
+7. Update Patch Version in ``develop`` branch **after merge**. Increment the patch version in the ``VERSION`` file.
