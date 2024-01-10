@@ -31,6 +31,7 @@ Currently implemented:
     * ``ColumnDateHWM``
     * ``ColumnDateTimeHWM``
     * ``FileListHWM``
+    * ``KeyValueIntHWM``
     * ``MemoryHWMStore``
     * ``BaseHWMStore`` (interface for third-party HWM store implementations)
 

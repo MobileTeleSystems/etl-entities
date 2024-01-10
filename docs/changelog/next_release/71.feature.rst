@@ -1,1 +1,0 @@
-Add  ``KeyValueIntHWM`` class, designed to manage HWM for partitioned data sources like Kafka topics. It extends the functionality of the base HWM classes to handle key-value pairs.
