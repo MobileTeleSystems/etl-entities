@@ -16,6 +16,7 @@ from __future__ import annotations
 
 from typing import Optional
 
+import typing_extensions
 from pydantic import validator
 from pydantic.types import StrictInt
 from pydantic.validators import int_validator
@@ -24,11 +25,16 @@ from etl_entities.hwm import ColumnIntHWM, register_hwm_type
 from etl_entities.old_hwm.column_hwm import ColumnHWM
 
 
+@typing_extensions.deprecated(
+    "Deprecated in v2.0, will be removed in v3.0",
+    category=UserWarning,
+)
 @register_hwm_type("old_column_int")
 class IntHWM(ColumnHWM[StrictInt]):
     """Integer HWM type
 
     .. deprecated:: 2.0.0
+        Use :obj:`ColumnIntHWM <etl_entities.hwm.column.int_hwm.ColumnIntHWM>` instead
 
     Parameters
     ----------

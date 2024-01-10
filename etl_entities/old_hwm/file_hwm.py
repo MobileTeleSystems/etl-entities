@@ -35,6 +35,7 @@ class FileHWM(
     """Basic file HWM type
 
     .. deprecated:: 2.0.0
+        Use :obj:`etl_entities.hwm.file.file_hwm.FileHWM` instead
 
     Parameters
     ----------

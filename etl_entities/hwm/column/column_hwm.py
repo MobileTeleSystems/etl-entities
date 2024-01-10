@@ -59,35 +59,6 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], Generi
     entity: Optional[str] = Field(default=None, alias="source")
     value: Optional[ColumnValueType] = None
 
-    def covers(self, value: Optional[ColumnValueType]) -> bool:
-        """Return ``True`` if input value is already covered by HWM
-
-        Examples
-        ----------
-
-        .. code:: python
-
-            hwm = ColumnIntHWM(name="somename", value=1)
-
-            assert hwm.covers(0)  # 0 <= 1
-            assert hwm.covers(1)  # 1 <= 1
-            assert hwm.covers(0.5)  # 0.5 <= 1
-            assert not hwm.covers(2)  # 2 > 1
-
-            empty_hwm = ColumnIntHWM(name="somename")
-
-            # None does not cover anything
-            assert not empty_hwm.covers(0)
-            assert not empty_hwm.covers(1)
-            assert not empty_hwm.covers(0.5)
-            assert not empty_hwm.covers(2)
-        """
-
-        if self.value is None:
-            return False
-
-        return self._check_new_value(value) <= self.value
-
     def __add__(self: ColumnHWMType, value: ColumnValueType) -> ColumnHWMType:
         """Increase HWM value and return copy of HWM
 

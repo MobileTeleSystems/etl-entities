@@ -6,7 +6,7 @@ on:
     - '[0-9]+.[0-9]+.[0-9]+'
 
 env:
-  DEFAULT_PYTHON: '3.11'
+  DEFAULT_PYTHON: '3.12'
 
 jobs:
   release:
@@ -23,13 +23,13 @@ jobs:
 
     steps:
     - name: Checkout code
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
       with:
         fetch-depth: 0
 
     - name: Set up Python ${{ env.DEFAULT_PYTHON }}
       id: python
-      uses: actions/setup-python@v4
+      uses: actions/setup-python@v5
       with:
         python-version: ${{ env.DEFAULT_PYTHON }}
 
@@ -59,7 +59,7 @@ jobs:
       run: |
         cat docs/changelog/${{ github.ref_name }}.rst > changelog.rst
 
-    - name: Fix Github links
+    - name: Prepare rST syntax for conversion to Markdown
       run: |
         # Replace Github links from Sphinx syntax with Markdown
         sed -i -E 's/:github:issue:`(.*)`/#\1/g' changelog.rst
@@ -77,13 +77,16 @@ jobs:
           --wrap=none
           changelog.rst
 
-    - name: Fix Github code blocks
+    - name: Fixing Markdown syntax after conversion
       run: |
         # Replace ``` {.python caption="abc"} with ```python caption="abc"
         sed -i -E 's/``` \{\.(.*)\}/```\1/g' changelog.md
 
         # Replace ``` python with ```python
         sed -i -E 's/``` (\w+)/```\1/g' changelog.md
+
+        # Replace \# with #
+        sed -i -E 's/\\#/#/g' changelog.md
 
     - name: Get release name
       id: release-name

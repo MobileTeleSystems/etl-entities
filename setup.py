@@ -66,6 +66,7 @@ setup(
         "CI/CD": "https://github.com/MobileTeleSystems/etl-entities/actions",
         "Tracker": "https://github.com/MobileTeleSystems/etl-entities/issues",
     },
+    entry_points={"tricoder_package_spy.register": ["etl-entities=etl_entities"]},
     python_requires=">=3.7",
     install_requires=requirements,
     include_package_data=True,

@@ -12,8 +12,8 @@ Column HWM
     date_hwm
     datetime_hwm
 
-What is HWM?
--------------
+What is Column HWM?
+-------------------
 
 Sometimes it's necessary to read only changed rows from a table.
 

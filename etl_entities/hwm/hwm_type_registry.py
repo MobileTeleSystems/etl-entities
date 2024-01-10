@@ -176,7 +176,7 @@ def register_hwm_type(type_name: str):
 
     """
 
-    def wrapper(klass: type[HWM]):
+    def wrapper(klass):
         HWMTypeRegistry.add(type_name, klass)
         return klass
 

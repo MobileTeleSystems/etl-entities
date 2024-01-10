@@ -18,6 +18,7 @@ import os
 from pathlib import PurePosixPath
 from typing import FrozenSet, Iterable, List
 
+import typing_extensions
 from pydantic import Field, validator
 
 from etl_entities.hwm import FileListHWM as NewFileListHWM
@@ -28,11 +29,16 @@ from etl_entities.old_hwm.file_hwm import FileHWM
 FileListType = FrozenSet[RelativePath]
 
 
+@typing_extensions.deprecated(
+    "Deprecated in v2.0, will be removed in v3.0",
+    category=UserWarning,
+)
 @register_hwm_type("old_file_list")
 class FileListHWM(FileHWM[FileListType, List[str]]):
     """File List HWM type
 
     .. deprecated:: 2.0.0
+        Use :obj:`etl_entities.hwm.file.file_list_hwm.FileListHWM` instead
 
     Parameters
     ----------

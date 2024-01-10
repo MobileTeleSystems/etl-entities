@@ -1,0 +1,16 @@
+2.2.0 (2024-01-10)
+==================
+
+Breaking Changes
+----------------
+
+- Remove ``cover`` method from base ``HWM`` class, it only remains in ``FileHWM`` class (:github:pull:`71`)
+
+
+Features
+--------
+
+- Improve typing:
+  * Fix Pylance (VS Code) complained ``"SomeClass" is not exported from module "etl_entities.module". Import from "etl_entities.module.submodule" instead``.
+  * Mark old HWM classes with  ``typing_extensions.deprecated`` decorator (:github:pull:`69`)
+- Add  ``KeyValueIntHWM`` class, designed to manage HWM for partitioned data sources like Kafka topics. It extends the functionality of the base HWM classes to handle key-value pairs. (:github:pull:`71`)

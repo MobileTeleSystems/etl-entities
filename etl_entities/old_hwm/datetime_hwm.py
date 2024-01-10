@@ -17,6 +17,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Optional
 
+import typing_extensions
 from pydantic import validator
 from pydantic.validators import strict_str_validator
 
@@ -24,11 +25,16 @@ from etl_entities.hwm import ColumnDateTimeHWM, register_hwm_type
 from etl_entities.old_hwm.column_hwm import ColumnHWM
 
 
+@typing_extensions.deprecated(
+    "Deprecated in v2.0, will be removed in v3.0",
+    category=UserWarning,
+)
 @register_hwm_type("old_column_datetime")
 class DateTimeHWM(ColumnHWM[datetime]):
     """DateTime HWM type
 
     .. deprecated:: 2.0.0
+        Use :obj:`ColumnDateTimeHWM <etl_entities.hwm.column.datetime_hwm.ColumnDateTimeHWM>` instead
 
     Parameters
     ----------
