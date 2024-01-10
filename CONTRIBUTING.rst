@@ -244,4 +244,4 @@ Remove content above the version number heading in the ``${VERSION}.rst`` file.
 
     mv docs/changelog/temp_NEXT_RELEASE.rst docs/changelog/NEXT_RELEASE.rst
 
-7. Update Patch Version in ``develop`` branch **after merge**. Increment the patch version in the ``VERSION`` file.
+7. Update the patch version in the ``VERSION`` file of ``develop`` branch **after release**. 
