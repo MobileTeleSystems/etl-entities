@@ -1,3 +1,0 @@
-Improve typing:
-* Fix Pylance (VS Code) complained ``"SomeClass" is not exported from module "etl_entities.module". Import from "etl_entities.module.submodule" instead``.
-* Mark old HWM classes with  ``typing_extensions.deprecated`` decorator
