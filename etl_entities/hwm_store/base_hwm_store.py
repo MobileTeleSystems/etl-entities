@@ -78,9 +78,7 @@ class BaseHWMStore(BaseModel, ABC):
 
         .. code:: python
 
-            from etl_entities.hwm import ColumnIntHWM
-
-            real_hwm = hwm_store.get_hwm(hwm_unique_name)
+            hwm = hwm_store.get_hwm(hwm_unique_name)
         """
 
     @abstractmethod
