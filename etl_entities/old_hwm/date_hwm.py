@@ -59,7 +59,7 @@ class DateHWM(ColumnHWM[date]):
         Process instance
 
     Examples
-    ----------
+    --------
 
     .. code:: python
 
@@ -91,7 +91,7 @@ class DateHWM(ColumnHWM[date]):
             Serialized value
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 
@@ -135,7 +135,7 @@ class DateHWM(ColumnHWM[date]):
             Deserialized value
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 
@@ -154,8 +154,8 @@ class DateHWM(ColumnHWM[date]):
     def __eq__(self, other):
         """Checks equality of two HWM instances
 
-        Params
-        -------
+        Parameters
+        ----------
         other : :obj:`etl_entities.old_hwm.date_hwm.DateHWM` or :obj:`datetime.date`
 
             Should be comparable with ``value`` attribute type.
@@ -167,13 +167,13 @@ class DateHWM(ColumnHWM[date]):
             like :obj:`etl_entities.old_hwm.date_hwm.DateHWM` and :obj:`etl_entities.old_hwm.int_hwm.IntHWM`.
 
         Returns
-        --------
+        -------
         result : bool
 
             ``True`` if both inputs are the same, ``False`` otherwise.
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 
@@ -195,8 +195,8 @@ class DateHWM(ColumnHWM[date]):
     def __lt__(self, other):
         """Checks current HWM value is less than another one
 
-        Params
-        -------
+        Parameters
+        ----------
         other : :obj:`etl_entities.old_hwm.date_hwm.DateHWM` or :obj:`datetime.date`
 
             Should be comparable with ``value`` attribute type.
@@ -212,13 +212,13 @@ class DateHWM(ColumnHWM[date]):
                 You cannot compare HWMs if one of them has None value
 
         Returns
-        --------
+        -------
         result : bool
 
             ``True`` if current HWM value is less than provided value, ``False`` otherwise.
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 

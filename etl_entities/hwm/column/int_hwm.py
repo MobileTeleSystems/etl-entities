@@ -54,7 +54,7 @@ class ColumnIntHWM(ColumnHWM[int]):
         HWM value modification time
 
     Examples
-    ----------
+    --------
 
     .. code:: python
 

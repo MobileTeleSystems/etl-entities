@@ -51,7 +51,7 @@ class RemoteFolder(BaseModel, Entity):
         Instance URL in format ``"protocol://some.domain[:port]"``
 
     Examples
-    ----------
+    --------
 
     .. code:: python
 
@@ -83,13 +83,13 @@ class RemoteFolder(BaseModel, Entity):
         Full folder name
 
         Returns
-        ----------
+        -------
         value : str
 
             Folder full name
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 
@@ -122,13 +122,13 @@ class RemoteFolder(BaseModel, Entity):
         Unique name of remote folder
 
         Returns
-        ----------
+        -------
         value : str
 
             Qualified name
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 

@@ -59,7 +59,7 @@ class IntHWM(ColumnHWM[StrictInt]):
         Process instance
 
     Examples
-    ----------
+    --------
 
     .. code:: python
 
@@ -91,7 +91,7 @@ class IntHWM(ColumnHWM[StrictInt]):
             Serialized value
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 
@@ -135,7 +135,7 @@ class IntHWM(ColumnHWM[StrictInt]):
             Deserialized value
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 
@@ -154,8 +154,8 @@ class IntHWM(ColumnHWM[StrictInt]):
     def __eq__(self, other):
         """Checks equality of two HWM instances
 
-        Params
-        -------
+        Parameters
+        ----------
         other : :obj:`etl_entities.old_hwm.int_hwm.IntHWM` or :obj:`int`
 
             Should be comparable with ``value`` attribute type.
@@ -165,13 +165,13 @@ class IntHWM(ColumnHWM[StrictInt]):
             like :obj:`etl_entities.old_hwm.int_hwm.IntHWM` and :obj:`etl_entities.old_hwm.date_hwm.DateHWM`.
 
         Returns
-        --------
+        -------
         result : bool
 
             ``True`` if both inputs are the same, ``False`` otherwise.
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 
@@ -192,8 +192,8 @@ class IntHWM(ColumnHWM[StrictInt]):
     def __lt__(self, other):
         """Checks current HWM value is less than another one
 
-        Params
-        -------
+        Parameters
+        ----------
         other : :obj:`etl_entities.old_hwm.int_hwm.IntHWM` or :obj:`int`
 
             Should be comparable with ``value`` attribute type.
@@ -207,13 +207,13 @@ class IntHWM(ColumnHWM[StrictInt]):
                 You cannot compare HWMs if one of them has None value
 
         Returns
-        --------
+        -------
         result : bool
 
             ``True`` if current HWM value is less than provided value, ``False`` otherwise.
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 

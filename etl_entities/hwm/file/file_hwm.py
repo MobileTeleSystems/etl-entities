@@ -75,12 +75,12 @@ class FileHWM(
     def __eq__(self, other):
         """Checks equality of two FileHWM instances
 
-        Params
-        -------
+        Parameters
+        ----------
         other : :obj:`etl_entities.hwm.file_hwm.FileHWM`
 
         Returns
-        --------
+        -------
         result : bool
 
             ``True`` if both inputs are the same, ``False`` otherwise

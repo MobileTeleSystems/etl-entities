@@ -88,7 +88,7 @@ class FileHWM(
         """Check if HWM value is set
 
         Returns
-        --------
+        -------
         result : bool
 
             ``False`` if ``value`` is empty, ``True`` otherwise
@@ -99,12 +99,12 @@ class FileHWM(
     def __eq__(self, other):
         """Checks equality of two FileHWM instances
 
-        Params
-        -------
+        Parameters
+        ----------
         other : :obj:`etl_entities.old_hwm.file_hwm.FileHWM`
 
         Returns
-        --------
+        -------
         result : bool
 
             ``True`` if both inputs are the same, ``False`` otherwise

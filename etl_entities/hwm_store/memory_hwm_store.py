@@ -37,6 +37,7 @@ class MemoryHWMStore(BaseHWMStore):
     --------
 
     .. code:: python
+
         from etl_entities.hwm_store import MemoryHWMStore
         from etl_entities.hwm import ColumnIntHWM
 

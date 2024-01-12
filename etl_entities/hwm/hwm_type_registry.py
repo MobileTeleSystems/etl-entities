@@ -133,7 +133,7 @@ class HWMTypeRegistry:
             Deserialized HWM
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 

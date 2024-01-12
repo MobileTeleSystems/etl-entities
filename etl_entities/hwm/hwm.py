@@ -83,7 +83,7 @@ class HWM(ABC, Generic[ValueType], GenericModel):
             Self
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 
@@ -113,7 +113,7 @@ class HWM(ABC, Generic[ValueType], GenericModel):
             Serialized HWM
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 
@@ -144,7 +144,7 @@ class HWM(ABC, Generic[ValueType], GenericModel):
             Deserialized HWM
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 

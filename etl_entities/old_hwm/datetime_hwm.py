@@ -59,7 +59,7 @@ class DateTimeHWM(ColumnHWM[datetime]):
         Process instance
 
     Examples
-    ----------
+    --------
 
     .. code:: python
 
@@ -96,7 +96,7 @@ class DateTimeHWM(ColumnHWM[datetime]):
             Serialized value
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 
@@ -143,7 +143,7 @@ class DateTimeHWM(ColumnHWM[datetime]):
             Deserialized value
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 
@@ -166,8 +166,8 @@ class DateTimeHWM(ColumnHWM[datetime]):
     def __eq__(self, other):
         """Checks equality of two HWM instances
 
-        Params
-        -------
+        Parameters
+        ----------
         other : :obj:`etl_entities.old_hwm.datetime_hwm.DateTimeHWM` or :obj:`datetime.datetime`
 
             Should be comparable with ``value`` attribute type.
@@ -179,13 +179,13 @@ class DateTimeHWM(ColumnHWM[datetime]):
             like :obj:`etl_entities.old_hwm.datetime_hwm.DateTimeHWM` and :obj:`etl_entities.old_hwm.int_hwm.IntHWM`.
 
         Returns
-        --------
+        -------
         result : bool
 
             ``True`` if both inputs are the same, ``False`` otherwise.
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 
@@ -211,8 +211,8 @@ class DateTimeHWM(ColumnHWM[datetime]):
     def __lt__(self, other):
         """Checks current HWM value is less than another one
 
-        Params
-        -------
+        Parameters
+        ----------
         other : :obj:`etl_entities.old_hwm.datetime_hwm.DateTimeHWM` or :obj:`datetime.datetime`
 
             Should be comparable with ``value`` attribute type.
@@ -228,13 +228,13 @@ class DateTimeHWM(ColumnHWM[datetime]):
                 You cannot compare HWMs if one of them has ``None`` value
 
         Returns
-        --------
+        -------
         result : bool
 
             ``True`` if current HWM value is less than provided value, ``False`` otherwise.
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 

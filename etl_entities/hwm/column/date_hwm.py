@@ -55,7 +55,7 @@ class ColumnDateHWM(ColumnHWM[date]):
         HWM value modification time
 
     Examples
-    ----------
+    --------
 
     .. code:: python
 

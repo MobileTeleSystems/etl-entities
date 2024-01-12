@@ -50,7 +50,7 @@ class ProcessStackManager:
             Process instance
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 
@@ -67,13 +67,13 @@ class ProcessStackManager:
         """Pops a process from the stack
 
         Returns
-        ----------
+        -------
         process : :obj:`etl_entities.process.process.Process`
 
             Process instance. If stack is empty, ``IndexError`` will be raised
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 
@@ -89,13 +89,13 @@ class ProcessStackManager:
         """Returns number of processes in the stack
 
         Returns
-        ----------
+        -------
         result : int
 
             Number of processes
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 
@@ -114,7 +114,7 @@ class ProcessStackManager:
         """Returns latest process in the stack or a default one
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 

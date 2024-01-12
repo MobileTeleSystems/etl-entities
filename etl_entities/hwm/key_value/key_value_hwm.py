@@ -117,8 +117,8 @@ class KeyValueHWM(HWM[frozendict], Generic[KeyValueHWMValueType], GenericModel):
     def __eq__(self, other):
         """Checks equality of two HWM instances
 
-        Params
-        -------
+        Parameters
+        ----------
         other : :obj:`etl_entities.hwm.key_value.key_value_hwm.KeyValueHWM`
 
             You can compare two :obj:`etl_entities.hwm.key_value.key_value_hwm.KeyValueHWM` instances,
@@ -126,7 +126,7 @@ class KeyValueHWM(HWM[frozendict], Generic[KeyValueHWMValueType], GenericModel):
             if its value is comparable with the ``value`` attribute of HWM
 
         Returns
-        --------
+        -------
         result : bool
 
             ``True`` if both inputs are the same, ``False`` otherwise.

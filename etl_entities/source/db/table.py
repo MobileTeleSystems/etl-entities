@@ -62,7 +62,7 @@ class Table(BaseModel, Entity):
         Cluster name in format ``my-cluster`` or instance URL in format ``"protocol://some.domain[:port]"``
 
     Examples
-    ----------
+    --------
 
     .. code:: python
 
@@ -81,13 +81,13 @@ class Table(BaseModel, Entity):
         Full name of table
 
         Returns
-        ----------
+        -------
         value : str
 
             Table full name
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 
@@ -113,13 +113,13 @@ class Table(BaseModel, Entity):
         Unique name of table
 
         Returns
-        ----------
+        -------
         value : str
 
             Qualified name
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 

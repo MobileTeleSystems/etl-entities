@@ -52,7 +52,7 @@ class KeyValueIntHWM(KeyValueHWM[int]):
         HWM value modification time
 
     Examples
-    ----------
+    --------
 
     .. code:: python
 
@@ -83,7 +83,7 @@ class KeyValueIntHWM(KeyValueHWM[int]):
             Serialized HWM
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 

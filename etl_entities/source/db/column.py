@@ -56,7 +56,7 @@ class Column(BaseModel, Entity):
             Names and values cannot contain symbols ``|``, ``/``, ``=``, ``@`` and ``#``
 
     Examples
-    ----------
+    --------
 
     .. code:: python
 
@@ -107,13 +107,13 @@ class Column(BaseModel, Entity):
         Unique name of column
 
         Returns
-        ----------
+        -------
         value : str
 
             Qualified name
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 

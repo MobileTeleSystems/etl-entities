@@ -59,7 +59,7 @@ class FileListHWM(FileHWM[FileListType]):
         HWM value modification time
 
     Examples
-    ----------
+    --------
 
     .. code:: python
 
@@ -78,7 +78,7 @@ class FileListHWM(FileHWM[FileListType]):
         """Return ``True`` if input value is already covered by HWM
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 
@@ -106,7 +106,7 @@ class FileListHWM(FileHWM[FileListType]):
             Self
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 
@@ -143,20 +143,20 @@ class FileListHWM(FileHWM[FileListType]):
     def __add__(self: FileListHWMType, value: str | os.PathLike | Iterable[str | os.PathLike]) -> FileListHWMType:
         """Adds path or paths to HWM value, and return copy of HWM
 
-        Params
-        -------
+        Parameters
+        ----------
         value : :obj:`str` or :obj:`pathlib.PosixPath` or :obj:`typing.Iterable` of them
 
             Path or collection of paths to be added to value
 
         Returns
-        --------
+        -------
         result : FileListHWM
 
             HWM copy with new value
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 
@@ -178,20 +178,20 @@ class FileListHWM(FileHWM[FileListType]):
     def __sub__(self: FileListHWMType, value: str | os.PathLike | Iterable[str | os.PathLike]) -> FileListHWMType:
         """Remove path or paths from HWM value, and return copy of HWM
 
-        Params
-        -------
+        Parameters
+        ----------
         value : :obj:`str` or :obj:`pathlib.PosixPath` or :obj:`typing.Iterable` of them
 
             Path or collection of paths to be added to value
 
         Returns
-        --------
+        -------
         result : FileListHWM
 
             HWM copy with new value
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 
@@ -214,13 +214,13 @@ class FileListHWM(FileHWM[FileListType]):
         """Checks if path is present in value
 
         Returns
-        --------
+        -------
         result : bool
 
             ``True`` if path is present in value, ``False`` otherwise
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 

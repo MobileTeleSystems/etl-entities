@@ -71,7 +71,8 @@ class BaseHWMStore(BaseModel, ABC):
 
         Returns
         -------
-        HWM object, if it exists in HWM store, or None
+        :obj:`HWM <etl_entities.hwm.HWM>`
+            HWM object, if it exists in HWM store, or None
 
         Examples
         --------
@@ -93,7 +94,8 @@ class BaseHWMStore(BaseModel, ABC):
 
         Returns
         -------
-        HWM location, like URL of file path.
+        Any
+            HWM location, like URL of file path. Result type is implementation-specific.
 
         Examples
         --------

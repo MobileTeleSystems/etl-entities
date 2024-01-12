@@ -1,7 +1,7 @@
 .. _hwm_classes:
 
 Old HWM classes
-=============
+===============
 
 .. toctree::
     :maxdepth: 2

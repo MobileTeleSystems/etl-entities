@@ -62,8 +62,8 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], Generi
     def __add__(self: ColumnHWMType, value: ColumnValueType) -> ColumnHWMType:
         """Increase HWM value and return copy of HWM
 
-        Params
-        -------
+        Parameters
+        ----------
         value : ``Any`` or ``None``
 
             Should be compatible with ``value`` attribute type.
@@ -71,13 +71,13 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], Generi
             For example, you cannot add ``str`` to ``int`` value, but you can add ``int`` to ``int``.
 
         Returns
-        --------
+        -------
         result : ColumnHWM
 
             HWM with new value
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 
@@ -99,8 +99,8 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], Generi
     def __sub__(self: ColumnHWMType, value: ColumnValueType) -> ColumnHWMType:
         """Decrease HWM value, and return copy of HWM
 
-        Params
-        -------
+        Parameters
+        ----------
         value : ``Any`` or ``None``
 
             Should be compatible with ``value`` attribute type.
@@ -108,13 +108,13 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], Generi
             For example, you cannot subtract ``str`` from ``int`` value, but you can subtract ``int`` from ``int``.
 
         Returns
-        --------
+        -------
         result : ColumnHWM
 
             HWM copy with new value
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 
@@ -136,8 +136,8 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], Generi
     def __eq__(self, other):
         """Checks equality of two HWM instances
 
-        Params
-        -------
+        Parameters
+        ----------
         other : :obj:`etl_entities.hwm.column_hwm.ColumnHWM`
 
             You can compare two :obj:`etl_entities.hwm.column_hwm.ColumnHWM` instances,
@@ -145,7 +145,7 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], Generi
             if its value is comparable with the ``value`` attribute of HWM
 
         Returns
-        --------
+        -------
         result : bool
 
             ``True`` if both inputs are the same, ``False`` otherwise.
@@ -172,7 +172,7 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], Generi
             HWM copy with new value
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 
@@ -199,7 +199,7 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], Generi
         """Checks current HWM value is less than another one.
 
         Returns
-        --------
+        -------
         result : bool
 
             ``True`` if current HWM value is less than provided value, ``False`` otherwise.

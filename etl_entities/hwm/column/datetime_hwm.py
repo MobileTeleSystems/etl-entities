@@ -56,7 +56,7 @@ class ColumnDateTimeHWM(ColumnHWM[datetime]):
         HWM value modification time
 
     Examples
-    ----------
+    --------
 
     .. code:: python
 

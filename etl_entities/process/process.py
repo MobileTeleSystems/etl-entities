@@ -70,7 +70,7 @@ class Process(BaseModel, Entity):
             Can be set only if ``task`` is set too
 
     Examples
-    ----------
+    --------
 
     .. code:: python
 
@@ -102,13 +102,13 @@ class Process(BaseModel, Entity):
         Full process name
 
         Returns
-        ----------
+        -------
         value : str
 
             Process full name
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 
@@ -136,13 +136,13 @@ class Process(BaseModel, Entity):
         Unique name of process
 
         Returns
-        ----------
+        -------
         value : str
 
             Qualified name
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 
@@ -162,7 +162,7 @@ class Process(BaseModel, Entity):
         Enter the process context
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 
