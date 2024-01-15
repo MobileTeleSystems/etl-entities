@@ -89,7 +89,7 @@ class BaseHWMStore(BaseModel, ABC):
 
         Parameters
         ----------
-        hwm : :obj:`etl_entities.hwm.HWM`
+        hwm : :obj:`HWM <etl_entities.hwm.HWM>`
             HWM object
 
         Returns
