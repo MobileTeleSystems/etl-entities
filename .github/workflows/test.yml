@@ -37,7 +37,7 @@ jobs:
         python-version: ${{ matrix.python-version }}
 
     - name: Cache pip
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/.cache/pip
         key: ${{ runner.os }}-python-${{ matrix.python-version }}-tests-${{ hashFiles('requirements*.txt') }}
@@ -85,7 +85,7 @@ jobs:
         python-version: ${{ env.DEFAULT_PYTHON }}
 
     - name: Cache pip
-      uses: actions/cache@v3
+      uses: actions/cache@v4
       with:
         path: ~/.cache/pip
         key: ${{ runner.os }}-python-${{ env.DEFAULT_PYTHON }}-coverage-${{ hashFiles('requirements*.txt') }}
