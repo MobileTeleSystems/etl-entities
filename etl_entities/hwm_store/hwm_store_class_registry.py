@@ -14,9 +14,11 @@
 
 from __future__ import annotations
 
-from typing import ClassVar, Collection
+from typing import ClassVar, Collection, TypeVar
 
 from etl_entities.hwm_store.base_hwm_store import BaseHWMStore
+
+T = TypeVar("T", bound=BaseHWMStore)
 
 
 class HWMStoreClassRegistry:
@@ -89,7 +91,7 @@ def register_hwm_store_class(type_name: str):
 
     """
 
-    def wrapper(cls: type[BaseHWMStore]):
+    def wrapper(cls: type[T]) -> type[T]:
         HWMStoreClassRegistry.add(type_name, cls)
         return cls
 
