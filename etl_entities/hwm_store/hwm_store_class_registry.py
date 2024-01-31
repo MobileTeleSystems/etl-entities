@@ -83,8 +83,7 @@ def register_hwm_store_class(type_name: str):
 
 
         @register_hwm_store_class("somename")
-        class MyClass(BaseHWMStore):
-            ...
+        class MyClass(BaseHWMStore): ...
 
 
         HWMStoreClassRegistry.get("somename") == MyClass
