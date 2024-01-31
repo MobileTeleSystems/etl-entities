@@ -109,8 +109,7 @@ class HWMTypeRegistry:
             from etl_entities import HWMTypeRegistry, HWM
 
 
-            class MyHWM(HWM):
-                ...
+            class MyHWM(HWM): ...
 
 
             HWMTypeRegistry.add("somename", MyHWM)
@@ -168,8 +167,7 @@ def register_hwm_type(type_name: str):
 
 
         @register_hwm_type("somename")
-        class MyHWM(HWM):
-            ...
+        class MyHWM(HWM): ...
 
 
         assert HWMTypeRegistry.get("somename") == MyHWM
