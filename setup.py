@@ -1,3 +1,5 @@
+# SPDX-FileCopyrightText: 2021-2024 MTS (Mobile Telesystems)
+# SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
 import os
@@ -40,7 +42,7 @@ setup(
     description="ETL Entities lib for onETL",
     long_description=long_description,
     long_description_content_type="text/x-rst",
-    license="Apache License 2.0",
+    license="Apache-2.0",
     license_files=("LICENSE.txt",),
     url="https://github.com/MobileTeleSystems/etl-entities",
     packages=find_packages(exclude=["docs", "docs.*", "tests", "tests.*"]),

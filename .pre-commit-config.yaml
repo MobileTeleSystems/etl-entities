@@ -29,8 +29,23 @@ repos:
   - repo: https://github.com/Lucas-C/pre-commit-hooks
     rev: v1.5.4
     hooks:
+      - id: forbid-tabs
       - id: remove-tabs
-        exclude: ^docs/(make.bat|Makefile)$
+        args: [--whitespaces-count, '2']
+      - id: chmod
+        args: ['644']
+        exclude_types: [shell]
+      - id: chmod
+        args: ['755']
+        types: [shell]
+      - id: insert-license
+        files: .*\.py$
+        exclude: ^(docs/.*\.py|tests/.*\.py)$
+        args:
+          - --license-filepath
+          - .spdx-license-header.txt
+          - --use-current-year
+          - --no-extra-eol
 
   - repo: https://github.com/codespell-project/codespell
     rev: v2.2.6
