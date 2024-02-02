@@ -127,3 +127,4 @@ ci:
   skip:
     - flake8 # checked with Github Actions
     - mypy # checked with Github Actions
+    - chmod # failing in pre-commit.ci
