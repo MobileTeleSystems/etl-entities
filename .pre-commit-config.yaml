@@ -40,7 +40,7 @@ repos:
         types: [shell]
       - id: insert-license
         files: .*\.py$
-        exclude: ^(docs/.*\.py|tests/.*\.py)$
+        exclude: ^(setup\.py|docs/.*\.py|tests/.*\.py)$
         args:
           - --license-filepath
           - .spdx-license-header.txt
