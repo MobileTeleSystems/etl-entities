@@ -24,12 +24,12 @@ def parse_config(value: Any, key: str) -> tuple[str, Sequence, Mapping]:
     if len(value) > 1:
         raise ValueError(f"Multiple HWM store types provided: {', '.join(value)}. Only one is allowed.")
 
-    for item in HWMStoreClassRegistry.known_types():
-        if item not in value:
+    for alias in HWMStoreClassRegistry.aliases():
+        if alias not in value:
             continue
 
-        store_type = item
-        child = value[item]
+        store_type = alias
+        child = value[alias]
 
         args, kwargs = parse_child_item(child)
 
@@ -70,7 +70,12 @@ def resolve_attr(conf: Mapping, hwm_key: str) -> Any:
 
 
 def detect_hwm_store(key: str) -> Callable:
-    """Detect HWM store by config object
+    """Detect HWM store by config object.
+
+    .. note::
+
+        This decorator could use only HWM Stores which were registered using
+        :obj:`register_hwm_store_class <etl_entities.hwm_store.hwm_store_class_registry.register_hwm_store_class>`.
 
     Parameters
     ----------
@@ -86,43 +91,54 @@ def detect_hwm_store(key: str) -> Callable:
 
     Config
 
-    .. code:: yaml
+    .. code-block:: yaml
+        :caption: conf/config.yaml
 
         # if HWM store can be created with no args
-        hwm_store: yaml
+        hwm_store: yaml  # this is HWM Store class alias
 
     or
 
-    .. code:: yaml
+    .. code-block:: yaml
+        :caption: conf/config.yaml
 
         # named constructor args
         hwm_store:
-            atlas:
-                url: http://some.atlas.url
-                user: username
-                password: password
+            yaml:
+                path: /some/path
+                encoding: utf-8
 
     Config could be nested:
 
-    .. code:: yaml
+    .. code-block:: yaml
+        :caption: conf/config.yaml
 
         myetl:
             env:
                 hwm_store: yaml
 
-    ``run.py``
+    Using decorator:
 
-    .. code:: python
+    .. code-block:: python
+        :caption: pipelines/my_pipeline.py
 
         import hydra
         from omegaconf import DictConfig
+
         from etl_entities.hwm_store import detect_hwm_store
 
 
-        # key=... is a path to config item, delimited by dot ``.``
-        @hydra.main(config="../conf")
-        @detect_hwm_store(key="myetl.env.hwm_store")
+        @hydra.main(
+            # path to config dir and file name (without extension)
+            config_path="../conf",
+            config_name="config",
+        )
+        @detect_hwm_store(
+            # key=... is a full key name of config item, delimited by dot ``.``
+            key="myetl.env.hwm_store",
+        )
         def main(config: DictConfig):
+            # inside this function YAMLHWMStore is used
             pass
 
     """

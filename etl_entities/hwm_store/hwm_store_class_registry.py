@@ -10,53 +10,101 @@ T = TypeVar("T", bound=BaseHWMStore)
 
 
 class HWMStoreClassRegistry:
-    """Registry class of different HWM stores.
-
-    Examples
-    --------
-
-    .. code:: python
-
-        from etl_entities.hwm_store import HWMStoreClassRegistry, MemoryHWMStore
-
-        HWMStoreClassRegistry.get("memory") == MemoryHWMStore
-
-        HWMStoreClassRegistry.get("unknown")  # raise KeyError
-
-    """
+    """Registry class of different HWM stores."""
 
     _default: type[BaseHWMStore | None] = type(None)
     _mapping: ClassVar[dict[str, type[BaseHWMStore]]] = {}
 
     @classmethod
-    def get(cls, type_name: str | None = None) -> type:
-        if not type_name:
+    def get(cls, alias: str | None = None) -> type:
+        """
+        Return HWM Store class by its alias, or return default HWM Store class.
+
+        Examples
+        --------
+
+        .. code:: python
+
+            from etl_entities.hwm_store import HWMStoreClassRegistry, MemoryHWMStore
+
+            HWMStoreClassRegistry.get("memory") == MemoryHWMStore
+
+            HWMStoreClassRegistry.get("unknown")  # raise KeyError
+
+            HWMStoreClassRegistry.get()  # some default HWM Store, see `set_default`
+
+        """
+        if not alias:
             return cls._default
 
-        result = cls._mapping.get(type_name)
+        result = cls._mapping.get(alias)
         if not result:
-            raise KeyError(f"Unknown HWM Store type {type_name!r}")
+            raise KeyError(f"Unknown HWM Store type {alias!r}")
 
         return result
 
     @classmethod
-    def add(cls, type_name: str, klass: type[BaseHWMStore]) -> None:
-        assert isinstance(type_name, str)  # noqa: S101
+    def add(cls, alias: str, klass: type[BaseHWMStore]) -> None:
+        """
+        Add alias for HWM Store class.
+
+        This alias then can be used by
+        :obj:`detect_hwm_store <etl_entities.hwm_store.hwm_store_detect.detect_hwm_store>`.
+
+        Examples
+        --------
+
+        .. code:: python
+
+            from etl_entities.hwm_store import HWMStoreClassRegistry, BaseHWMStore
+
+            HWMStoreClassRegistry.get("my_store")  # raise KeyError
+
+
+            class MyHWMStore(BaseHWMStore): ...
+
+
+            HWMStoreClassRegistry.add("my_store", MyHWMStore)
+            HWMStoreClassRegistry.get("my_store") == MyHWMStore
+
+        """
+        assert isinstance(alias, str)  # noqa: S101
         assert issubclass(klass, BaseHWMStore)  # noqa: S101
 
-        cls._mapping[type_name] = klass
+        cls._mapping[alias] = klass
 
     @classmethod
     def set_default(cls, klass: type[BaseHWMStore]) -> None:
+        """Set specific HWM store class as default HWM Store implementation.
+
+        Examples
+        --------
+
+        .. code-block:: python
+
+            from etl_entities.hwm_store import HWMStoreClassRegistry, BaseHWMStore
+
+
+            class MyHWMStore(BaseHWMStore): ...
+
+
+            HWMStoreClassRegistry.set_default(MyHWMStore)
+
+            assert HWMStoreClassRegistry.get() == MyHWMStore
+
+        """
         cls._default = klass
 
     @classmethod
-    def known_types(cls) -> Collection[str]:
+    def aliases(cls) -> Collection[str]:
+        """Returl all known HWM store aliases, like ``memory`` or ``yaml``"""
         return cls._mapping.keys()
 
 
-def register_hwm_store_class(type_name: str):
-    """Decorator for registering some Store class with a name
+def register_hwm_store_class(alias: str):
+    """Decorator for registering some Store class with a name.
+
+    Thin wrapper for :obj:`HWMStoreClassRegistry.add`.
 
     Examples
     --------
@@ -70,16 +118,16 @@ def register_hwm_store_class(type_name: str):
         )
 
 
-        @register_hwm_store_class("somename")
-        class MyClass(BaseHWMStore): ...
+        @register_hwm_store_class("my_store")
+        class MyHWMStore(BaseHWMStore): ...
 
 
-        HWMStoreClassRegistry.get("somename") == MyClass
+        HWMStoreClassRegistry.get("my_store") == MyHWMStore
 
     """
 
     def wrapper(cls: type[T]) -> type[T]:
-        HWMStoreClassRegistry.add(type_name, cls)
+        HWMStoreClassRegistry.add(alias, cls)
         return cls
 
     return wrapper

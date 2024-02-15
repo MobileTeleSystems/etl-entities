@@ -14,12 +14,14 @@ from etl_entities.hwm_store.hwm_store_class_registry import register_hwm_store_c
 
 @register_hwm_store_class("memory")
 class MemoryHWMStore(BaseHWMStore):
-    """In-memory local store for HWM values.
+    """Simple in-memory (RAM) HWM Store.
+
+    Alias: ``memory``
 
     .. note::
 
-        This class should be used in tests only, because all saved HWM values
-        will be deleted after exiting the context
+        All values stored in MemoryHWMStore are gone after the Python interpreter is exited.
+        This class should be used in tests only!
 
     Examples
     --------

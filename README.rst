@@ -27,13 +27,17 @@ What is ETL Entities?
 Collection of classes & decorators used for handling High Water Mark (HWM).
 
 Currently implemented:
+
+* HWM classes:
     * ``ColumnIntHWM``
     * ``ColumnDateHWM``
     * ``ColumnDateTimeHWM``
     * ``FileListHWM``
     * ``KeyValueIntHWM``
+
+* HWM Store classes:
+    * ``BaseHWMStore`` (base interface)
     * ``MemoryHWMStore``
-    * ``BaseHWMStore`` (interface for third-party HWM store implementations)
 
 .. installation
 

@@ -6,7 +6,6 @@ File HWM
 .. toctree::
     :maxdepth: 2
     :caption: HWM classes
-    :name: file_hwm_classes
 
     file_list_hwm
 

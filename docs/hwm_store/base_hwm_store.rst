@@ -1,7 +1,7 @@
 .. _base-hwm-store:
 
 Base HWM Store
-=================================================================
+==============
 
 .. currentmodule:: etl_entities.hwm_store.base_hwm_store
 

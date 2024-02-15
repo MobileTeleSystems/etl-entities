@@ -24,8 +24,12 @@ class BaseHWMStore(BaseModel, ABC):
 
         .. code:: python
 
-            with hwm_store:
-                db_reader.run()
+            from etl_entities.hwm_store import HWMStoreStackManager
+
+            with SomeHWMStore(...) as hwm_store:
+                assert HWMStoreStackManager.get_current() == hwm_store
+
+            assert HWMStoreStackManager.get_current() == default_hwm_store
         """
         # hack to avoid circular imports
         from etl_entities.hwm_store.hwm_store_stack_manager import HWMStoreStackManager

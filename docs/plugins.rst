@@ -76,7 +76,7 @@ How plugins are imported?
     from some_plugin.module.internals import my_function
 
 If specific module/class/function uses some registration capabilities of etl_entities,
-like :ref:`hook-decorator`, it will be executed during this import.
+it will be executed during this import.
 
 How to enable/disable plugins?
 ------------------------------
