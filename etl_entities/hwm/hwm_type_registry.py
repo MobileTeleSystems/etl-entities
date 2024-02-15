@@ -30,12 +30,10 @@ class HWMTypeRegistry:
 
         .. code:: python
 
-            from etl_entities import HWMTypeRegistry, IntHWM, FloatHWM
+            from etl_entities.hwm import HWMTypeRegistry, ColumnIntHWM, ColumnDateHWM
 
-            assert HWMTypeRegistry.get("int") == IntHWM
-            assert HWMTypeRegistry.get("integer") == IntHWM  # multiple type names are supported
-
-            assert HWMTypeRegistry.get("float") == FloatHWM
+            assert HWMTypeRegistry.get("int") == ColumnIntHWM
+            assert HWMTypeRegistry.get("date") == ColumnDateHWM
 
             HWMTypeRegistry.get("unknown")  # raises KeyError
         """
@@ -61,10 +59,10 @@ class HWMTypeRegistry:
 
         .. code:: python
 
-            from etl_entities import HWMTypeRegistry, IntHWM, FloatHWM
+            from etl_entities.hwm import HWMTypeRegistry, ColumnIntHWM, ColumnDateHWM
 
-            assert HWMTypeRegistry.get_key(IntHWM) == "int"  # only first type name is returned
-            assert HWMTypeRegistry.get_key(FloatHWM) == "float"
+            assert HWMTypeRegistry.get_key(ColumnIntHWM) == "int"
+            assert HWMTypeRegistry.get_key(ColumnDateHWM) == "date"
 
             HWMTypeRegistry.get_key(UnknownHWM)  # raises KeyError
         """
@@ -94,17 +92,15 @@ class HWMTypeRegistry:
 
         .. code:: python
 
-            from etl_entities import HWMTypeRegistry, HWM
+            from etl_entities.hwm import HWMTypeRegistry, HWM
 
 
             class MyHWM(HWM): ...
 
 
-            HWMTypeRegistry.add("somename", MyHWM)
-            HWMTypeRegistry.add("anothername", MyHWM)  # multiple type names are allowed
+            HWMTypeRegistry.add("my_hwm", MyHWM)
 
-            assert HWMTypeRegistry.get("somename") == MyHWM
-            assert HWMTypeRegistry.get("anothername") == MyHWM
+            assert HWMTypeRegistry.get("my_hwm") == MyHWM
         """
 
         cls._mapping[type_name] = klass
@@ -124,17 +120,16 @@ class HWMTypeRegistry:
 
         .. code:: python
 
-            from etl_entities import HWMTypeRegistry, IntHWM
+            from etl_entities.hwm import HWMTypeRegistry, ColumnIntHWM
 
-            assert HWMTypeRegistry.parse(
+            hwm = HWMTypeRegistry.parse(
                 {
+                    "type": "column_int",
+                    "name": "some_name",
                     "value": "1",
-                    "type": "int",
-                    "column": {"name": ..., "partition": ...},
-                    "source": ...,
-                    "process": ...,
                 }
-            ) == IntHWM(value=1, ...)
+            )
+            assert hwm == ColumnIntHWM(name="some_name", value=1)
 
             HWMTypeRegistry.parse({"type": "unknown"})  # raises KeyError
         """
@@ -144,21 +139,30 @@ class HWMTypeRegistry:
 
 
 def register_hwm_type(type_name: str):
-    """Decorator for registering some HWM class with a type name
+    """Decorator register some HWM class with a type name
 
     Examples
     --------
 
     .. code:: python
 
-        from etl_entities import HWMTypeRegistry, register_hwm_type, HWM
+        from etl_entities.hwm import HWMTypeRegistry, register_hwm_type, HWM
 
 
-        @register_hwm_type("somename")
+        @register_hwm_type("my_hwm")
         class MyHWM(HWM): ...
 
 
-        assert HWMTypeRegistry.get("somename") == MyHWM
+        assert HWMTypeRegistry.get("my_hwm") == MyHWM
+
+        hwm = HWMTypeRegistry.parse(
+            {
+                "type": "my_hwm",
+                "name": "some_name",
+                "value": "1",
+            }
+        )
+        assert hwm == MyHWM(name="some_name", value=1)
 
     """
 

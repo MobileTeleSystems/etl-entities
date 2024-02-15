@@ -27,5 +27,5 @@ def test_hwm_store_registry_known_types():
         pass  # noqa: WPS604
 
     HWMStoreClassRegistry.add("known", KnownTypeStore)
-    known_types = HWMStoreClassRegistry.known_types()
+    known_types = HWMStoreClassRegistry.aliases()
     assert "known" in known_types

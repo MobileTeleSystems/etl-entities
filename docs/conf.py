@@ -52,9 +52,7 @@ extensions = [
     "sphinx_toolbox.github",
     "sphinxcontrib.towncrier",  # provides `towncrier-draft-entries` directive
 ]
-numpydoc_show_class_members = True
-autosummary_generate_overwrite = False
-autosummary_generate = False
+numpydoc_show_class_members = False
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]

@@ -1,0 +1,1 @@
+Rename ``HWMStoreClassRegistry.known_types`` to ``aliases``
