@@ -7,7 +7,10 @@ from copy import deepcopy
 from datetime import datetime
 from typing import Any, Generic, TypeVar
 
-from pydantic import Field, validate_model
+try:
+    from pydantic.v1 import Field, validate_model
+except (ImportError, AttributeError):
+    from pydantic import Field, validate_model  # type: ignore[no-redef, assignment]
 
 from etl_entities.entity import GenericModel
 from etl_entities.hwm.hwm_type_registry import HWMTypeRegistry

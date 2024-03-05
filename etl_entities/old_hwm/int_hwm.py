@@ -5,9 +5,15 @@ from __future__ import annotations
 from typing import Optional
 
 import typing_extensions
-from pydantic import validator
-from pydantic.types import StrictInt
-from pydantic.validators import int_validator
+
+try:
+    from pydantic.v1 import validator
+    from pydantic.v1.types import StrictInt
+    from pydantic.v1.validators import int_validator
+except (ImportError, AttributeError):
+    from pydantic import validator  # type: ignore[no-redef, assignment]
+    from pydantic.types import StrictInt  # type: ignore[no-redef, assignment]
+    from pydantic.validators import int_validator  # type: ignore[no-redef, assignment]
 
 from etl_entities.hwm import ColumnIntHWM, register_hwm_type
 from etl_entities.old_hwm.column_hwm import ColumnHWM

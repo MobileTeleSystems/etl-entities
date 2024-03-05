@@ -4,7 +4,10 @@ from __future__ import annotations
 
 from typing import Generic, Optional, TypeVar
 
-from pydantic import Field
+try:
+    from pydantic.v1 import Field
+except (ImportError, AttributeError):
+    from pydantic import Field  # type: ignore[no-redef, assignment]
 
 from etl_entities.entity import GenericModel
 from etl_entities.hwm.hwm import HWM

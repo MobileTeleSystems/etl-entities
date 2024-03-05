@@ -6,7 +6,10 @@ import os
 import sys
 from typing import FrozenSet, Iterable, TypeVar
 
-from pydantic import Field, validator
+try:
+    from pydantic.v1 import Field, validator
+except (ImportError, AttributeError):
+    from pydantic import Field, validator  # type: ignore[no-redef, assignment]
 
 from etl_entities.hwm import FileHWM
 from etl_entities.hwm.hwm_type_registry import register_hwm_type

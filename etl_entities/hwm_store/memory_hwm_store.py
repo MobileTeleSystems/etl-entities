@@ -4,7 +4,10 @@ from __future__ import annotations
 
 from typing import Dict
 
-from pydantic import PrivateAttr
+try:
+    from pydantic.v1 import PrivateAttr
+except (ImportError, AttributeError):
+    from pydantic import PrivateAttr  # type: ignore[no-redef, assignment]
 
 from etl_entities.hwm import HWM
 from etl_entities.hwm.hwm_type_registry import HWMTypeRegistry

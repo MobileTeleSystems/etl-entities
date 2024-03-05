@@ -7,7 +7,11 @@ from pathlib import PurePosixPath
 from typing import FrozenSet, Iterable, List
 
 import typing_extensions
-from pydantic import Field, validator
+
+try:
+    from pydantic.v1 import Field, validator
+except (ImportError, AttributeError):
+    from pydantic import Field, validator  # type: ignore[no-redef, assignment]
 
 from etl_entities.hwm import FileListHWM as NewFileListHWM
 from etl_entities.hwm import register_hwm_type

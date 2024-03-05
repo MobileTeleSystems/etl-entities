@@ -6,8 +6,13 @@ from datetime import datetime
 from typing import Optional
 
 import typing_extensions
-from pydantic import validator
-from pydantic.validators import strict_str_validator
+
+try:
+    from pydantic.v1 import validator
+    from pydantic.v1.validators import strict_str_validator
+except (ImportError, AttributeError):
+    from pydantic import validator  # type: ignore[no-redef, assignment]
+    from pydantic.validators import strict_str_validator  # type: ignore[no-redef, assignment]
 
 from etl_entities.hwm import ColumnDateTimeHWM, register_hwm_type
 from etl_entities.old_hwm.column_hwm import ColumnHWM

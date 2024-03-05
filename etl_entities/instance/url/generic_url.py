@@ -6,7 +6,10 @@ from __future__ import annotations
 
 from typing import ClassVar, Tuple
 
-from pydantic import AnyUrl
+try:
+    from pydantic.v1 import AnyUrl
+except (ImportError, AttributeError):
+    from pydantic import AnyUrl
 
 
 class GenericURL(AnyUrl):
