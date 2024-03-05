@@ -5,7 +5,10 @@ from __future__ import annotations
 from decimal import Decimal, InvalidOperation
 from typing import Optional
 
-from pydantic import StrictInt, validator
+try:
+    from pydantic.v1 import StrictInt, validator
+except (ImportError, AttributeError):
+    from pydantic import StrictInt, validator  # type: ignore[no-redef, assignment]
 
 from etl_entities.hwm.column.column_hwm import ColumnHWM
 from etl_entities.hwm.hwm_type_registry import register_hwm_type

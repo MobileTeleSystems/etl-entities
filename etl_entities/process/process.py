@@ -9,7 +9,11 @@ from socket import getfqdn
 
 import psutil
 import typing_extensions
-from pydantic import ConstrainedStr, Field, validator
+
+try:
+    from pydantic.v1 import ConstrainedStr, Field, validator
+except (ImportError, AttributeError):
+    from pydantic import ConstrainedStr, Field, validator  # type: ignore[no-redef, assignment]
 
 from etl_entities.entity import BaseModel, Entity
 from etl_entities.instance import Host

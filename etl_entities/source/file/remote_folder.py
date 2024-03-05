@@ -6,7 +6,11 @@ import os
 from typing import Union
 
 import typing_extensions
-from pydantic import validator
+
+try:
+    from pydantic.v1 import validator
+except (ImportError, AttributeError):
+    from pydantic import validator  # type: ignore[no-redef, assignment]
 
 from etl_entities.entity import BaseModel, Entity
 from etl_entities.instance import AbsolutePath, Cluster, GenericPath, GenericURL

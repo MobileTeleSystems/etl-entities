@@ -3,7 +3,11 @@
 from __future__ import annotations
 
 from frozendict import frozendict
-from pydantic import Field, validator
+
+try:
+    from pydantic.v1 import Field, validator
+except (ImportError, AttributeError):
+    from pydantic import Field, validator  # type: ignore[no-redef, assignment]
 
 from etl_entities.hwm.hwm_type_registry import register_hwm_type
 from etl_entities.hwm.key_value.key_value_hwm import KeyValueHWM

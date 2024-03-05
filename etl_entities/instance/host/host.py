@@ -4,7 +4,14 @@
 
 from __future__ import annotations
 
-from pydantic import AnyUrl, ConstrainedStr, parse_obj_as
+try:
+    from pydantic.v1 import AnyUrl, ConstrainedStr, parse_obj_as
+except (ImportError, AttributeError):
+    from pydantic import (  # type: ignore[no-redef, assignment]
+        AnyUrl,
+        ConstrainedStr,
+        parse_obj_as,
+    )
 
 
 class Host(ConstrainedStr):

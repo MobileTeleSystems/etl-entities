@@ -6,7 +6,11 @@ import re
 from typing import Union
 
 import typing_extensions
-from pydantic import ConstrainedStr
+
+try:
+    from pydantic.v1 import ConstrainedStr
+except (ImportError, AttributeError):
+    from pydantic import ConstrainedStr  # type: ignore[no-redef, assignment]
 
 from etl_entities.entity import BaseModel, Entity
 from etl_entities.instance import Cluster, GenericURL

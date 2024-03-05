@@ -6,7 +6,10 @@ from __future__ import annotations
 
 import re
 
-from pydantic import StrictStr
+try:
+    from pydantic.v1 import StrictStr
+except (ImportError, AttributeError):
+    from pydantic import StrictStr
 
 
 class Cluster(StrictStr):
