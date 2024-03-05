@@ -6,7 +6,6 @@ KeyValue HWM
 .. toctree::
     :maxdepth: 2
     :caption: HWM classes
-    :name: key_value_hwm_classes
 
     key_value_int_hwm
 

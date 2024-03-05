@@ -1,17 +1,5 @@
-#  Copyright 2023 MTS (Mobile Telesystems)
-#
-#  Licensed under the Apache License, Version 2.0 (the "License");
-#  you may not use this file except in compliance with the License.
-#  You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-#  Unless required by applicable law or agreed to in writing, software
-#  distributed under the License is distributed on an "AS IS" BASIS,
-#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#  See the License for the specific language governing permissions and
-#  limitations under the License.
-
+# SPDX-FileCopyrightText: 2021-2024 MTS (Mobile Telesystems)
+# SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
 import os
@@ -19,7 +7,11 @@ from pathlib import PurePosixPath
 from typing import FrozenSet, Iterable, List
 
 import typing_extensions
-from pydantic import Field, validator
+
+try:
+    from pydantic.v1 import Field, validator
+except (ImportError, AttributeError):
+    from pydantic import Field, validator  # type: ignore[no-redef, assignment]
 
 from etl_entities.hwm import FileListHWM as NewFileListHWM
 from etl_entities.hwm import register_hwm_type
@@ -59,7 +51,7 @@ class FileListHWM(FileHWM[FileListType, List[str]]):
         Process instance
 
     Examples
-    ----------
+    --------
 
     .. code:: python
 
@@ -108,7 +100,7 @@ class FileListHWM(FileHWM[FileListType, List[str]]):
         Name of HWM
 
         Returns
-        ----------
+        -------
         value : str
 
             Static value ``"file_list"``
@@ -126,7 +118,7 @@ class FileListHWM(FileHWM[FileListType, List[str]]):
             Serialized value
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 
@@ -162,7 +154,7 @@ class FileListHWM(FileHWM[FileListType, List[str]]):
             Deserialized value
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 
@@ -190,7 +182,7 @@ class FileListHWM(FileHWM[FileListType, List[str]]):
         """Return ``True`` if input value is already covered by HWM
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 
@@ -218,7 +210,7 @@ class FileListHWM(FileHWM[FileListType, List[str]]):
             Self
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 
@@ -251,13 +243,13 @@ class FileListHWM(FileHWM[FileListType, List[str]]):
         """Check if HWM value is set
 
         Returns
-        --------
+        -------
         result : bool
 
             ``False`` if ``value`` is empty, ``True`` otherwise
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 
@@ -276,13 +268,13 @@ class FileListHWM(FileHWM[FileListType, List[str]]):
         """Return number of files in the HWM.
 
         Returns
-        --------
+        -------
         result : int
 
             Number of files
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 
@@ -300,20 +292,20 @@ class FileListHWM(FileHWM[FileListType, List[str]]):
     def __add__(self, value: str | os.PathLike | Iterable[str | os.PathLike]):
         """Adds path or paths to HWM value, and return copy of HWM
 
-        Params
-        -------
+        Parameters
+        ----------
         value : :obj:`str` or :obj:`pathlib.PosixPath` or :obj:`typing.Iterable` of them
 
             Path or collection of paths to be added to value
 
         Returns
-        --------
+        -------
         result : FileListHWM
 
             HWM copy with new value
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 
@@ -335,20 +327,20 @@ class FileListHWM(FileHWM[FileListType, List[str]]):
     def __sub__(self, value: str | os.PathLike | Iterable[str | os.PathLike]):
         """Remove path or paths from HWM value, and return copy of HWM
 
-        Params
-        -------
+        Parameters
+        ----------
         value : :obj:`str` or :obj:`pathlib.PosixPath` or :obj:`typing.Iterable` of them
 
             Path or collection of paths to be added to value
 
         Returns
-        --------
+        -------
         result : FileListHWM
 
             HWM copy with new value
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 
@@ -371,13 +363,13 @@ class FileListHWM(FileHWM[FileListType, List[str]]):
         """Iterate over files in FileListHWM.
 
         Returns
-        --------
+        -------
         result : Iterator[RelativePath]
 
             Files in HWM, order is not preserved
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 
@@ -397,13 +389,13 @@ class FileListHWM(FileHWM[FileListType, List[str]]):
         """Returns set of files with absolute paths
 
         Returns
-        --------
+        -------
         result : :obj:`frosenzet` of :obj:`pathlib.PosixPath`
 
             Copy of HWM with updated value
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 
@@ -424,13 +416,13 @@ class FileListHWM(FileHWM[FileListType, List[str]]):
         """Checks if path is present in value
 
         Returns
-        --------
+        -------
         result : bool
 
             ``True`` if path is present in value, ``False`` otherwise
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 
@@ -454,18 +446,18 @@ class FileListHWM(FileHWM[FileListType, List[str]]):
     def __eq__(self, other):
         """Checks equality of two FileListHWM instances
 
-        Params
-        -------
+        Parameters
+        ----------
         other : :obj:`etl_entities.old_hwm.file_list_hwm.FileListHWM`
 
         Returns
-        --------
+        -------
         result : bool
 
             ``True`` if both inputs are the same, ``False`` otherwise.
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 

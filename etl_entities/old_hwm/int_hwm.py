@@ -1,25 +1,19 @@
-#  Copyright 2023 MTS (Mobile Telesystems)
-#
-#  Licensed under the Apache License, Version 2.0 (the "License");
-#  you may not use this file except in compliance with the License.
-#  You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-#  Unless required by applicable law or agreed to in writing, software
-#  distributed under the License is distributed on an "AS IS" BASIS,
-#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#  See the License for the specific language governing permissions and
-#  limitations under the License.
-
+# SPDX-FileCopyrightText: 2021-2024 MTS (Mobile Telesystems)
+# SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
 from typing import Optional
 
 import typing_extensions
-from pydantic import validator
-from pydantic.types import StrictInt
-from pydantic.validators import int_validator
+
+try:
+    from pydantic.v1 import validator
+    from pydantic.v1.types import StrictInt
+    from pydantic.v1.validators import int_validator
+except (ImportError, AttributeError):
+    from pydantic import validator  # type: ignore[no-redef, assignment]
+    from pydantic.types import StrictInt  # type: ignore[no-redef, assignment]
+    from pydantic.validators import int_validator  # type: ignore[no-redef, assignment]
 
 from etl_entities.hwm import ColumnIntHWM, register_hwm_type
 from etl_entities.old_hwm.column_hwm import ColumnHWM
@@ -59,7 +53,7 @@ class IntHWM(ColumnHWM[StrictInt]):
         Process instance
 
     Examples
-    ----------
+    --------
 
     .. code:: python
 
@@ -91,7 +85,7 @@ class IntHWM(ColumnHWM[StrictInt]):
             Serialized value
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 
@@ -135,7 +129,7 @@ class IntHWM(ColumnHWM[StrictInt]):
             Deserialized value
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 
@@ -154,8 +148,8 @@ class IntHWM(ColumnHWM[StrictInt]):
     def __eq__(self, other):
         """Checks equality of two HWM instances
 
-        Params
-        -------
+        Parameters
+        ----------
         other : :obj:`etl_entities.old_hwm.int_hwm.IntHWM` or :obj:`int`
 
             Should be comparable with ``value`` attribute type.
@@ -165,13 +159,13 @@ class IntHWM(ColumnHWM[StrictInt]):
             like :obj:`etl_entities.old_hwm.int_hwm.IntHWM` and :obj:`etl_entities.old_hwm.date_hwm.DateHWM`.
 
         Returns
-        --------
+        -------
         result : bool
 
             ``True`` if both inputs are the same, ``False`` otherwise.
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 
@@ -192,8 +186,8 @@ class IntHWM(ColumnHWM[StrictInt]):
     def __lt__(self, other):
         """Checks current HWM value is less than another one
 
-        Params
-        -------
+        Parameters
+        ----------
         other : :obj:`etl_entities.old_hwm.int_hwm.IntHWM` or :obj:`int`
 
             Should be comparable with ``value`` attribute type.
@@ -207,13 +201,13 @@ class IntHWM(ColumnHWM[StrictInt]):
                 You cannot compare HWMs if one of them has None value
 
         Returns
-        --------
+        -------
         result : bool
 
             ``True`` if current HWM value is less than provided value, ``False`` otherwise.
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 

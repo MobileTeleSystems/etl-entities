@@ -1,22 +1,13 @@
-#  Copyright 2023 MTS (Mobile Telesystems)
-#
-#  Licensed under the Apache License, Version 2.0 (the "License");
-#  you may not use this file except in compliance with the License.
-#  You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-#  Unless required by applicable law or agreed to in writing, software
-#  distributed under the License is distributed on an "AS IS" BASIS,
-#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#  See the License for the specific language governing permissions and
-#  limitations under the License.
-
+# SPDX-FileCopyrightText: 2021-2024 MTS (Mobile Telesystems)
+# SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
 from typing import Dict
 
-from pydantic import PrivateAttr
+try:
+    from pydantic.v1 import PrivateAttr
+except (ImportError, AttributeError):
+    from pydantic import PrivateAttr  # type: ignore[no-redef, assignment]
 
 from etl_entities.hwm import HWM
 from etl_entities.hwm.hwm_type_registry import HWMTypeRegistry
@@ -26,17 +17,20 @@ from etl_entities.hwm_store.hwm_store_class_registry import register_hwm_store_c
 
 @register_hwm_store_class("memory")
 class MemoryHWMStore(BaseHWMStore):
-    """In-memory local store for HWM values.
+    """Simple in-memory (RAM) HWM Store.
+
+    Alias: ``memory``
 
     .. note::
 
-        This class should be used in tests only, because all saved HWM values
-        will be deleted after exiting the context
+        All values stored in MemoryHWMStore are gone after the Python interpreter is exited.
+        This class should be used in tests only!
 
     Examples
     --------
 
     .. code:: python
+
         from etl_entities.hwm_store import MemoryHWMStore
         from etl_entities.hwm import ColumnIntHWM
 

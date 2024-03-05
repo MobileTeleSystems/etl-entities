@@ -1,98 +1,130 @@
+default_language_version:
+  python: python3.11
+
 repos:
-- repo: https://github.com/pre-commit/pre-commit-hooks
-  rev: v4.5.0
-  hooks:
-  - id: check-ast
-  - id: check-case-conflict
-  - id: check-docstring-first
-  - id: check-merge-conflict
-  - id: check-toml
-  - id: check-vcs-permalinks
-  - id: check-yaml
-  - id: requirements-txt-fixer
-    files: ^(requirements.*\.txt)$
-  - id: end-of-file-fixer
-    exclude: ^.*/VERSION$
-  - id: fix-byte-order-marker
-  - id: fix-encoding-pragma
-    args: [--remove]
-  - id: name-tests-test
-    files: ^tests/.*\.py$
-    exclude: ^tests/libs/.*\.py$
-    args: [--django]
-  - id: trailing-whitespace
-  - id: detect-private-key
-- repo: https://github.com/Lucas-C/pre-commit-hooks
-  rev: v1.5.4
-  hooks:
-  - id: remove-tabs
-    exclude: ^docs/(make.bat|Makefile)$
-- repo: https://github.com/codespell-project/codespell
-  rev: v2.2.6
-  hooks:
-  - id: codespell
-    args: [-w]
-- repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
-  rev: v2.12.0
-  hooks:
-  - id: pretty-format-yaml
-    args: [--autofix, --indent, '2']
-- repo: https://github.com/pycqa/isort
-  rev: 5.13.2
-  hooks:
-  - id: isort
-    files: etl_entities/.*
-  - id: isort
-    files: tests/.*
-- repo: https://github.com/pre-commit/pygrep-hooks
-  rev: v1.10.0
-  hooks:
-  - id: python-no-log-warn
-  - id: python-no-eval
-  - id: rst-backticks
-  - id: rst-directive-colons
-  - id: rst-inline-touching-normal
-  - id: text-unicode-replacement-char
-- repo: https://github.com/asottile/pyupgrade
-  rev: v3.15.0
-  hooks:
-  - id: pyupgrade
-    args: [--py37-plus, --keep-runtime-typing]
-- repo: https://github.com/psf/black-pre-commit-mirror
-  rev: 23.12.1
-  hooks:
-  - id: black
-    language_version: python3
-- repo: https://github.com/asottile/blacken-docs
-  rev: 1.16.0
-  hooks:
-  - id: blacken-docs
-- repo: https://github.com/Lucas-C/pre-commit-hooks-bandit
-  rev: v1.0.6
-  hooks:
-  - id: python-bandit-vulnerability-check
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: check-ast
+      - id: check-case-conflict
+      - id: check-docstring-first
+      - id: check-merge-conflict
+      - id: check-toml
+      - id: check-vcs-permalinks
+      - id: check-yaml
+      - id: requirements-txt-fixer
+        files: ^(requirements.*\.txt)$
+      - id: end-of-file-fixer
+        exclude: ^.*/VERSION$
+      - id: fix-byte-order-marker
+      - id: fix-encoding-pragma
+        args: [--remove]
+      - id: name-tests-test
+        files: ^tests/.*\.py$
+        exclude: ^tests/libs/.*\.py$
+        args: [--django]
+      - id: trailing-whitespace
+      - id: detect-private-key
+
+  - repo: https://github.com/Lucas-C/pre-commit-hooks
+    rev: v1.5.5
+    hooks:
+      - id: forbid-tabs
+      - id: remove-tabs
+        args: [--whitespaces-count, '2']
+      - id: chmod
+        args: ['644']
+        exclude_types: [shell]
+      - id: chmod
+        args: ['755']
+        types: [shell]
+      - id: insert-license
+        files: .*\.py$
+        exclude: ^(setup\.py|docs/.*\.py|tests/.*\.py)$
+        args:
+          - --license-filepath
+          - .spdx-license-header.txt
+          - --use-current-year
+          - --no-extra-eol
+
+  - repo: https://github.com/codespell-project/codespell
+    rev: v2.2.6
+    hooks:
+      - id: codespell
+        args: [-w]
+
+  - repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
+    rev: v2.12.0
+    hooks:
+      - id: pretty-format-yaml
+        args: [--autofix, --indent, '2', --offset, '2']
+
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        files: etl_entities/.*
+      - id: isort
+        files: tests/.*
+
+  - repo: https://github.com/pre-commit/pygrep-hooks
+    rev: v1.10.0
+    hooks:
+      - id: python-no-log-warn
+      - id: python-no-eval
+      - id: rst-backticks
+      - id: rst-directive-colons
+      - id: rst-inline-touching-normal
+      - id: text-unicode-replacement-char
+
+  - repo: https://github.com/asottile/pyupgrade
+    rev: v3.15.1
+    hooks:
+      - id: pyupgrade
+        args: [--py37-plus, --keep-runtime-typing]
+
+  - repo: https://github.com/psf/black-pre-commit-mirror
+    rev: 24.2.0
+    hooks:
+      - id: black
+        language_version: python3
+
+  - repo: https://github.com/asottile/blacken-docs
+    rev: 1.16.0
+    hooks:
+      - id: blacken-docs
+        additional_dependencies:
+          - black==24.2.0
+
+  - repo: https://github.com/Lucas-C/pre-commit-hooks-bandit
+    rev: v1.0.6
+    hooks:
+      - id: python-bandit-vulnerability-check
     # TODO: remove line below after https://github.com/PyCQA/bandit/issues/488
-    args: [-lll, --recursive, -x, './venv/*,./tests/*,./.pytest_cache/*', .]
-- repo: meta
-  hooks:
-  - id: check-hooks-apply
-  - id: check-useless-excludes
-- repo: local
-  hooks:
-  - id: flake8
-    name: flake8
-    entry: python3 -m flake8 .
-    language: system
-    types: [python]
-    pass_filenames: false
-  - id: mypy
-    name: mypy
-    entry: python3 -m mypy --config-file setup.cfg etl_entities
-    language: system
-    types: [python]
-    pass_filenames: false
+        args: [-lll, --recursive, -x, './venv/*,./tests/*,./.pytest_cache/*', .]
+
+  - repo: meta
+    hooks:
+      - id: check-hooks-apply
+      - id: check-useless-excludes
+
+  - repo: local
+    hooks:
+      - id: flake8
+        name: flake8
+        entry: python3 -m flake8 .
+        language: system
+        types: [python]
+        pass_filenames: false
+      - id: mypy
+        name: mypy
+        entry: python3 -m mypy --config-file setup.cfg etl_entities
+        language: system
+        types: [python]
+        pass_filenames: false
 
 ci:
   skip:
-  - flake8  # checked with Github Actions
-  - mypy  # checked with Github Actions
+    - flake8 # checked with Github Actions
+    - mypy # checked with Github Actions
+    - chmod # failing in pre-commit.ci

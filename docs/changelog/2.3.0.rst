@@ -1,0 +1,13 @@
+2.3.0 (2024-03-05)
+==================
+
+Breaking Changes
+----------------
+
+- Rename ``HWMStoreClassRegistry.known_types`` to ``aliases`` (:github:pull:`79`)
+
+
+Features
+--------
+
+- Allow using ``etl-entities`` with both Pydantic v1 and v2. (:github:pull:`82`)

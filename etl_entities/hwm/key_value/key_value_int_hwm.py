@@ -1,21 +1,13 @@
-#  Copyright 2023 MTS (Mobile Telesystems)
-#
-#  Licensed under the Apache License, Version 2.0 (the "License");
-#  you may not use this file except in compliance with the License.
-#  You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-#  Unless required by applicable law or agreed to in writing, software
-#  distributed under the License is distributed on an "AS IS" BASIS,
-#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#  See the License for the specific language governing permissions and
-#  limitations under the License.
-
+# SPDX-FileCopyrightText: 2021-2024 MTS (Mobile Telesystems)
+# SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
 from frozendict import frozendict
-from pydantic import Field, validator
+
+try:
+    from pydantic.v1 import Field, validator
+except (ImportError, AttributeError):
+    from pydantic import Field, validator  # type: ignore[no-redef, assignment]
 
 from etl_entities.hwm.hwm_type_registry import register_hwm_type
 from etl_entities.hwm.key_value.key_value_hwm import KeyValueHWM
@@ -52,7 +44,7 @@ class KeyValueIntHWM(KeyValueHWM[int]):
         HWM value modification time
 
     Examples
-    ----------
+    --------
 
     .. code:: python
 
@@ -83,7 +75,7 @@ class KeyValueIntHWM(KeyValueHWM[int]):
             Serialized HWM
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 

@@ -79,8 +79,7 @@ def test_detect_hwm_store_missing_key(config_constructor, config, key):
     with pytest.raises(ValueError, match=f"The configuration does not contain a required key {key!r}"):
 
         @detect_hwm_store(key)
-        def main(input_config):
-            ...  # noqa: WPS428
+        def main(input_config): ...  # noqa: WPS428
 
         conf = config_constructor(config)
         main(conf)

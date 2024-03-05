@@ -5,4 +5,4 @@ Column Datetime HWM
 
 .. autoclass:: ColumnDateTimeHWM
     :members: name, set_value, dict, json, copy, deserialize
-    :special-members: __bool__, __add__, __sub__, __eq__, __lt__
+    :special-members: __add__, __sub__, __eq__, __lt__

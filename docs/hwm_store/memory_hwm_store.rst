@@ -1,7 +1,7 @@
 .. _memory-hwm-store:
 
-In-memory HWM Store (ephemeral)
-=================================================================
+MemoryHWMStore
+==============
 
 .. currentmodule:: etl_entities.hwm_store.memory_hwm_store
 

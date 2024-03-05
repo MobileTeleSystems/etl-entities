@@ -25,7 +25,7 @@ sys.path.insert(0, os.fspath(PROJECT_ROOT_DIR))
 # -- Project information -----------------------------------------------------
 
 project = "etl-entities"
-copyright = "2023, DataOps.ETL"
+copyright = "2021-2024 MTS (Mobile Telesystems)"
 author = "DataOps.ETL"
 
 # The version info for the project you're documenting, acts as replacement for
@@ -52,7 +52,7 @@ extensions = [
     "sphinx_toolbox.github",
     "sphinxcontrib.towncrier",  # provides `towncrier-draft-entries` directive
 ]
-numpydoc_show_class_members = True
+numpydoc_show_class_members = False
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]

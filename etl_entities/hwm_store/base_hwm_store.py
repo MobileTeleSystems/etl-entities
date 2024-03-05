@@ -1,17 +1,5 @@
-#  Copyright 2023 MTS (Mobile Telesystems)
-#
-#  Licensed under the Apache License, Version 2.0 (the "License");
-#  you may not use this file except in compliance with the License.
-#  You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-#  Unless required by applicable law or agreed to in writing, software
-#  distributed under the License is distributed on an "AS IS" BASIS,
-#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#  See the License for the specific language governing permissions and
-#  limitations under the License.
-
+# SPDX-FileCopyrightText: 2021-2024 MTS (Mobile Telesystems)
+# SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
 import logging
@@ -36,8 +24,12 @@ class BaseHWMStore(BaseModel, ABC):
 
         .. code:: python
 
-            with hwm_store:
-                db_reader.run()
+            from etl_entities.hwm_store import HWMStoreStackManager
+
+            with SomeHWMStore(...) as hwm_store:
+                assert HWMStoreStackManager.get_current() == hwm_store
+
+            assert HWMStoreStackManager.get_current() == default_hwm_store
         """
         # hack to avoid circular imports
         from etl_entities.hwm_store.hwm_store_stack_manager import HWMStoreStackManager
@@ -71,16 +63,15 @@ class BaseHWMStore(BaseModel, ABC):
 
         Returns
         -------
-        HWM object, if it exists in HWM store, or None
+        :obj:`HWM <etl_entities.hwm.HWM>`
+            HWM object, if it exists in HWM store, or None
 
         Examples
         --------
 
         .. code:: python
 
-            from etl_entities.hwm import ColumnIntHWM
-
-            real_hwm = hwm_store.get_hwm(hwm_unique_name)
+            hwm = hwm_store.get_hwm(hwm_unique_name)
         """
 
     @abstractmethod
@@ -90,12 +81,13 @@ class BaseHWMStore(BaseModel, ABC):
 
         Parameters
         ----------
-        hwm : :obj:`etl_entities.hwm.HWM`
+        hwm : :obj:`HWM <etl_entities.hwm.HWM>`
             HWM object
 
         Returns
         -------
-        HWM location, like URL of file path.
+        Any
+            HWM location, like URL of file path. Result type is implementation-specific.
 
         Examples
         --------

@@ -2,9 +2,14 @@
 
 version: 2
 updates:
-- package-ecosystem: github-actions
-  directory: /
-  schedule:
-    interval: daily
-  labels:
-  - type:ci
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    labels:
+      - type:ci
+    # https://til.simonwillison.net/github/dependabot-python-setup
+    groups:
+      github-actions:
+        patterns:
+          - '*'

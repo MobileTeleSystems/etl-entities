@@ -1,18 +1,5 @@
-#  Copyright 2023 MTS (Mobile Telesystems)
-#
-#  Licensed under the Apache License, Version 2.0 (the "License");
-#  you may not use this file except in compliance with the License.
-#  You may obtain a copy of the License at
-#
-#      http://www.apache.org/licenses/LICENSE-2.0
-#
-#  Unless required by applicable law or agreed to in writing, software
-#  distributed under the License is distributed on an "AS IS" BASIS,
-#  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-#  See the License for the specific language governing permissions and
-#  limitations under the License.
-
-
+# SPDX-FileCopyrightText: 2021-2024 MTS (Mobile Telesystems)
+# SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
 from abc import ABC, abstractmethod
@@ -20,7 +7,10 @@ from copy import deepcopy
 from datetime import datetime
 from typing import Any, Generic, TypeVar
 
-from pydantic import Field, validate_model
+try:
+    from pydantic.v1 import Field, validate_model
+except (ImportError, AttributeError):
+    from pydantic import Field, validate_model  # type: ignore[no-redef, assignment]
 
 from etl_entities.entity import GenericModel
 from etl_entities.hwm.hwm_type_registry import HWMTypeRegistry
@@ -83,7 +73,7 @@ class HWM(ABC, Generic[ValueType], GenericModel):
             Self
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 
@@ -113,7 +103,7 @@ class HWM(ABC, Generic[ValueType], GenericModel):
             Serialized HWM
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 
@@ -144,7 +134,7 @@ class HWM(ABC, Generic[ValueType], GenericModel):
             Deserialized HWM
 
         Examples
-        ----------
+        --------
 
         .. code:: python
 
