@@ -96,12 +96,15 @@ repos:
         additional_dependencies:
           - black==24.3.0
 
-  - repo: https://github.com/Lucas-C/pre-commit-hooks-bandit
-    rev: v1.0.6
+  - repo: https://github.com/pycqa/bandit
+    rev: 1.7.8
     hooks:
-      - id: python-bandit-vulnerability-check
-    # TODO: remove line below after https://github.com/PyCQA/bandit/issues/488
-        args: [-lll, --recursive, -x, './venv/*,./tests/*,./.pytest_cache/*', .]
+      - id: bandit
+        args:
+          - --aggregate=file
+          - -iii
+          - -ll
+        require_serial: true
 
   - repo: meta
     hooks:
