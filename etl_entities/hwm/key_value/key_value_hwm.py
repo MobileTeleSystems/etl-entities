@@ -76,19 +76,16 @@ class KeyValueHWM(HWM[frozendict], Generic[KeyValueHWMValueType], GenericModel):
         Examples
         --------
 
-        .. code:: python
-
-            from frozendict import frozendict
-            from etl_entities.hwm import KeyValueHWM
-
-            hwm = KeyValueHWM(value={0: 100, 1: 120}, ...)
-
-            hwm.update({1: 125, 2: 130})
-            assert hwm.value == frozendict({0: 100, 1: 125, 2: 130})
-
-            # The offset for partition 1 is not updated as 123 is less than 125
-            hwm.update({1: 123})
-            assert hwm.value == frozendict({0: 100, 1: 125, 2: 130})
+        >>> from frozendict import frozendict
+        >>> from etl_entities.hwm import KeyValueHWM
+        >>> hwm = KeyValueHWM(value={0: 100, 1: 120}, name="my_hwm")
+        >>> hwm = hwm.update({1: 125, 2: 130})
+        >>> hwm.value
+        frozendict.frozendict({0: 100, 1: 125, 2: 130})
+        >>> # Value for key 1 is not updated as 123 is less than current 125
+        >>> hwm = hwm.update({1: 123})
+        >>> hwm.value
+        frozendict.frozendict({0: 100, 1: 125, 2: 130})
         """
 
         modified = False

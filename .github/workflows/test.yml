@@ -63,7 +63,8 @@ jobs:
         run: |
           mkdir reports/ || echo "Directory exists"
           pip install -e . --no-build-isolation
-          ./run_tests.sh
+          # run both tests ad doctests
+          ./run_tests.sh etl_entities/hwm tests
 
       - name: Upload coverage results
         uses: actions/upload-artifact@v4
