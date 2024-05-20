@@ -392,7 +392,7 @@ def test_column_hwm_unregistered_type(hwm_class):
     class UnregisteredHWM(hwm_class):
         pass  # noqa: WPS604
 
-    err_msg = r"You should register <class \'.*'> class using @register_hwm_type decorator"
+    err_msg = f"You should register '{UnregisteredHWM.__qualname__}' class using @register_hwm_type decorator"
 
     with pytest.raises(KeyError, match=err_msg):
         HWMTypeRegistry.get_key(UnregisteredHWM)

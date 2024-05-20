@@ -96,6 +96,12 @@ todo_include_todos = False
 # Output file base name for HTML help builder.
 htmlhelp_basename = "etl-entities-doc"
 
+# prevent >>>, ... and doctest outputs from copying
+copybutton_prompt_text = r">>> |\.\.\. |\$ |In \[\d*\]: | {2,5}\.\.\.: | {5,8}: "
+copybutton_prompt_is_regexp = True
+copybutton_copy_empty_lines = False
+copybutton_only_copy_prompt_lines = True
+
 towncrier_draft_autoversion_mode = "draft"
 towncrier_draft_include_empty = False
 towncrier_draft_working_directory = PROJECT_ROOT_DIR
