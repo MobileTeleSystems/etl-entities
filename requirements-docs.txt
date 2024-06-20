@@ -4,6 +4,7 @@ numpydoc
 packaging
 sphinx
 sphinx-copybutton
+sphinx-last-updated-by-git
 sphinx-toolbox
 sphinxcontrib-towncrier
 towncrier
