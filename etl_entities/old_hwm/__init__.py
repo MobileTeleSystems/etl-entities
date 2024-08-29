@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2021-2024 MTS (Mobile Telesystems)
+# SPDX-FileCopyrightText: 2021-2024 MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 from etl_entities.old_hwm.column_hwm import ColumnHWM
 from etl_entities.old_hwm.date_hwm import DateHWM
