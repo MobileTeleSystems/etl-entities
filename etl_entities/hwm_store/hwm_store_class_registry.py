@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2021-2024 MTS (Mobile Telesystems)
+# SPDX-FileCopyrightText: 2021-2024 MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
@@ -23,16 +23,15 @@ class HWMStoreClassRegistry:
         Examples
         --------
 
-        .. code:: python
-
-            from etl_entities.hwm_store import HWMStoreClassRegistry, MemoryHWMStore
-
-            HWMStoreClassRegistry.get("memory") == MemoryHWMStore
-
-            HWMStoreClassRegistry.get("unknown")  # raise KeyError
-
-            HWMStoreClassRegistry.get()  # some default HWM Store, see `set_default`
-
+        >>> from etl_entities.hwm_store import HWMStoreClassRegistry
+        >>> HWMStoreClassRegistry.get("memory")
+        <class 'etl_entities.hwm_store.memory_hwm_store.MemoryHWMStore'>
+        >>> HWMStoreClassRegistry.get("unknown")
+        Traceback (most recent call last):
+            ...
+        KeyError: "Unknown HWM Store type 'unknown'"
+        >>> HWMStoreClassRegistry.get()  # some default HWM Store, see `set_default`
+        <class 'NoneType'>
         """
         if not alias:
             return cls._default
@@ -54,19 +53,16 @@ class HWMStoreClassRegistry:
         Examples
         --------
 
-        .. code:: python
+        >>> from etl_entities.hwm_store import HWMStoreClassRegistry, BaseHWMStore
+        >>> HWMStoreClassRegistry.get("my_store")  # raise KeyError
+        Traceback (most recent call last):
+            ...
+        KeyError: "Unknown HWM Store type 'my_store'"
 
-            from etl_entities.hwm_store import HWMStoreClassRegistry, BaseHWMStore
-
-            HWMStoreClassRegistry.get("my_store")  # raise KeyError
-
-
-            class MyHWMStore(BaseHWMStore): ...
-
-
-            HWMStoreClassRegistry.add("my_store", MyHWMStore)
-            HWMStoreClassRegistry.get("my_store") == MyHWMStore
-
+        >>> class MyHWMStore(BaseHWMStore): ...
+        >>> HWMStoreClassRegistry.add("my_store", MyHWMStore)
+        >>> HWMStoreClassRegistry.get("my_store")
+        <class 'etl_entities.hwm_store.hwm_store_class_registry.MyHWMStore'>
         """
         assert isinstance(alias, str)  # noqa: S101
         assert issubclass(klass, BaseHWMStore)  # noqa: S101
@@ -80,18 +76,11 @@ class HWMStoreClassRegistry:
         Examples
         --------
 
-        .. code-block:: python
-
-            from etl_entities.hwm_store import HWMStoreClassRegistry, BaseHWMStore
-
-
-            class MyHWMStore(BaseHWMStore): ...
-
-
-            HWMStoreClassRegistry.set_default(MyHWMStore)
-
-            assert HWMStoreClassRegistry.get() == MyHWMStore
-
+        >>> from etl_entities.hwm_store import HWMStoreClassRegistry, BaseHWMStore
+        >>> class MyHWMStore(BaseHWMStore): ...
+        >>> HWMStoreClassRegistry.set_default(MyHWMStore)
+        >>> HWMStoreClassRegistry.get()
+        <class 'etl_entities.hwm_store.hwm_store_class_registry.MyHWMStore'>
         """
         cls._default = klass
 

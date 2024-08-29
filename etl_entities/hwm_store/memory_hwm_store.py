@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2021-2024 MTS (Mobile Telesystems)
+# SPDX-FileCopyrightText: 2021-2024 MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
@@ -29,27 +29,18 @@ class MemoryHWMStore(BaseHWMStore):
     Examples
     --------
 
-    .. code:: python
-
-        from etl_entities.hwm_store import MemoryHWMStore
-        from etl_entities.hwm import ColumnIntHWM
-
-        hwm_store = MemoryHWMStore()
-
-        # not found
-        retrieved_hwm = hwm_store.get_hwm("long_unique_name")
-        assert hwm_store.get_hwm("long_unique_name") is None
-
-        hwm = ColumnIntHWM(name="long_unique_name", value=10)
-        hwm_store.set_hwm(hwm_value)
-
-        # found
-        retrieved_hwm = hwm_store.get_hwm("long_unique_name")
-        assert retrieved_hwm == hwm
-
-        hwm_store.clear()
-        # not found again
-        assert hwm_store.get_hwm("long_unique_name") is None
+    >>> from etl_entities.hwm_store import MemoryHWMStore
+    >>> from etl_entities.hwm import ColumnIntHWM
+    >>> hwm_store = MemoryHWMStore()
+    >>> retrieved_hwm = hwm_store.get_hwm("long_unique_name")
+    >>> hwm_store.get_hwm("long_unique_name") # not found
+    >>> hwm = ColumnIntHWM(name="long_unique_name", value=10)
+    >>> hwm_store.set_hwm(hwm)
+    >>> got_hwm = hwm_store.get_hwm("long_unique_name") # found
+    >>> got_hwm == hwm
+    True
+    >>> hwm_store.clear()
+    >>> hwm_store.get_hwm("long_unique_name") # not found again
     """
 
     _data: Dict[str, dict] = PrivateAttr(default_factory=dict)

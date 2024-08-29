@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2021-2024 MTS (Mobile Telesystems)
+# SPDX-FileCopyrightText: 2021-2024 MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
@@ -69,15 +69,10 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], Generi
         Examples
         --------
 
-        .. code:: python
-
-            # assume val2 == val1 + inc
-
-            hwm1 = ColumnHWM(value=val1, ...)
-            hwm2 = ColumnHWM(value=val2, ...)
-
-            # same as ColumnHWM(value=hwm1.value + inc, ...)
-            assert hwm1 + inc == hwm2
+        >>> hwm = ColumnHWM(value=100, name="my_hwm")
+        >>> hwm = hwm + 2
+        >>> hwm.value
+        102
         """
 
         new_value = self.value + value  # type: ignore[operator]
@@ -106,15 +101,10 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], Generi
         Examples
         --------
 
-        .. code:: python
-
-            # assume val2 == val1 - dec
-
-            hwm1 = ColumnHWM(value=val1, ...)
-            hwm2 = ColumnHWM(value=val2, ...)
-
-            # same as ColumnHWM(value=hwm1.value - dec, ...)
-            assert hwm1 - dec == hwm2
+        >>> hwm = ColumnHWM(value=100, name="my_hwm")
+        >>> hwm = hwm - 2
+        >>> hwm.value
+        98
         """
 
         new_value = self.value - value  # type: ignore[operator]
@@ -164,17 +154,14 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], Generi
         Examples
         --------
 
-        .. code:: python
-
-            from etl_entities.hwm import ColumnIntHWM
-
-            hwm = ColumnIntHWM(value=1, ...)
-
-            hwm.update(2)
-            assert hwm.value == 2
-
-            hwm.update(1)
-            assert hwm.value == 2  # value cannot decrease
+        >>> from etl_entities.hwm import ColumnIntHWM
+        >>> hwm = ColumnIntHWM(value=1, name="my_hwm")
+        >>> hwm = hwm.update(2)
+        >>> hwm.value
+        2
+        >>> hwm = hwm.update(1)
+        >>> hwm.value  # value cannot decrease
+        2
         """
 
         if self.value is None:

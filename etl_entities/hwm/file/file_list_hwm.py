@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2021-2024 MTS (Mobile Telesystems)
+# SPDX-FileCopyrightText: 2021-2024 MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
@@ -71,14 +71,12 @@ class FileListHWM(FileHWM[FileListType]):
         Examples
         --------
 
-        .. code:: python
-
-            from etl_entities.hwm import FileListHWM
-
-            hwm = FileListHWM(value={"some/path.py"}, ...)
-
-            assert hwm.covers("some/path.py")  # path in HWM
-            assert not hwm.covers("another/path.py")  # path not in HWM
+        >>> from etl_entities.hwm import FileListHWM
+        >>> hwm = FileListHWM(value={"/some/path.py"}, name="my_hwm")
+        >>> hwm.covers("/some/path.py")  # path in HWM
+        True
+        >>> hwm.covers("/another/path.py")  # path not in HWM
+        False
         """
 
         return value in self
@@ -99,30 +97,16 @@ class FileListHWM(FileHWM[FileListType]):
         Examples
         --------
 
-        .. code:: python
-
-            from etl_entities.hwm import FileListHWM
-            from etl_entities.instance import AbsolutePath
-
-            hwm = FileListHWM(value=["/some/existing_path.py"], ...)
-
-            # new paths are appended
-            hwm.update("/some/new_path.py")
-            assert hwm.value == frozenset(
-                {
-                    AbsolutePath("/some/existing_path.py"),
-                    AbsolutePath("/some/new_path.py"),
-                }
-            )
-
-            # existing paths do nothing
-            hwm.update("/some/existing_path.py")
-            assert hwm.value == frozenset(
-                {
-                    AbsolutePath("/some/existing_path.py"),
-                    AbsolutePath("/some/new_path.py"),
-                }
-            )
+        >>> from etl_entities.hwm import FileListHWM
+        >>> hwm = FileListHWM(value=["/some/existing_path.py"], name="my_hwm")
+        >>> # new paths are appended
+        >>> hwm = hwm.update("/some/new_path.py")
+        >>> sorted(hwm.value)
+        [AbsolutePath('/some/existing_path.py'), AbsolutePath('/some/new_path.py')]
+        >>> # existing path already here
+        >>> hwm = hwm.update("/some/existing_path.py")
+        >>> sorted(hwm.value)
+        [AbsolutePath('/some/existing_path.py'), AbsolutePath('/some/new_path.py')]
         """
 
         new_value = self.value | self._check_new_value(value)
@@ -149,15 +133,11 @@ class FileListHWM(FileHWM[FileListType]):
         Examples
         --------
 
-        .. code:: python
-
-            from etl_entities.hwm import FileListHWM
-
-            hwm1 = FileListHWM(value={"some/path"}, ...)
-            hwm2 = FileListHWM(value={"some/path", "another.file"}, ...)
-
-            assert hwm1 + "another.file" == hwm2
-            # same as FileListHWM(value=hwm1.value | {"another.file"}, ...)
+        >>> from etl_entities.hwm import FileListHWM
+        >>> hwm = FileListHWM(value={"/some/path"}, name="my_hwm")
+        >>> hwm = hwm + "/another.file"
+        >>> sorted(hwm.value)
+        [AbsolutePath('/another.file'), AbsolutePath('/some/path')]
         """
 
         new_value = self.value | self._check_new_value(value)
@@ -184,15 +164,11 @@ class FileListHWM(FileHWM[FileListType]):
         Examples
         --------
 
-        .. code:: python
-
-            from etl_entities.hwm import FileListHWM
-
-            hwm1 = FileListHWM(value={"some/path"}, ...)
-            hwm2 = FileListHWM(value={"some/path", "another.file"}, ...)
-
-            assert hwm1 - "another.file" == hwm2
-            # same as FileListHWM(value=hwm1.value - {"another.file"}, ...)
+        >>> from etl_entities.hwm import FileListHWM
+        >>> hwm = FileListHWM(value={"/some/path", "/another.file"}, name="my_hwm")
+        >>> hwm = hwm - "/another.file"
+        >>> sorted(hwm.value)
+        [AbsolutePath('/some/path')]
         """
 
         new_value = self.value - self._check_new_value(value)
@@ -213,15 +189,13 @@ class FileListHWM(FileHWM[FileListType]):
         Examples
         --------
 
-        .. code:: python
-
-            from etl_entities.hwm import FileListHWM
-            from etl_entities.instance import AbsolutePath
-
-            hwm = FileListHWM(value={"/some/path"}, ...)
-
-            assert "/some/path" in hwm
-            assert "/another/path" not in hwm
+        >>> from etl_entities.hwm import FileListHWM
+        >>> from etl_entities.instance import AbsolutePath
+        >>> hwm = FileListHWM(value={"/some/path"}, name="my_hwm")
+        >>> "/some/path" in hwm
+        True
+        >>> "/another/path" in hwm
+        False
         """
 
         if isinstance(item, str):

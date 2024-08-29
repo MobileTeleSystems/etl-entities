@@ -63,7 +63,8 @@ jobs:
         run: |
           mkdir reports/ || echo "Directory exists"
           pip install -e . --no-build-isolation
-          ./run_tests.sh
+          # run both tests ad doctests
+          ./run_tests.sh etl_entities/hwm tests
 
       - name: Upload coverage results
         uses: actions/upload-artifact@v4
@@ -105,10 +106,9 @@ jobs:
       - name: Download all coverage reports
         uses: actions/download-artifact@v4
         with:
-          path: reports
-
-      - name: Move coverage data to the root folder
-        run: find reports -type f -exec mv '{}' reports \;
+          path: reports/
+          pattern: coverage-*
+          merge-multiple: true
 
       - name: Generate coverate reports
         run: ./combine_coverage.sh
@@ -119,8 +119,7 @@ jobs:
           token: ${{ secrets.CODECOV_TOKEN }}
           file: ./reports/coverage.xml
           fail_ci_if_error: true
-        # TODO: remove after fixing https://github.com/codecov/codecov-cli/issues/367
-          plugin: gcov
+          plugin: noop
 
       - name: All done
         run: echo 1

@@ -1,5 +1,5 @@
 [run]
-branch = True
+branch = true
 omit = tests/*
 parallel = true
 data_file = reports/.coverage
@@ -16,3 +16,6 @@ exclude_lines =
     if TYPE_CHECKING:
     class .*\bProtocol\):
     @(abc\.)?abstractmethod
+    if log.isEnabledFor(logging.DEBUG):
+    if sys.version_info
+    except .*ImportError

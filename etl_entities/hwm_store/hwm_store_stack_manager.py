@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2021-2024 MTS (Mobile Telesystems)
+# SPDX-FileCopyrightText: 2021-2024 MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
@@ -39,14 +39,12 @@ class HWMStoreStackManager:
         Examples
         --------
 
-        .. code:: python
-
-            from etl_entities.hwm_store import HWMStoreStackManager
-
-            with SomeHWMStore(...) as hwm_store:
-                assert HWMStoreStackManager.get_current() == hwm_store
-
-            assert HWMStoreStackManager.get_current() == default_hwm_store
+        >>> from etl_entities.hwm_store import HWMStoreStackManager
+        >>> with SomeHWMStore(...) as hwm_store:
+        ...     print(HWMStoreStackManager.get_current())
+        SomeHWMStore(...)
+        >>> HWMStoreStackManager.get_current()
+        DefaultHWMStore()
         """
         if cls._stack:
             return cls._stack[-1]

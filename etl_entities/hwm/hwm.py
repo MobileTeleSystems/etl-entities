@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2021-2024 MTS (Mobile Telesystems)
+# SPDX-FileCopyrightText: 2021-2024 MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
@@ -75,14 +75,11 @@ class HWM(ABC, Generic[ValueType], GenericModel):
         Examples
         --------
 
-        .. code:: python
-
-            from etl_entities.hwm import ColumnIntHWM
-
-            hwm = ColumnIntHWM(value=1, ...)
-
-            hwm.set_value(2)
-            assert hwm.value == 2
+        >>> from etl_entities.hwm import ColumnIntHWM
+        >>> hwm = ColumnIntHWM(value=1, name="my_hwm")
+        >>> hwm = hwm.set_value(2)
+        >>> hwm.value
+        2
         """
 
         new_value = self._check_new_value(value)
@@ -105,18 +102,20 @@ class HWM(ABC, Generic[ValueType], GenericModel):
         Examples
         --------
 
-        .. code:: python
+        >>> from etl_entities.hwm import ColumnIntHWM
 
-            from etl_entities.hwm import ColumnIntHWM
-
-            hwm = ColumnIntHWM(value=1, ...)
-            assert hwm.serialize() == {
-                "value": "1",
-                "type": "int",
-                "column": "column_name",
-                "name": "table_name",
-                "description": ...,
-            }
+        >>> hwm = ColumnIntHWM(name="my_hwm", value=1, entity="some_column", description="some description")
+        >>> json = hwm.serialize()
+        >>> json["type"]
+        'column_int'
+        >>> json["name"]
+        'my_hwm'
+        >>> json["value"]
+        1
+        >>> json["entity"]
+        'some_column'
+        >>> json["description"]
+        'some description'
         """
 
         result = super().serialize()
@@ -135,21 +134,30 @@ class HWM(ABC, Generic[ValueType], GenericModel):
 
         Examples
         --------
-
-        .. code:: python
-
-            from etl_entities.hwm import ColumnIntHWM
-
-            assert ColumnIntHWM.deserialize(
-                {
-                    "value": "1",
-                    "type": "int",
-                    "column": "column_name",
-                    "name": "name",
-                }
-            ) == ColumnIntHWM(value=1, ...)
-
-            ColumnIntHWM.deserialize({"type": "date"})  # raises ValueError
+        >>> from etl_entities.hwm import ColumnIntHWM
+        >>> hwm = ColumnIntHWM.deserialize(
+        ...     {
+        ...         "type": "column_int",
+        ...         "name": "my_hwm",
+        ...         "value": "1",
+        ...         "entity": "some_column",
+        ...         "description": "some description",
+        ...     }
+        ... )
+        >>> type(hwm)
+        <class 'etl_entities.hwm.column.int_hwm.ColumnIntHWM'>
+        >>> hwm.name
+        'my_hwm'
+        >>> hwm.value
+        1
+        >>> hwm.entity
+        'some_column'
+        >>> hwm.description
+        'some description'
+        >>> ColumnIntHWM.deserialize({"type": "column_date"})
+        Traceback (most recent call last):
+            ...
+        ValueError: Type 'column_date' does not match class 'ColumnIntHWM'
         """
 
         value = deepcopy(inp)
@@ -157,7 +165,7 @@ class HWM(ABC, Generic[ValueType], GenericModel):
         if type_name:
             hwm_type = HWMTypeRegistry.get(type_name)
             if not issubclass(cls, hwm_type):
-                raise ValueError(f"Type {type_name} does not match class {cls.__name__}")
+                raise ValueError(f"Type {type_name!r} does not match class {cls.__qualname__!r}")
 
         return super().deserialize(value)
 

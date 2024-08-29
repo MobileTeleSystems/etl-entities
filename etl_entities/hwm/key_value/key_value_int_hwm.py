@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2021-2024 MTS (Mobile Telesystems)
+# SPDX-FileCopyrightText: 2021-2024 MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
@@ -66,31 +66,6 @@ class KeyValueIntHWM(KeyValueHWM[int]):
     value: frozendict = Field(default_factory=frozendict)
 
     def serialize(self) -> dict:
-        """Return dict representation of HWM
-
-        Returns
-        -------
-        result : dict
-
-            Serialized HWM
-
-        Examples
-        --------
-
-        .. code:: python
-
-            from etl_entities.hwm import ColumnIntHWM
-
-            hwm = ColumnIntHWM(value=1, ...)
-            assert hwm.serialize() == {
-                "value": "1",
-                "type": "int",
-                "column": "column_name",
-                "name": "table_name",
-                "description": ...,
-            }
-        """
-
         # Convert self.value to a regular dictionary if it is a frozendict
         # This is necessary because frozendict objects are not natively serializable to JSON.
         serialized_data = {

@@ -25,7 +25,7 @@ sys.path.insert(0, os.fspath(PROJECT_ROOT_DIR))
 # -- Project information -----------------------------------------------------
 
 project = "etl-entities"
-copyright = "2021-2024 MTS (Mobile Telesystems)"
+copyright = "2021-2024 MTS PJSC"
 author = "DataOps.ETL"
 
 # The version info for the project you're documenting, acts as replacement for
@@ -51,8 +51,24 @@ extensions = [
     "sphinx.ext.autosummary",
     "sphinx_toolbox.github",
     "sphinxcontrib.towncrier",  # provides `towncrier-draft-entries` directive
+    "sphinx_last_updated_by_git",
 ]
+
 numpydoc_show_class_members = False
+
+# prevent >>>, ... and doctest outputs from copying
+copybutton_prompt_text = r">>> |\.\.\. |\$ |In \[\d*\]: | {2,5}\.\.\.: | {5,8}: "
+copybutton_prompt_is_regexp = True
+copybutton_copy_empty_lines = False
+copybutton_only_copy_prompt_lines = True
+
+towncrier_draft_autoversion_mode = "draft"
+towncrier_draft_include_empty = False
+towncrier_draft_working_directory = PROJECT_ROOT_DIR
+
+github_username = "MobileTeleSystems"
+github_repository = "etl-entities"
+
 
 # Add any paths that contain templates here, relative to this directory.
 templates_path = ["_templates"]
@@ -67,13 +83,13 @@ exclude_patterns = ["_build", "Thumbs.db", ".DS_Store"]
 
 # The theme to use for HTML and HTML Help pages.  See the documentation for
 # a list of builtin themes.
-#
 html_theme = "furo"
 
 # Add any paths that contain custom static files (such as style sheets) here,
 # relative to this directory. They are copied after the builtin static files,
 # so a file named "default.css" will overwrite the builtin "default.css".
 html_static_path = ["_static"]
+html_extra_path = ["robots.txt"]
 
 # The master toctree document.
 master_doc = "index"
@@ -95,10 +111,3 @@ todo_include_todos = False
 
 # Output file base name for HTML help builder.
 htmlhelp_basename = "etl-entities-doc"
-
-towncrier_draft_autoversion_mode = "draft"
-towncrier_draft_include_empty = False
-towncrier_draft_working_directory = PROJECT_ROOT_DIR
-
-github_username = "MobileTeleSystems"
-github_repository = "etl-entities"
