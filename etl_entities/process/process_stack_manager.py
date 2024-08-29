@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from typing import ClassVar
 
 import typing_extensions
@@ -22,7 +22,7 @@ class ProcessStackManager:
     .. deprecated:: 2.0.0
     """
 
-    default: ClassVar[Process] = Process()  # noqa: WPS462
+    default: ClassVar[Process] = field(default_factory=Process)
     "Default process returned by ``ProcessStackManager.get_current``"  # noqa: WPS428
 
     _stack: ClassVar[list[Process]] = []
