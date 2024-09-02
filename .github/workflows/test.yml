@@ -71,6 +71,8 @@ jobs:
         with:
           name: coverage-python-${{ matrix.python-version }}-pydantic-${{ matrix.pydantic-version }}-os-${{ matrix.os }}
           path: reports/*
+          # https://github.com/actions/upload-artifact/issues/602
+          include-hidden-files: true
 
   all_done:
     name: Tests done
