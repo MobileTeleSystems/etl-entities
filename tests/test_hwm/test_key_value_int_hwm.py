@@ -8,16 +8,15 @@ from etl_entities.hwm import KeyValueIntHWM
 
 
 @pytest.mark.parametrize(
-    "expression, value, expected_value",
+    "value, expected_value",
     [
-        ("offset", {0: 100, 1: 200}, frozendict({0: 100, 1: 200})),
-        ("offset", {0: "100", 1: "200"}, frozendict({0: 100, 1: 200})),
-        ("offset", {"key1": 100, "key2": 200}, frozendict({"key1": 100, "key2": 200})),
-        ("offset", {"key1": "100", "key2": "200"}, frozendict({"key1": 100, "key2": 200})),
-        (None, {}, frozendict()),
+        ({0: 100, 1: 200}, frozendict({0: 100, 1: 200})),
+        ({0: "100", 1: "200"}, frozendict({0: 100, 1: 200})),
+        ({"0": 100, "1": 200}, frozendict({0: 100, 1: 200})),
+        ({}, frozendict()),
     ],
 )
-def test_key_value_int_hwm_valid_input(expression, value, expected_value):
+def test_key_value_int_hwm_valid_input(value, expected_value):
     name = "key_value_int_hwm_name"
     entity = "topic_name"
     modified_time = datetime.now() - timedelta(days=5)
@@ -39,14 +38,14 @@ def test_key_value_int_hwm_valid_input(expression, value, expected_value):
         value=value,
         description="my hwm",
         entity=entity,
-        expression="something",
+        expression="some expression",
         modified_time=modified_time,
     )
     assert hwm.name == name
     assert hwm.value == expected_value
     assert hwm.description == "my hwm"
     assert hwm.entity == entity
-    assert hwm.expression == "something"
+    assert hwm.expression == "some expression"
     assert hwm.modified_time == modified_time
 
 
@@ -54,9 +53,12 @@ def test_key_value_int_hwm_valid_input(expression, value, expected_value):
     "invalid_value",
     [
         {1: 1.5},
+        {1.5: 1},  # noqa: WPS449
         {1: "offset_value"},
+        {"offset_value": 1},
         {"partition": "offset_value"},
         {1: None},
+        {None: 1},
         None,
     ],
 )
@@ -192,7 +194,7 @@ def test_key_value_int_hwm_update():
 def test_key_value_int_hwm_serialization():
     name = "key_value_int_hwm_name"
     modified_time = datetime.now() - timedelta(days=5)
-    value = {"0": 100, "1": 123}
+    value = {0: 100, 1: 123}
 
     hwm1 = KeyValueIntHWM(
         name=name,
