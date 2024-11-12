@@ -1,2 +1,0 @@
-``KeyValueHWM`` now has 2 required generic arguments - ``KeyValueHWMKeyType`` and ``KeyValueHWMValueType``.
-This allows creating own ``key -> value`` HWM types with arbitrary ``key`` type (previously it was ``Any``).

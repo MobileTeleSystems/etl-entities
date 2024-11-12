@@ -1,1 +1,0 @@
-Make ``KeyValueIntHWM`` keys strictly integers. Previously string values could be used.
