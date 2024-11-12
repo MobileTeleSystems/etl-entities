@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
+import sys
 from typing import Generic, Optional, TypeVar
 
 from frozendict import frozendict
@@ -15,11 +16,12 @@ from etl_entities.entity import GenericModel
 from etl_entities.hwm.hwm import HWM
 
 KeyValueHWMValueType = TypeVar("KeyValueHWMValueType")
+KeyValueHWMKeyType = TypeVar("KeyValueHWMKeyType")
 KeyValueHWMType = TypeVar("KeyValueHWMType", bound="KeyValueHWM")
 
 
-class KeyValueHWM(HWM[frozendict], Generic[KeyValueHWMValueType], GenericModel):
-    """Base key value HWM type
+class KeyValueHWM(HWM[frozendict], Generic[KeyValueHWMKeyType, KeyValueHWMValueType], GenericModel):
+    """HWM type storing ``key -> value`` map.
 
     Parameters
     ----------
@@ -27,7 +29,7 @@ class KeyValueHWM(HWM[frozendict], Generic[KeyValueHWMValueType], GenericModel):
 
         HWM unique name
 
-    value : ``frozendict[Any, KeyValueHWMValueType]`` , default: ``frozendict``
+    value : ``frozendict[KeyValueHWMKeyType, KeyValueHWMValueType]`` , default: ``frozendict``
 
         HWM value
 
@@ -49,10 +51,10 @@ class KeyValueHWM(HWM[frozendict], Generic[KeyValueHWMValueType], GenericModel):
     """
 
     entity: Optional[str] = Field(default=None, alias="topic")
-    # value: frozendict with Any type for keys and KeyValueHWMValueType type for values.
-    # Direct type specification for frozendict contents (e.g., frozendict[KeyType, ValueType])
-    # is supported only from Python 3.9 onwards.
-    value: frozendict = Field(default_factory=frozendict)
+    if sys.version_info >= (3, 9):  # noqa: WPS604
+        value: frozendict[KeyValueHWMKeyType, KeyValueHWMValueType] = Field(default_factory=frozendict)
+    else:
+        value: frozendict = Field(default_factory=frozendict)
 
     def update(self: KeyValueHWMType, new_data: dict) -> KeyValueHWMType:
         """
@@ -89,18 +91,19 @@ class KeyValueHWM(HWM[frozendict], Generic[KeyValueHWMValueType], GenericModel):
         """
 
         modified = False
-        temp_dict = dict(self.value)
+        new_dict = {int(key): int(value) for key, value in new_data.items()}
+        current_dict = dict(self.value)
 
-        for partition, new_offset in new_data.items():
-            current_offset = temp_dict.get(partition)
-            if current_offset is None or new_offset > current_offset:
-                temp_dict[partition] = new_offset
+        for new_key, new_value in new_dict.items():
+            current_value = current_dict.get(new_key)
+            if current_value is None or new_value > current_value:
+                current_dict[new_key] = new_value
                 modified = True
 
         # update the frozendict only if modifications were made.
         # this avoids unnecessary reassignment and creation of a new frozendict object,
         if modified:
-            self.set_value(frozendict(temp_dict))
+            self.set_value(frozendict(current_dict))
 
         return self
 

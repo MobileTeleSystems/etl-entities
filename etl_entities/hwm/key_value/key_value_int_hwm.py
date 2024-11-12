@@ -2,20 +2,22 @@
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
+from typing import Mapping
+
 from frozendict import frozendict
 
 try:
-    from pydantic.v1 import Field, validator
+    from pydantic.v1 import validator
 except (ImportError, AttributeError):
-    from pydantic import Field, validator  # type: ignore[no-redef, assignment]
+    from pydantic import validator  # type: ignore[no-redef, assignment]
 
 from etl_entities.hwm.hwm_type_registry import register_hwm_type
 from etl_entities.hwm.key_value.key_value_hwm import KeyValueHWM
 
 
 @register_hwm_type("key_value_int")
-class KeyValueIntHWM(KeyValueHWM[int]):
-    """Integer KeyValue HWM type
+class KeyValueIntHWM(KeyValueHWM[int, int]):
+    """HWM type storing ``int -> int`` mapping.
 
     Parameters
     ----------
@@ -23,7 +25,7 @@ class KeyValueIntHWM(KeyValueHWM[int]):
 
         HWM unique name
 
-    value : ``frozendict[Any, KeyValueHWMValueType]``, default: ``frozendict``
+    value : ``frozendict[int, int]``, default: ``frozendict``
 
         HWM value
 
@@ -61,10 +63,6 @@ class KeyValueIntHWM(KeyValueHWM[int]):
         )
     """
 
-    # employing frozendict without specifying `frozendict[Any, int]`
-    # due to the lack of support for generic dict annotations in Python 3.7.
-    value: frozendict = Field(default_factory=frozendict)
-
     def serialize(self) -> dict:
         # Convert self.value to a regular dictionary if it is a frozendict
         # This is necessary because frozendict objects are not natively serializable to JSON.
@@ -81,13 +79,14 @@ class KeyValueIntHWM(KeyValueHWM[int]):
 
     @validator("value", pre=True)
     def _validate_int_values(cls, key_value):  # noqa: N805
-        if key_value is None:
-            return key_value
-        new_key_value = {}
-        for key, value in key_value.items():
-            if not isinstance(value, (int, str)):
-                raise ValueError
-            else:
-                new_key_value[key] = int(value)
+        if isinstance(key_value, Mapping):
+            result = {}
+            for key, value in key_value.items():
+                if not isinstance(key, (int, str)):
+                    raise TypeError(f"key should be integer, got {key!r}")
+                if not isinstance(value, (int, str)):
+                    raise TypeError(f"Value should be integer, got {value!r}")
+                result[int(key)] = int(value)
+            return frozendict(result)
 
-        return frozendict(new_key_value)
+        return key_value

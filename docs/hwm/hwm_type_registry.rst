@@ -5,4 +5,4 @@ HWM Type Registry
 .. autoclass:: HWMTypeRegistry
     :members: get, get_key, add, parse
 
-.. automethod:: register_hwm_type
+.. autofunction:: register_hwm_type
