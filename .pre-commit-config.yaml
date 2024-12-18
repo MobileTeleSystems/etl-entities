@@ -124,12 +124,12 @@ repos:
         language: system
         types: [python]
         pass_filenames: false
-#      - id: mypy
-#        name: mypy
-#        entry: python3 -m mypy --config-file setup.cfg etl_entities
-#        language: system
-#        types: [python]
-#        pass_filenames: false
+     - id: mypy
+       name: mypy
+       entry: python3 -m mypy --config-file setup.cfg etl_entities
+       language: system
+       types: [python]
+       pass_filenames: false
 
 ci:
   skip:
