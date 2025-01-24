@@ -46,6 +46,7 @@ Currently implemented:
     * ``ColumnDateHWM``
     * ``ColumnDateTimeHWM``
     * ``FileListHWM``
+    * ``FileModifiedTimeHWM``
     * ``KeyValueIntHWM``
 
 * HWM Store classes:

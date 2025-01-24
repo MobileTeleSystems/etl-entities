@@ -16,7 +16,7 @@ from etl_entities.hwm.hwm_type_registry import register_hwm_type
 
 @register_hwm_type("column_int")
 class ColumnIntHWM(ColumnHWM[int]):
-    """Integer HWM type
+    """HWM based on tracking latest column value of type :obj:`int`.
 
     Parameters
     ----------

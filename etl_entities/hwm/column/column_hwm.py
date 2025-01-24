@@ -164,10 +164,7 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], Generi
         2
         """
 
-        if self.value is None:
-            return self.set_value(value)
-
-        if self.value < value:  # type: ignore[operator]
+        if self.value is None or self.value < value:  # type: ignore[operator]
             return self.set_value(value)
 
         return self
