@@ -1,10 +1,29 @@
+import os
 import secrets
-from datetime import date, datetime, timedelta
+from datetime import date, datetime, timezone
+from pathlib import Path
+from unittest.mock import Mock
 
 import pytest
 
-from etl_entities.hwm import ColumnDateHWM, ColumnDateTimeHWM, ColumnIntHWM, FileListHWM
+from etl_entities.hwm import (
+    ColumnDateHWM,
+    ColumnDateTimeHWM,
+    ColumnIntHWM,
+    FileListHWM,
+    FileModifiedTimeHWM,
+)
 from etl_entities.hwm_store import MemoryHWMStore
+
+
+def file_with_mtime(mtime: datetime) -> Path:
+    result = Mock(spec=Path)
+    result.exists.return_value = True
+    result.is_file.return_value = True
+    result_stat = Mock(spec=os.stat_result)
+    result_stat.st_mtime = mtime.timestamp()
+    result.stat.return_value = result_stat
+    return result
 
 
 @pytest.fixture(
@@ -29,17 +48,17 @@ from etl_entities.hwm_store import MemoryHWMStore
             ColumnDateHWM(
                 name=secrets.token_hex(5),
                 source=secrets.token_hex(5),
-                value=date(year=2023, month=8, day=15),
+                value=date(2025, 1, 1),
             ),
-            timedelta(days=31),
+            date(2025, 1, 2),
         ),
         (
             ColumnDateTimeHWM(
                 name=secrets.token_hex(5),
                 source=secrets.token_hex(5),
-                value=datetime(year=2023, month=8, day=15, hour=11, minute=22, second=33),
+                value=datetime(2025, 1, 1, 11, 22, 33, 456789),
             ),
-            timedelta(seconds=50),
+            datetime(2025, 1, 1, 22, 33, 44, 567890),
         ),
         (
             FileListHWM(
@@ -57,6 +76,14 @@ from etl_entities.hwm_store import MemoryHWMStore
             ),
             "/absolute/path/file3",
         ),
+        (
+            FileModifiedTimeHWM(
+                name=secrets.token_hex(5),
+                directory="/absolute/path",
+                value=datetime(2025, 1, 1, 11, 22, 33, 456789, tzinfo=timezone.utc),
+            ),
+            file_with_mtime(datetime(2025, 1, 1, 22, 33, 44, 567890, tzinfo=timezone.utc)),
+        ),
     ],
 )
 def hwm_delta(request):
@@ -72,7 +99,7 @@ def test_hwm_store_get_save(hwm_delta):
     assert hwm_store.get_hwm(hwm.name) == hwm
 
     # changing HWM object does not change MemoryHWMStore data
-    hwm1 = hwm.copy() + delta
+    hwm1 = hwm.copy().update(delta)
     assert hwm_store.get_hwm(hwm.name) == hwm
 
     # it is changed only after explicit call of .set_hwm()

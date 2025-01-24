@@ -8,6 +8,7 @@ File HWM
     :caption: HWM classes
 
     file_list_hwm
+    file_mtime_hwm
 
 What is File HWM?
 -----------------
@@ -40,18 +41,13 @@ This technique is called ``High WaterMark`` or ``HWM`` for short.
 It is used by different `strategies <https://onetl.readthedocs.io/en/latest/strategy/index.html#strategy>`_ to implement some complex logic
 of filtering source data.
 
-
 Supported types
 ---------------
 
 There are a several ways to track HWM value:
 
-    * Save the entire file list, and then select only files not present in this list
-      (``file_list``)
-    * Save max modified time of all files, and then select only files with ``modified_time``
+    * Save list o file paths, and then select only files not present in this list - :obj:`FileListHWM`
+    * Save max modified time of all files, and then select only files with modified time (``file.stat().st_mtime``) - :obj:`FileModifiedTimeHWM`
       higher than this value
     * If file name contains some incrementing value, e.g. id or datetime,
-      parse it and save max value of all files, then select only files with higher value
-    * and so on
-
-Currently the only HWM type implemented for files is ``file_list``. Other ones can be implemented on-demand
+      parse it and save max value of all files, then select only files with higher value - not implemented for now.

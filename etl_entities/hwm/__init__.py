@@ -6,6 +6,7 @@ from etl_entities.hwm.column.datetime_hwm import ColumnDateTimeHWM
 from etl_entities.hwm.column.int_hwm import ColumnIntHWM
 from etl_entities.hwm.file.file_hwm import FileHWM
 from etl_entities.hwm.file.file_list_hwm import FileListHWM
+from etl_entities.hwm.file.file_mtime_hwm import FileModifiedTimeHWM
 from etl_entities.hwm.hwm import HWM
 from etl_entities.hwm.hwm_type_registry import HWMTypeRegistry, register_hwm_type
 from etl_entities.hwm.key_value.key_value_hwm import KeyValueHWM
@@ -19,6 +20,7 @@ __all__ = [
     "ColumnIntHWM",
     "FileHWM",
     "FileListHWM",
+    "FileModifiedTimeHWM",
     "KeyValueHWM",
     "KeyValueIntHWM",
     "HWMTypeRegistry",
