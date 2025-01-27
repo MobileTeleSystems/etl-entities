@@ -1,0 +1,13 @@
+2.5.0 (2025-01-27)
+==================
+
+Features
+--------
+
+- Implement ``FileModifiedTimeHWM``, HWM based on file modification time. (:github:pull:`109`)
+
+
+Improvements
+------------
+
+- Add compatibility with ``Python 3.13`` (:github:pull:`106`)

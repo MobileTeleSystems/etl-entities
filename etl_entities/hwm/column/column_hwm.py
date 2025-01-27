@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2021-2024 MTS PJSC
+# SPDX-FileCopyrightText: 2021-2025 MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
@@ -164,10 +164,7 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], Generi
         2
         """
 
-        if self.value is None:
-            return self.set_value(value)
-
-        if self.value < value:  # type: ignore[operator]
+        if self.value is None or self.value < value:  # type: ignore[operator]
             return self.set_value(value)
 
         return self

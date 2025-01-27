@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2021-2024 MTS PJSC
+# SPDX-FileCopyrightText: 2021-2025 MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
@@ -18,7 +18,7 @@ from etl_entities.hwm.hwm_type_registry import register_hwm_type
 
 @register_hwm_type("column_date")
 class ColumnDateHWM(ColumnHWM[date]):
-    """Date HWM type
+    """HWM based on tracking latest column value of type :obj:`datetime.date`.
 
     Parameters
     ----------

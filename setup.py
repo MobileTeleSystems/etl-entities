@@ -45,7 +45,7 @@ setup(
     url="https://github.com/MobileTeleSystems/etl-entities",
     packages=find_packages(exclude=["docs", "docs.*", "tests", "tests.*"]),
     classifiers=[
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 5 - Production/Stable",
         "Framework :: Pydantic",
         "Framework :: Pydantic :: 1",
         "Framework :: Pydantic :: 2",
@@ -59,6 +59,7 @@ setup(
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
         "Typing :: Typed",
     ],
     project_urls={

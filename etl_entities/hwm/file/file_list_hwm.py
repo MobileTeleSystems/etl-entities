@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2021-2024 MTS PJSC
+# SPDX-FileCopyrightText: 2021-2025 MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
@@ -21,7 +21,7 @@ FileListHWMType = TypeVar("FileListHWMType", bound="FileListHWM")
 
 @register_hwm_type("file_list")
 class FileListHWM(FileHWM[FileListType]):
-    """File List HWM type
+    """HWM based on tracking list of file names.
 
     Parameters
     ----------
@@ -72,10 +72,10 @@ class FileListHWM(FileHWM[FileListType]):
         --------
 
         >>> from etl_entities.hwm import FileListHWM
-        >>> hwm = FileListHWM(value={"/some/path.py"}, name="my_hwm")
-        >>> hwm.covers("/some/path.py")  # path in HWM
+        >>> hwm = FileListHWM(value={"/some/old_file.py"}, name="my_hwm")
+        >>> hwm.covers("/some/old_file.py")  # path in HWM
         True
-        >>> hwm.covers("/another/path.py")  # path not in HWM
+        >>> hwm.covers("/some/new_file.py")  # path not in HWM
         False
         """
 
@@ -90,7 +90,7 @@ class FileListHWM(FileHWM[FileListType]):
 
         Returns
         -------
-        result : FileHWM
+        result : FileListHWM
 
             Self
 
