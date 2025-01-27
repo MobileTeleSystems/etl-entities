@@ -35,6 +35,14 @@ class PathWithStats(Protocol):
 class FileModifiedTimeHWM(FileHWM[Optional[datetime]]):  # noqa: WPS338r
     """HWM based on tracking file modification time.
 
+    .. warning::
+
+        This HWM types is not very precise, as some filesystems may have whole second precision,
+        so files created within the same second may be skipped.
+
+        Also this HWM should not be used if file modification time can be changed after the file
+        was already handled by previous ETL process run. This could lead to reading the same file twice.
+
     .. versionadded:: 2.5.0
 
     Parameters
