@@ -12,6 +12,7 @@ from etl_entities.hwm import (
     ColumnIntHWM,
     FileListHWM,
     FileModifiedTimeHWM,
+    KeyValueIntHWM,
 )
 from etl_entities.hwm_store import MemoryHWMStore
 
@@ -61,6 +62,36 @@ def file_with_mtime(mtime: datetime) -> Path:
             datetime(2025, 1, 1, 22, 33, 44, 567890),
         ),
         (
+            KeyValueIntHWM(
+                name=f"{secrets.token_hex(5)}.{secrets.token_hex(5)}",
+                # no topic
+                expression="offset",
+                value={
+                    0: 100,
+                    1: 123,
+                },
+            ),
+            {
+                0: 110,
+                1: 150,
+            },
+        ),
+        (
+            KeyValueIntHWM(
+                name=f"{secrets.token_hex(5)}.{secrets.token_hex(5)}",
+                topic="topic_name",
+                expression="offset",
+                value={
+                    0: 100,
+                    1: 123,
+                },
+            ),
+            {
+                0: 110,
+                1: 150,
+            },
+        ),
+        (
             FileListHWM(
                 name=secrets.token_hex(5),
                 # no directory
@@ -75,6 +106,14 @@ def file_with_mtime(mtime: datetime) -> Path:
                 value=["/absolute/path/file1", "/absolute/path/file2"],
             ),
             "/absolute/path/file3",
+        ),
+        (
+            FileModifiedTimeHWM(
+                name=secrets.token_hex(5),
+                # no directory
+                value=datetime(2025, 1, 1, 11, 22, 33, 456789, tzinfo=timezone.utc),
+            ),
+            file_with_mtime(datetime(2025, 1, 1, 22, 33, 44, 567890, tzinfo=timezone.utc)),
         ),
         (
             FileModifiedTimeHWM(

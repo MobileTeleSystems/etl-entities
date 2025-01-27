@@ -33,9 +33,9 @@ class KeyValueIntHWM(KeyValueHWM[int, int]):
 
         Description of HWM
 
-    source : Any, default: ``None``
+    entity : Any, default: ``None``
 
-        HWM source, e.g. topic name
+        HWM entity, e.g. topic name
 
     expression : Any, default: ``None``
 
