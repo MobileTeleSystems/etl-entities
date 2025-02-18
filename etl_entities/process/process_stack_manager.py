@@ -2,6 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
+import warnings
 from dataclasses import dataclass
 from typing import ClassVar
 
@@ -22,8 +23,9 @@ class ProcessStackManager:
     .. deprecated:: 2.0.0
     """
 
-    default: ClassVar[Process] = Process()  # noqa: WPS462
-    "Default process returned by ``ProcessStackManager.get_current``"  # noqa: WPS428
+    with warnings.catch_warnings(category=UserWarning):  # noqa: WPS604
+        default: ClassVar[Process] = Process()  # noqa: WPS462
+        "Default process returned by ``ProcessStackManager.get_current``"  # noqa: WPS428
 
     _stack: ClassVar[list[Process]] = []
 
