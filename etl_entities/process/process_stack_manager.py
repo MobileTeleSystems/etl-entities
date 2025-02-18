@@ -23,7 +23,7 @@ class ProcessStackManager:
     .. deprecated:: 2.0.0
     """
 
-    with warnings.catch_warnings(category=UserWarning):  # noqa: WPS604
+    with warnings.catch_warnings():  # noqa: WPS604
         default: ClassVar[Process] = Process()  # noqa: WPS462
         "Default process returned by ``ProcessStackManager.get_current``"  # noqa: WPS428
 
