@@ -35,10 +35,13 @@ class PathWithStats(Protocol):
 class FileModifiedTimeHWM(FileHWM[Optional[datetime]]):  # noqa: WPS338r
     """HWM based on tracking file modification time.
 
+    Uses ``Pathlib.Path(file).stat().st_mtime`` under the hood.
+
     .. warning::
 
-        This HWM types is not very precise, as some filesystems may have whole second precision,
-        so files created within the same second may be skipped.
+        Some filesystems may return ``st_mtime`` rounded to whole second or even worse
+        (some FTP servers round time to minutes, 10s of minutes or even hours). This could lead to skipping
+        files created since previous process run, but having the same modification time as HWM value.
 
         Also this HWM should not be used if file modification time can be changed after the file
         was already handled by previous ETL process run. This could lead to reading the same file twice.

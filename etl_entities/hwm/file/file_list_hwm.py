@@ -23,6 +23,11 @@ FileListHWMType = TypeVar("FileListHWMType", bound="FileListHWM")
 class FileListHWM(FileHWM[FileListType]):
     """HWM based on tracking list of file names.
 
+    .. warning::
+
+        This HWM should not be used if the file content may change between ETL process runs,
+        as **only** file name is tracked, not the content.
+
     Parameters
     ----------
     name : ``str``
