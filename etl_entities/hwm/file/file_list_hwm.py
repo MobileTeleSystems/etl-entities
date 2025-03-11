@@ -120,6 +120,30 @@ class FileListHWM(FileHWM[FileListType]):
 
         return self
 
+    def reset(self: FileListHWMType) -> FileListHWMType:
+        """Reset current HWM value and return HWM.
+
+        .. note::
+
+            Changes HWM value in-place
+
+        Returns
+        -------
+        result : FileListHWM
+
+            Self
+
+        Examples
+        --------
+
+        >>> from etl_entities.hwm import FileListHWM
+        >>> hwm = FileListHWM(value=["/some/existing_path.py"], name="my_hwm")
+        >>> hwm = hwm.reset()
+        >>> sorted(hwm.value)
+        []
+        """
+        return self.set_value(frozenset())
+
     def __add__(self: FileListHWMType, value: str | os.PathLike | Iterable[str | os.PathLike]) -> FileListHWMType:
         """Adds path or paths to HWM value, and return copy of HWM
 

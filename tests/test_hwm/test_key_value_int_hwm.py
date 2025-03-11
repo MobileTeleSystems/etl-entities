@@ -233,3 +233,12 @@ def test_key_value_int_hwm_serialization():
     serialized2 = hwm2.serialize()
     assert serialized2 == expected2
     assert KeyValueIntHWM.deserialize(serialized2) == hwm2
+
+
+def test_key_value_int_hwm_reset():
+    value = {0: 10, 1: 20}
+    hwm = KeyValueIntHWM(name="key_value_name", value=value)
+    assert hwm.value == value
+
+    hwm = hwm.reset()
+    assert hwm.value == {}

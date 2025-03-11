@@ -175,3 +175,30 @@ class FileModifiedTimeHWM(FileHWM[Optional[datetime]]):  # noqa: WPS338r
             return self.set_value(new_value)
 
         return self
+
+    def reset(self: FileModifiedTimeHWMType) -> FileModifiedTimeHWMType:
+        """Reset current HWM value and return HWM.
+
+        .. note::
+
+            Changes HWM value in-place
+
+        Returns
+        -------
+        result : FileModifiedTimeHWM
+
+            Self
+
+        Examples
+        --------
+
+        >>> from pathlib import Path
+        >>> from etl_entities.hwm import FileModifiedTimeHWM
+        >>> hwm = FileModifiedTimeHWM(
+        ...     name='hwm_name',
+        ...     value=datetime(2025, 1, 1, 11, 22, 33, 456789),
+        ... )
+        >>> hwm = hwm.reset()
+        >>> hwm.value
+        """
+        return self.set_value(None)
