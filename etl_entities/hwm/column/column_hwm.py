@@ -169,6 +169,29 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], Generi
 
         return self
 
+    def reset(self: ColumnHWMType) -> ColumnHWMType:
+        """Reset current HWM value and return HWM.
+
+        .. note::
+
+            Changes HWM value in-place
+
+        Returns
+        -------
+        result : ColumnHWM
+
+            Self
+
+        Examples
+        --------
+
+        >>> from etl_entities.hwm import ColumnIntHWM
+        >>> hwm = ColumnIntHWM(value=1, name="my_hwm")
+        >>> hwm = hwm.reset()
+        >>> hwm.value
+        """
+        return self.set_value(None)
+
     def __lt__(self, other):
         """Checks current HWM value is less than another one.
 

@@ -48,7 +48,7 @@ repos:
           - --no-extra-eol
 
   - repo: https://github.com/codespell-project/codespell
-    rev: v2.3.0
+    rev: v2.4.1
     hooks:
       - id: codespell
         args: [-w]
@@ -60,7 +60,7 @@ repos:
         args: [--autofix, --indent, '2', --offset, '2']
 
   - repo: https://github.com/pycqa/isort
-    rev: 5.13.2
+    rev: 6.0.1
     hooks:
       - id: isort
         files: etl_entities/.*
@@ -89,7 +89,7 @@ repos:
       - id: add-trailing-comma
 
   - repo: https://github.com/psf/black-pre-commit-mirror
-    rev: 24.10.0
+    rev: 25.1.0
     hooks:
       - id: black
         language_version: python3
@@ -102,7 +102,7 @@ repos:
           - black==24.4.2
 
   - repo: https://github.com/pycqa/bandit
-    rev: 1.8.2
+    rev: 1.8.3
     hooks:
       - id: bandit
         args:

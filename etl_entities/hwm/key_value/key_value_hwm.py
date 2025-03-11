@@ -37,9 +37,9 @@ class KeyValueHWM(HWM[frozendict], Generic[KeyValueHWMKeyType, KeyValueHWMValueT
 
         Description of HWM
 
-    source : Any, default: ``None``
+    entity : Any, default: ``None``
 
-        HWM source, e.g. ``topic`` name
+        HWM entity, e.g. ``topic`` name
 
     expression : Any, default: ``None``
 
@@ -106,6 +106,30 @@ class KeyValueHWM(HWM[frozendict], Generic[KeyValueHWMKeyType, KeyValueHWMValueT
             self.set_value(frozendict(current_dict))
 
         return self
+
+    def reset(self: KeyValueHWMType) -> KeyValueHWMType:
+        """Reset current HWM value and return HWM.
+
+        .. note::
+
+            Changes HWM value in-place
+
+        Returns
+        -------
+        result : KeyValueHWM
+
+            Self
+
+        Examples
+        --------
+
+        >>> from etl_entities.hwm import KeyValueHWM
+        >>> hwm = KeyValueHWM(value={0: 100, 1: 120}, name="my_hwm")
+        >>> hwm = hwm.reset()
+        >>> dict(hwm.value)
+        {}
+        """
+        return self.set_value(frozendict())
 
     def __eq__(self, other):
         """Checks equality of two HWM instances
