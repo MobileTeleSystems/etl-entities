@@ -545,3 +545,19 @@ def test_file_list_hwm_serialization():
     serialized2 = hwm2.serialize()
     assert serialized2 == expected2
     assert FileListHWM.deserialize(serialized2) == hwm2
+
+
+def test_file_list_hwm_reset():
+    value = [
+        AbsolutePath("/some/path/file.orc"),
+        AbsolutePath("/some/path/file.py"),
+        AbsolutePath("/some/path/file.txt"),
+    ]
+    hwm = FileListHWM(
+        name="file_list",
+        value=value,
+    )
+    assert sorted(hwm.value) == value
+
+    hwm = hwm.reset()
+    assert sorted(hwm.value) == []

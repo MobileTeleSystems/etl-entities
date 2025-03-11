@@ -514,3 +514,11 @@ def test_file_modified_time_hwm_serialization():
     empty_hwm_serialized = empty_hwm.serialize()
     assert empty_hwm_serialized == empty_hwm_expected
     assert FileModifiedTimeHWM.deserialize(empty_hwm_serialized) == empty_hwm
+
+
+def test_file_modified_time_hwm_reset():
+    hwm = FileModifiedTimeHWM(name="file_mtime", value=datetime.now())
+    assert hwm.value is not None
+
+    hwm = hwm.reset()
+    assert hwm.value is None

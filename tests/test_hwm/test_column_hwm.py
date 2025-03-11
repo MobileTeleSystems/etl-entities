@@ -466,3 +466,19 @@ def test_column_hwm_update(hwm_class, value, delta):
 
         with pytest.raises(TypeError):
             _ = hwm1.update(delta)
+
+
+@pytest.mark.parametrize(
+    "hwm_class, value",
+    [
+        (ColumnDateHWM, date.today()),
+        (ColumnDateTimeHWM, datetime.now()),
+        (ColumnIntHWM, 2),
+    ],
+)
+def test_column_hwm_reset(hwm_class, value):
+    hwm = hwm_class(name="some_hwm_name", value=value)
+    assert hwm.value == value
+
+    hwm = hwm.reset()
+    assert hwm.value is None

@@ -171,7 +171,11 @@ class HWM(ABC, Generic[ValueType], GenericModel):
 
     @abstractmethod
     def update(self: HWMType, value: Any) -> HWMType:
-        """Update current HWM value with some implementation-specific logic, and return HWM"""
+        """Update current HWM value with some implementation-specific logic and return HWM"""
+
+    @abstractmethod
+    def reset(self: HWMType) -> HWMType:
+        """Reset HWM value with some implementation-specific logic and return HWM"""
 
     def _check_new_value(self, value):
         validated_dict, _, validation_error = validate_model(
