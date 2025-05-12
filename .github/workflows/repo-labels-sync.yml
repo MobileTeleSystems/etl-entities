@@ -11,10 +11,17 @@ on:
     paths:
       - .github/labels.yml
       - .github/workflows/repo-labels-sync.yml
+  workflow_dispatch:
 
 jobs:
   labeler:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      issues: write # to update repo labels
+      pull-requests: write # to update repo labels
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
