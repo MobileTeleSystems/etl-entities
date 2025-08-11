@@ -114,7 +114,7 @@ jobs:
         run: pip install -I -r requirements-test.txt
 
       - name: Download all coverage reports
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v5
         with:
           path: reports/
           pattern: coverage-*
