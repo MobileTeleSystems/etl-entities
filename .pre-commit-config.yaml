@@ -17,8 +17,6 @@ repos:
       - id: end-of-file-fixer
         exclude: ^.*/VERSION$
       - id: fix-byte-order-marker
-      - id: fix-encoding-pragma
-        args: [--remove]
       - id: name-tests-test
         files: ^tests/.*\.py$
         exclude: ^tests/libs/.*\.py$
