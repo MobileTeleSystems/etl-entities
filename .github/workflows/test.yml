@@ -78,7 +78,7 @@ jobs:
           ./run_tests.sh etl_entities/hwm tests
 
       - name: Upload coverage results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v5
         with:
           name: coverage-python-${{ matrix.python-version }}-pydantic-${{ matrix.pydantic-version }}-os-${{ matrix.os }}
           path: reports/*
@@ -117,7 +117,7 @@ jobs:
         run: pip install -I -r requirements-test.txt
 
       - name: Download all coverage reports
-        uses: actions/download-artifact@v5
+        uses: actions/download-artifact@v6
         with:
           path: reports/
           pattern: coverage-*
