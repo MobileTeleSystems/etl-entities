@@ -76,7 +76,7 @@ repos:
       - id: text-unicode-replacement-char
 
   - repo: https://github.com/asottile/pyupgrade
-    rev: v3.21.1
+    rev: v3.21.2
     hooks:
       - id: pyupgrade
         args: [--py37-plus, --keep-runtime-typing]
@@ -100,7 +100,7 @@ repos:
           - black==24.4.2
 
   - repo: https://github.com/pycqa/bandit
-    rev: 1.9.0
+    rev: 1.9.2
     hooks:
       - id: bandit
         args:
