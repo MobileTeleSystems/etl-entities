@@ -560,4 +560,4 @@ def test_file_list_hwm_reset():
     assert sorted(hwm.value) == value
 
     hwm = hwm.reset()
-    assert sorted(hwm.value) == []
+    assert sorted(hwm.value) == []  # noqa: WPS520

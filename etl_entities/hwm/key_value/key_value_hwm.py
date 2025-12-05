@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2021-2025 MTS PJSC
+# SPDX-FileCopyrightText: 2024-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
@@ -128,7 +128,7 @@ class KeyValueHWM(HWM[frozendict], Generic[KeyValueHWMKeyType, KeyValueHWMValueT
         >>> hwm = hwm.reset()
         >>> dict(hwm.value)
         {}
-        """
+        """  # noqa: P102
         return self.set_value(frozendict())
 
     def __eq__(self, other):

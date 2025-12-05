@@ -241,4 +241,4 @@ def test_key_value_int_hwm_reset():
     assert hwm.value == value
 
     hwm = hwm.reset()
-    assert hwm.value == {}
+    assert hwm.value == {}  # noqa: WPS520
