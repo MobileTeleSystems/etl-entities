@@ -26,7 +26,7 @@ sys.path.insert(0, os.fspath(PROJECT_ROOT_DIR))
 
 project = "etl-entities"
 copyright = "2021-present MTS PJSC"
-author = "DataOps.ETL"
+author = "MWS Data Bridge"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
