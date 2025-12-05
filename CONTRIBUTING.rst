@@ -292,7 +292,7 @@ Before making a release from the ``develop`` branch, follow these steps:
     git checkout develop
 
     NEXT_VERSION=$(echo "$VERSION" | awk -F. '/[0-9]+\./{$NF++;print}' OFS=.)
-    echo "$NEXT_VERSION" > evacuator/VERSION
+    echo "$NEXT_VERSION" > etl_entities/VERSION
 
     git add .
     git commit -m "Bump version"
