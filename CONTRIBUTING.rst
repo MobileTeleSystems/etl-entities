@@ -6,6 +6,23 @@ reports, improving documentation, submitting feature requests, reviewing
 new submissions, or contributing code that can be incorporated into the
 project.
 
+Review process
+--------------
+
+For any **significant** changes please create a new GitHub issue and
+enhancements that you wish to make. Describe the feature you would like
+to see, why you need it, and how it will work. Discuss your ideas
+transparently and get community feedback before proceeding.
+
+Small changes can directly be crafted and submitted to the GitHub
+Repository as a Pull Request. This requires creating a **repo fork** using
+`instruction <https://docs.github.com/en/get-started/quickstart/fork-a-repo>`_.
+
+Important notes
+---------------
+
+Please take into account that some companies still use old Python versions, like 3.7. So the changes should be compatible.
+
 Initial setup for local development
 -----------------------------------
 
@@ -14,17 +31,10 @@ Install Git
 
 Please follow `instruction <https://docs.github.com/en/get-started/quickstart/set-up-git>`_.
 
-Create a fork
-~~~~~~~~~~~~~
-
-If you are not a member of a development team building ETL Entities, you should create a fork before making any changes.
-
-Please follow `instruction <https://docs.github.com/en/get-started/quickstart/fork-a-repo>`_.
-
 Clone the repo
 ~~~~~~~~~~~~~~
 
-Open terminal and run these commands:
+Open terminal and run these commands to clone a **forked** repo:
 
 .. code:: bash
 
@@ -32,28 +42,20 @@ Open terminal and run these commands:
 
     cd etl-entities
 
-Setup environment
-~~~~~~~~~~~~~~~~~
+Enable pre-commit hooks
+~~~~~~~~~~~~~~~~~~~~~~~
 
 Create virtualenv and install dependencies:
 
 .. code:: bash
 
-    # create virtual environment
     python -m venv venv
     source venv/bin/activate
     pip install -U wheel
     pip install -U pip setuptools
-
-    # install requirements
     pip install -U \
         -r requirements.txt \
-        -r requirements-dev.txt \
-        -r requirements-docs.txt \
-        -r requirements-test.txt
-
-Enable pre-commit hooks
-~~~~~~~~~~~~~~~~~~~~~~~
+        -r requirements-dev.txt
 
 Install pre-commit hooks:
 
@@ -70,18 +72,35 @@ Test pre-commit hooks run:
 How to
 ------
 
-
 Run tests
 ~~~~~~~~~
 
+.. note::
+
+    You can skip this if only source code behavior remains the same.
+
+Create virtualenv and install dependencies:
+
 .. code:: bash
 
-    # run tests
-    pytest
+    pip install -U -r requirements-test.txt
 
+.. code:: bash
+
+    pytest
 
 Build documentation
 ~~~~~~~~~~~~~~~~~~~
+
+.. note::
+
+    You can skip this if only source code behavior remains the same.
+
+Create virtualenv and install dependencies:
+
+.. code:: bash
+
+    pip install -U -r requirements-docs.txt
 
 Build documentation using Sphinx:
 
@@ -92,21 +111,6 @@ Build documentation using Sphinx:
 
 Then open in browser ``docs/_build/index.html``.
 
-
-Review process
---------------
-
-Please create a new GitHub issue for any significant changes and
-enhancements that you wish to make. Provide the feature you would like
-to see, why you need it, and how it will work. Discuss your ideas
-transparently and get community feedback before proceeding.
-
-Significant Changes that you wish to contribute to the project should be
-discussed first in a GitHub issue that clearly outlines the changes and
-benefits of the feature.
-
-Small Changes can directly be crafted and submitted to the GitHub
-Repository as a Pull Request.
 
 Create pull request
 ~~~~~~~~~~~~~~~~~~~
@@ -205,7 +209,11 @@ How to skip change notes check?
 Just add ``ci:skip-changelog`` label to pull request.
 
 Release Process
-^^^^^^^^^^^^^^^
+---------------
+
+.. note::
+
+    This is for repo maintainers only
 
 Before making a release from the ``develop`` branch, follow these steps:
 
@@ -284,7 +292,7 @@ Before making a release from the ``develop`` branch, follow these steps:
     git checkout develop
 
     NEXT_VERSION=$(echo "$VERSION" | awk -F. '/[0-9]+\./{$NF++;print}' OFS=.)
-    echo "$NEXT_VERSION" > etl_entities/VERSION
+    echo "$NEXT_VERSION" > evacuator/VERSION
 
     git add .
     git commit -m "Bump version"
