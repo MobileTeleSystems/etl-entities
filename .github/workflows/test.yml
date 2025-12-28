@@ -57,7 +57,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          uv sync --group test
+          uv sync --group test --no-install-project
 
       - name: Run tests
         run: |
@@ -113,7 +113,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          uv sync --group test
+          uv sync --group test --no-install-project
 
       - name: Generate coverate reports
         run: |
