@@ -62,11 +62,12 @@ jobs:
           uv sync \
             --group test \
             --group "test-pydantic-${{ matrix.pydantic-version }}"
+          uv pip install -e .
 
       - name: Run tests
         run: |
           mkdir reports/ || echo "Directory exists"
-          # run both tests ad doctests
+          # run both tests and doctests
           ./run_tests.sh etl_entities/hwm tests
 
       - name: Upload coverage results
