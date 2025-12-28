@@ -58,7 +58,7 @@ jobs:
       - name: Run tests
         run: |
           mkdir reports/ || echo "Directory exists"
-          make test-ci UV_ARGS="--group test-pydantic-${{ matrix.pydantic-version }}" PYTEST_ARGS="--junitxml=reports/junit/python${{ matrix.python-version }}-pydantic${{ matrix.pydantic-version }}.xml"
+          make test-ci UV_ARGS="--no-install-project --group test-pydantic-${{ matrix.pydantic-version }}" PYTEST_ARGS="--junitxml=reports/junit/python${{ matrix.python-version }}-pydantic${{ matrix.pydantic-version }}.xml"
 
       - name: Upload coverage results
         uses: actions/upload-artifact@v6
