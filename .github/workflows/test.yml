@@ -73,8 +73,14 @@ jobs:
 
   all_done:
     name: Tests done
-    if: success() || failure()
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      checks: write
+      pull-requests: write
+
+    if: success() || failure()
     needs: [tests]
 
     steps:
