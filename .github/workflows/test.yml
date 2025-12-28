@@ -58,7 +58,9 @@ jobs:
       - name: Run tests
         run: |
           mkdir reports/ || echo "Directory exists"
-          make test-ci UV_ARGS="--no-install-project --group test-pydantic-${{ matrix.pydantic-version }}" PYTEST_ARGS="--junitxml=reports/junit/python${{ matrix.python-version }}-pydantic${{ matrix.pydantic-version }}.xml"
+          make test-ci \
+            UV_ARGS="--group test-pydantic-${{ matrix.pydantic-version }}" \
+            PYTEST_ARGS="--junitxml=reports/junit/python${{ matrix.python-version }}-pydantic${{ matrix.pydantic-version }}.xml"
 
       - name: Upload coverage results
         uses: actions/upload-artifact@v6
@@ -89,11 +91,6 @@ jobs:
         with:
           enable-cache: 'false'
 
-      # no uv cache here because fresh install takes about 1 second
-
-      - name: Install dependencies
-        run: uv sync --group test
-
       - name: Download all coverage reports
         uses: actions/download-artifact@v7
         with:
@@ -110,8 +107,8 @@ jobs:
       - name: Generate coverate reports
         run: |
           mkdir reports/ || echo "Directory exists"
-          uv run coverage combine
-          uv run coverage xml -o reports/coverage.xml -i
+          uv run --group test coverage combine
+          uv run --group test coverage xml -o reports/coverage.xml -i
 
       - name: Coverage comment
         id: coverage
