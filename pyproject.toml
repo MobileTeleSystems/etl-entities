@@ -111,10 +111,8 @@ log_cli_level = "INFO"
 addopts = '--doctest-modules --ignore-glob="tests/libs/**"'
 filterwarnings = ["ignore:Deprecated in v2.0, will be removed in v3.0:UserWarning"]
 
-[tool.coverage.paths]
-source = ["etl_entities"]
-
 [tool.coverage.run]
+source_pkgs = ["etl_entities"]
 branch = true
 omit = ["tests/*"]
 parallel = true
