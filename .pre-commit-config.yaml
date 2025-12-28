@@ -1,39 +1,69 @@
-default_language_version:
-  python: python3.11
-
 repos:
   - repo: https://github.com/pre-commit/pre-commit-hooks
     rev: v6.0.0
     hooks:
       - id: check-ast
+        priority: 0
       - id: check-case-conflict
+        priority: 0
       - id: check-docstring-first
+        priority: 0
       - id: check-merge-conflict
+        priority: 0
       - id: check-toml
+        priority: 0
       - id: check-vcs-permalinks
+        priority: 0
+      - id: detect-private-key
+        priority: 0
       - id: check-yaml
-      - id: end-of-file-fixer
-        exclude: ^.*/VERSION$
-      - id: fix-byte-order-marker
+        args: [--unsafe]
+        priority: 0
       - id: name-tests-test
+        args: [--django]
         files: ^tests/.*\.py$
         exclude: ^tests/libs/.*\.py$
-        args: [--django]
+        priority: 0
+      - id: end-of-file-fixer
+        exclude: ^.*/VERSION$
+        priority: 1
+      - id: fix-byte-order-marker
+        priority: 2
       - id: trailing-whitespace
-      - id: detect-private-key
+        priority: 3
+
+  - repo: https://github.com/pre-commit/pygrep-hooks
+    rev: v1.10.0
+    hooks:
+      - id: python-no-log-warn
+        priority: 0
+      - id: python-no-eval
+        priority: 0
+      - id: rst-backticks
+        priority: 0
+      - id: rst-directive-colons
+        priority: 0
+      - id: rst-inline-touching-normal
+        priority: 0
+      - id: text-unicode-replacement-char
+        priority: 0
 
   - repo: https://github.com/Lucas-C/pre-commit-hooks
     rev: v1.5.5
     hooks:
       - id: forbid-tabs
+        priority: 0
       - id: remove-tabs
         args: [--whitespaces-count, '2']
+        priority: 4
       - id: chmod
         args: ['644']
         exclude_types: [shell]
+        priority: 5
       - id: chmod
         args: ['755']
         types: [shell]
+        priority: 5
       - id: insert-license
         files: .*\.py$
         exclude: ^(docs/.*\.py|tests/.*\.py)$
@@ -42,45 +72,36 @@ repos:
           - .spdx-license-header.txt
           - --allow-past-years
           - --no-extra-eol
+        priority: 6
 
   - repo: https://github.com/codespell-project/codespell
     rev: v2.4.1
     hooks:
       - id: codespell
         args: [-w]
+        priority: 7
 
   - repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
     rev: v2.15.0
     hooks:
       - id: pretty-format-yaml
         args: [--autofix, --indent, '2', --preserve-quotes, --offset, '2']
-
-  - repo: https://github.com/pre-commit/pygrep-hooks
-    rev: v1.10.0
-    hooks:
-      - id: python-no-log-warn
-      - id: python-no-eval
-      - id: rst-backticks
-      - id: rst-directive-colons
-      - id: rst-inline-touching-normal
-      - id: text-unicode-replacement-char
+        priority: 8
 
   - repo: https://github.com/astral-sh/uv-pre-commit
     rev: 0.9.18
     hooks:
       - id: uv-lock
+        priority: 8
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.14.10
     hooks:
       - id: ruff-format
-      - id: ruff
+        priority: 8
+      - id: ruff-check
         args: [--fix]
-
-  - repo: meta
-    hooks:
-      - id: check-hooks-apply
-      - id: check-useless-excludes
+        priority: 9
 
   - repo: local
     hooks:
@@ -90,8 +111,23 @@ repos:
         language: system
         types: [python]
         pass_filenames: false
+        priority: 10
+      - id: towncrier
+        name: towncrier
+        entry: towncrier build --draft
+        language: system
+        types: [rst]
+        pass_filenames: false
+        priority: 6
+
+  - repo: meta
+    hooks:
+      - id: check-hooks-apply
+        priority: 0
+      - id: check-useless-excludes
+        priority: 0
 
 ci:
   skip:
     - mypy # checked with Github Actions
-    - chmod # failing in pre-commit.ci
+    - towncrier # checked with Github Actions
