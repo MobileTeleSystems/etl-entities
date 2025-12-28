@@ -2,7 +2,6 @@
 
 VERSION = develop
 VIRTUAL_ENV ?= .venv
-PYDANTIC_VERSION ?= 2
 PYTHON = ${VIRTUAL_ENV}/bin/python
 PIP = ${VIRTUAL_ENV}/bin/pip
 UV ?= ${VIRTUAL_ENV}/bin/uv
@@ -37,29 +36,26 @@ venv-install: ##@Env Install requirements to venv
 		--group dev \
 		--group docs \
 		--group test \
-		--group test-pydantic-${PYDANTIC_VERSION} \
-		$(ARGS)
+		$(UV_ARGS)
 
 
 test: ##@Run tests
 	# run both tests and doctests
 	uv run \
-		--isolated \
+		$(UV_ARGS) \
 		--group test \
-		--group "test-pydantic-${PYDANTIC_VERSION}" \
 		--with-editable tests/libs/dummy \
 		--with-editable tests/libs/failing \
 			pytest \
 			etl_entities/hwm tests \
-			$(ARGS)
+			$(PYTEST_ARGS)
 
 
 test-ci: ##@Run tests in CI
 	# run both tests and doctests
 	uv run \
-		--isolated \
+		$(UV_ARGS) \
 		--group test \
-		--group "test-pydantic-${PYDANTIC_VERSION}" \
 		--with-editable tests/libs/dummy \
 		--with-editable tests/libs/failing \
 		coverage \
@@ -67,7 +63,7 @@ test-ci: ##@Run tests in CI
 			-m \
 				pytest \
 				etl_entities/hwm tests \
-				$(ARGS)
+				$(PYTEST_ARGS)
 
 
 .PHONY: docs
