@@ -44,8 +44,8 @@ test: ##@Run tests
 	uv run \
 		$(UV_ARGS) \
 		--group test \
-		--with-editable tests/libs/dummy \
-		--with-editable tests/libs/failing \
+		--with tests/libs/dummy \
+		--with tests/libs/failing \
 			pytest \
 			etl_entities/hwm tests \
 			$(PYTEST_ARGS)
@@ -56,8 +56,8 @@ test-ci: ##@Run tests in CI
 	uv run \
 		$(UV_ARGS) \
 		--group test \
-		--with-editable tests/libs/dummy \
-		--with-editable tests/libs/failing \
+		--with tests/libs/dummy \
+		--with tests/libs/failing \
 		coverage \
 			run \
 			-m \
