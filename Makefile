@@ -32,7 +32,6 @@ venv-cleanup: ##@Env Cleanup venv
 venv-install: ##@Env Install requirements to venv
 	${UV} sync \
 		--inexact \
-		--no-install-project \
 		--group dev \
 		--group docs \
 		--group test \
