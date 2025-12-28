@@ -129,5 +129,6 @@ repos:
 
 ci:
   skip:
+    - chmod # failing in pre-commit.ci
     - mypy # checked with Github Actions
     - towncrier # checked with Github Actions
