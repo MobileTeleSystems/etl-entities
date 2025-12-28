@@ -51,9 +51,13 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v7
         with:
+          activate-environment: 'true'
           enable-cache: 'false'
-
       # no uv cache here because fresh install takes about 1 second
+
+      - name: Install dependencies
+        run: |
+          uv sync --group test
 
       - name: Run tests
         run: |
@@ -81,16 +85,6 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v6
 
-      - name: Set up Python ${{ env.DEFAULT_PYTHON }}
-        uses: actions/setup-python@v6
-        with:
-          python-version: ${{ env.DEFAULT_PYTHON }}
-
-      - name: Install uv
-        uses: astral-sh/setup-uv@v7
-        with:
-          enable-cache: 'false'
-
       - name: Download all coverage reports
         uses: actions/download-artifact@v7
         with:
@@ -104,11 +98,28 @@ jobs:
         with:
           report_paths: reports/junit/*.xml
 
+      - name: Set up Python ${{ env.DEFAULT_PYTHON }}
+        uses: actions/setup-python@v6
+        with:
+          python-version: ${{ env.DEFAULT_PYTHON }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          activate-environment: 'true'
+          enable-cache: 'false'
+
+      # no uv cache here because fresh install takes about 1 second
+
+      - name: Install dependencies
+        run: |
+          uv sync --group test
+
       - name: Generate coverate reports
         run: |
           mkdir reports/ || echo "Directory exists"
-          uv run --group test coverage combine
-          uv run --group test coverage xml -o reports/coverage.xml -i
+          uv run coverage combine
+          uv run coverage xml -o reports/coverage.xml -i
 
       - name: Coverage comment
         id: coverage
