@@ -45,7 +45,7 @@ test: ##@Run tests
 	uv run \
 		--isolated \
 		--group test \
-		--group "test-pydantic-${PYDANTIC_VERSION}"
+		--group "test-pydantic-${PYDANTIC_VERSION}" \
 		--with-editable tests/libs/dummy \
 		--with-editable tests/libs/failing \
 			pytest \
