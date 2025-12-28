@@ -42,6 +42,7 @@ venv-install: ##@Env Install requirements to venv
 
 
 test: ##@Run tests
+	# run both tests and doctests
 	uv run \
 		--isolated \
 		--group test \
@@ -49,23 +50,22 @@ test: ##@Run tests
 		--with-editable tests/libs/dummy \
 		--with-editable tests/libs/failing \
 			pytest \
-			# run both tests and doctests
 			etl_entities/hwm tests \
 			$(ARGS)
 
 
 test-ci: ##@Run tests in CI
+	# run both tests and doctests
 	uv run \
 		--isolated \
 		--group test \
-		--group "test-pydantic-${PYDANTIC_VERSION}"
+		--group "test-pydantic-${PYDANTIC_VERSION}" \
 		--with-editable tests/libs/dummy \
 		--with-editable tests/libs/failing \
 		coverage \
 			run \
 			-m \
 				pytest \
-				# run both tests and doctests
 				etl_entities/hwm tests \
 				$(ARGS)
 
