@@ -60,6 +60,12 @@ jobs:
           mkdir reports/ || echo "Directory exists"
           PYDANTIC_VERSION=${{ matrix.pydantic-version }} make test-ci ARGS="--junitxml=reports/junit/python${{ matrix.python-version }}-pydantic${{ matrix.pydantic-version }}.xml"
 
+      - name: Show test results
+        uses: mikepenz/action-junit-report@v5
+        if: success() || failure() # always run even if the previous step fails
+        with:
+          report_paths: reports/junit/*.xml
+
       - name: Upload coverage results
         uses: actions/upload-artifact@v6
         with:
@@ -98,12 +104,6 @@ jobs:
           path: reports/
           pattern: coverage-*
           merge-multiple: true
-
-      - name: Show coverage report
-        uses: mikepenz/action-junit-report@v5
-        if: success() || failure() # always run even if the previous step fails
-        with:
-          report_paths: reports/junit*.xml
 
       - name: Generate coverate reports
         run: |
