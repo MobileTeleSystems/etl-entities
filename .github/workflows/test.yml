@@ -58,6 +58,7 @@ jobs:
 
       - name: Install dependencies
         run: |
+          uv pip install pip
           uv sync \
             --group test \
             --group "test-pydantic-${{ matrix.pydantic-version }}"
@@ -99,9 +100,7 @@ jobs:
       # no uv cache here because fresh install takes about 1 second
 
       - name: Install dependencies
-        run: |
-          uv pip install pip
-          uv sync --group test
+        run: uv sync --group test
 
       - name: Download all coverage reports
         uses: actions/download-artifact@v7
