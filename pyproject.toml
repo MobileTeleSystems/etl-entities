@@ -103,6 +103,40 @@ conflicts = [
 dev = {requires-python = ">=3.12"}
 docs = {requires-python = ">=3.12"}
 
+[pytest.ini_options]
+testpaths = ["tests"]
+norecursedirs = [".git", "venv"]
+cache_dir = ".pytest_cache"
+log_cli_level = "INFO"
+addopts = '--doctest-modules --ignore-glob="tests/libs/**"'
+filterwarnings = ["ignore:Deprecated in v2.0, will be removed in v3.0:UserWarning"]
+
+[tool.coverage.paths]
+source = ["etl_entities"]
+
+[tool.coverage.run]
+branch = true
+omit = ["tests/*"]
+parallel = true
+data_file = "reports/.coverage"
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "if self.debug:",
+    "if settings.DEBUG",
+    "raise AssertionError",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    'class .*\bProtocol\):',
+    '@(abc\.)?abstractmethod',
+    "if log.isEnabledFor(logging.DEBUG):",
+    "if sys.version_info",
+    "except .*ImportError",
+]
+
 [tool.ruff]
 target-version = "py37"
 line-length = 120

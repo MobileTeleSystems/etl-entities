@@ -56,14 +56,6 @@ repos:
       - id: remove-tabs
         args: [--whitespaces-count, '2']
         priority: 4
-      - id: chmod
-        args: ['644']
-        exclude_types: [shell]
-        priority: 5
-      - id: chmod
-        args: ['755']
-        types: [shell]
-        priority: 5
       - id: insert-license
         files: .*\.py$
         exclude: ^(docs/.*\.py|tests/.*\.py)$
@@ -72,36 +64,36 @@ repos:
           - .spdx-license-header.txt
           - --allow-past-years
           - --no-extra-eol
-        priority: 6
+        priority: 5
 
   - repo: https://github.com/codespell-project/codespell
     rev: v2.4.1
     hooks:
       - id: codespell
         args: [-w]
-        priority: 7
+        priority: 6
 
   - repo: https://github.com/macisamuele/language-formatters-pre-commit-hooks
     rev: v2.15.0
     hooks:
       - id: pretty-format-yaml
         args: [--autofix, --indent, '2', --preserve-quotes, --offset, '2']
-        priority: 8
+        priority: 7
 
   - repo: https://github.com/astral-sh/uv-pre-commit
     rev: 0.9.18
     hooks:
       - id: uv-lock
-        priority: 8
+        priority: 7
 
   - repo: https://github.com/astral-sh/ruff-pre-commit
     rev: v0.14.10
     hooks:
       - id: ruff-format
-        priority: 8
+        priority: 7
       - id: ruff-check
         args: [--fix]
-        priority: 9
+        priority: 8
 
   - repo: local
     hooks:
@@ -111,14 +103,14 @@ repos:
         language: system
         types: [python]
         pass_filenames: false
-        priority: 10
+        priority: 9
       - id: towncrier
         name: towncrier
         entry: towncrier build --draft
         language: system
         types: [rst]
         pass_filenames: false
-        priority: 6
+        priority: 5
 
   - repo: meta
     hooks:
@@ -129,6 +121,5 @@ repos:
 
 ci:
   skip:
-    - chmod # failing in pre-commit.ci
     - mypy # checked with Github Actions
     - towncrier # checked with Github Actions

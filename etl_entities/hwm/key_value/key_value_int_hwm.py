@@ -118,8 +118,8 @@ class KeyValueIntHWM(KeyValueHWM[int, int]):
         --------
 
         >>> from frozendict import frozendict
-        >>> from etl_entities.hwm import KeyValueHWM
-        >>> hwm = KeyValueHWM(value={0: 100, 1: 120}, name="my_hwm")
+        >>> from etl_entities.hwm import KeyValueIntHWM
+        >>> hwm = KeyValueIntHWM(value={0: 100, 1: 120}, name="my_hwm")
         >>> hwm = hwm.update({1: 125, 2: 130})
         >>> hwm.value
         frozendict.frozendict({0: 100, 1: 125, 2: 130})

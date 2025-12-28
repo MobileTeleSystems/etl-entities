@@ -87,7 +87,9 @@ class KeyValueHWM(HWM[frozendict], GenericModel, Generic[KeyValueHWMKeyType, Key
         frozendict.frozendict({0: 100, 1: 125, 2: 130})
         """
 
-        self.set_value(frozendict(new_data))
+        new = dict(self.value)
+        new.update(new_data)
+        self.set_value(frozendict(new))
         return self
 
     def reset(self) -> Self:

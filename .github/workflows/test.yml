@@ -56,19 +56,11 @@ jobs:
 
       # no uv cache here because fresh install takes about 1 second
 
-      - name: Install dependencies
-        run: |
-          uv pip install pip
-          uv sync \
-            --group test \
-            --group "test-pydantic-${{ matrix.pydantic-version }}"
-          uv pip install -e .
-
       - name: Run tests
         run: |
           mkdir reports/ || echo "Directory exists"
           # run both tests and doctests
-          ./run_tests.sh etl_entities/hwm tests
+          PYDANTIC_VERSION=${{ matrix.pydantic-version }} make test-cis" ARGS="-junitxml=reports/junit/python${{ matrix.python-version }}-pydantic${{ pydantic-version }}.xml"
 
       - name: Upload coverage results
         uses: actions/upload-artifact@v6
@@ -95,7 +87,6 @@ jobs:
       - name: Install uv
         uses: astral-sh/setup-uv@v7
         with:
-          activate-environment: 'true'
           enable-cache: 'false'
 
       # no uv cache here because fresh install takes about 1 second
@@ -111,7 +102,10 @@ jobs:
           merge-multiple: true
 
       - name: Generate coverate reports
-        run: ./combine_coverage.sh
+        run: |
+          mkdir reports/ || echo "Directory exists"
+          uv run coverage combine
+          uv run coverage xml reports/coverage.xml -i
 
       - name: Coverage comment
         id: coverage

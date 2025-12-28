@@ -41,6 +41,33 @@ venv-install: ##@Env Install requirements to venv
 		$(ARGS)
 
 
+test: ##@Run tests
+	uv run \
+		--isolated \
+		--group test \
+		--group "test-pydantic-${PYDANTIC_VERSION}"
+		--with-editable tests/libs/dummy \
+		--with-editable tests/libs/failing \
+			pytest \
+			etl_entities/hwm tests \
+			$(ARGS)
+
+
+test-ci: ##@Run tests in CI
+	uv run \
+		--isolated \
+		--group test \
+		--group "test-pydantic-${PYDANTIC_VERSION}"
+		--with-editable tests/libs/dummy \
+		--with-editable tests/libs/failing \
+		coverage \
+			run \
+			-m \
+				pytest \
+				etl_entities/hwm tests \
+				$(ARGS)
+
+
 .PHONY: docs
 
 docs: docs-build docs-open ##@Docs Generate & open docs
