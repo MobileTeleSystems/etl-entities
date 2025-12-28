@@ -111,7 +111,7 @@ jobs:
         run: |
           mkdir reports/ || echo "Directory exists"
           uv run --group test coverage combine
-          uv run --group test coverage xml -o reports/coverage.xml -i
+          uv run --group test coverage xml -o reports/coverage.xml
 
       - name: Coverage comment
         id: coverage
