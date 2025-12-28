@@ -49,6 +49,7 @@ test: ##@Run tests
 		--with-editable tests/libs/dummy \
 		--with-editable tests/libs/failing \
 			pytest \
+			# run both tests and doctests
 			etl_entities/hwm tests \
 			$(ARGS)
 
@@ -64,6 +65,7 @@ test-ci: ##@Run tests in CI
 			run \
 			-m \
 				pytest \
+				# run both tests and doctests
 				etl_entities/hwm tests \
 				$(ARGS)
 
