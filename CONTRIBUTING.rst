@@ -54,7 +54,7 @@ Create virtualenv and install dependencies:
     pip install -U wheel
     pip install -U pip setuptools
     pip install -U \
-        -r requirements.txt \
+        -e . \
         -r requirements-dev.txt
 
 Install pre-commit hooks:

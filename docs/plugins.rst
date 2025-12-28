@@ -26,16 +26,17 @@ Users should import classes from the plugin package **explicitly** to avoid name
 How to implement plugin?
 ------------------------
 
-Create a Python package ``some-plugin`` with a file ``some_plugin/setup.py``:
+Create a Python package ``some-plugin`` entrypoints specified:
 
 .. code-block:: python
+    :caption: setup.py
 
     # some_plugin/setup.py
     from setuptools import setup
 
     setup(
         # if you want to import something from etl_entities, add it to requirements list
-        install_requires=["etl_entities"],
+        install_requires=["etl-entities"],
         entry_points={
             # this key enables plugins autoimport functionality
             "etl_entities.plugins": [
@@ -45,6 +46,22 @@ Create a Python package ``some-plugin`` with a file ``some_plugin/setup.py``:
             ],
         },
     )
+
+.. code-block:: toml
+    :caption: pyproject.toml
+
+    [project]
+    dependencies = ["etl-entities"]
+
+    [project.entry-points."etl_entities.plugins"]
+    # automatically import all module content
+    "some-plugin-name=some_plugin.module"
+
+    # import a specific class
+    "some-plugin-class=some_plugin.module.internals:MyClass"
+
+    # import a specific function
+    "some-plugin-function=some_plugin.module.internals:my_function"
 
 See `setuptools documentation for entry points <https://setuptools.pypa.io/en/latest/userguide/entry_point.html>`_
 

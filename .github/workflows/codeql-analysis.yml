@@ -52,7 +52,7 @@ jobs:
 
       - name: Install dependencies
         run: |
-          pip install -I -r requirements.txt -r requirements-dev.txt
+          pip install -e . -r requirements-dev.txt
 
           # Set the `CODEQL-PYTHON` environment variable to the Python executable
           # that includes the dependencies
