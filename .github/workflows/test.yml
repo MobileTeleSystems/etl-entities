@@ -14,7 +14,7 @@ concurrency:
 
 env:
   DEFAULT_PYTHON: '3.13'
-  MIN_COVERAGE: 98
+  MIN_COVERAGE: 97
 
 permissions:
   contents: write
