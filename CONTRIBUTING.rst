@@ -42,20 +42,31 @@ Open terminal and run these commands to clone a **forked** repo:
 
     cd etl-entities
 
-Enable pre-commit hooks
-~~~~~~~~~~~~~~~~~~~~~~~
+Setup environment
+~~~~~~~~~~~~~~~~~
 
-Create virtualenv and install dependencies:
+Firstly, install `make <https://www.gnu.org/software/make/manual/make.html>`_. It is used for running complex commands in local environment.
+
+Secondly, create virtualenv and install dependencies:
 
 .. code:: bash
 
-    python -m venv venv
-    source venv/bin/activate
-    pip install -U wheel
-    pip install -U pip setuptools
-    pip install -U \
-        -e . \
-        -r requirements-dev.txt
+    make venv
+
+If you already have venv, but need to install dependencies required for development:
+
+.. code:: bash
+
+    make venv-install
+
+We are using `uv <https://docs.astral.sh/uv/>`_ for managing dependencies and building the package.
+It allows to keep development environment the same for all developers due to using lock file with fixed dependency versions.
+
+Enable pre-commit hooks
+~~~~~~~~~~~~~~~~~~~~~~~
+
+`pre-commit <https://pre-commit.com/>`_ hooks allows to validate & fix repository content before making new commit.
+It allows to run linters, formatters, fix file permissions and so on. If something is wrong, changes cannot be committed.
 
 Install pre-commit hooks:
 
@@ -83,7 +94,7 @@ Create virtualenv and install dependencies:
 
 .. code:: bash
 
-    pip install -U -r requirements-test.txt
+    make venv-install
 
 .. code:: bash
 
@@ -100,14 +111,13 @@ Create virtualenv and install dependencies:
 
 .. code:: bash
 
-    pip install -U -r requirements-docs.txt
+    make venv-install
 
 Build documentation using Sphinx:
 
 .. code:: bash
 
-    cd docs
-    make html
+    make docs
 
 Then open in browser ``docs/_build/index.html``.
 

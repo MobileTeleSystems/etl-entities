@@ -14,8 +14,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  # flake8-commas is failing on Python 3.12
-  DEFAULT_PYTHON: '3.11'
+  DEFAULT_PYTHON: '3.13'
 
 jobs:
   linters:
@@ -36,33 +35,22 @@ jobs:
         with:
           python-version: ${{ env.DEFAULT_PYTHON }}
 
-      - name: Cache pip
-        uses: actions/cache@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
         with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-python-${{ env.DEFAULT_PYTHON }}-codeql-${{ hashFiles('requirements*.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-python-${{ env.DEFAULT_PYTHON }}-codeql-${{ hashFiles('requirements*.txt') }}
-            ${{ runner.os }}-python-${{ env.DEFAULT_PYTHON }}-codeql-
-            ${{ runner.os }}-python
-            ${{ runner.os }}-
+          enable-cache: 'false'
 
-      - name: Upgrade pip
-        run: python -m pip install --upgrade pip setuptools wheel
+      # no uv cache here because fresh install takes about 1 second
 
       - name: Install dependencies
         run: |
-          pip install -e . -r requirements-dev.txt
-
-          # Set the `CODEQL-PYTHON` environment variable to the Python executable
-          # that includes the dependencies
-          echo "CODEQL_PYTHON=$(which python)" >> $GITHUB_ENV
+          uv sync --group dev
 
       - name: Run flake8
-        run: python3 -m flake8 --config setup.cfg .
+        run: uv run -m flake8 --config setup.cfg .
 
       - name: Run mypy
-        run: python3 -m mypy --config-file setup.cfg etl_entities
+        run: uv run -m mypy etl_entities
 
   codeql:
     name: CodeQL

@@ -13,3 +13,19 @@ updates:
       github-actions:
         patterns:
           - '*'
+  - package-ecosystem: uv
+    directory: /
+    schedule:
+      interval: monthly
+    labels:
+      - type:dependency
+    versioning-strategy: increase-if-necessary
+    ignore:
+      # https://github.com/sphinx-toolbox/sphinx-toolbox/issues/201
+      - dependency-name: sphinx
+        update-types: ["version-update:semver-major"]
+    # https://til.simonwillison.net/github/dependabot-python-setup
+    groups:
+      python-packages:
+        patterns:
+          - '*'

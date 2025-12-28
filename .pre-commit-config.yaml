@@ -12,8 +12,6 @@ repos:
       - id: check-toml
       - id: check-vcs-permalinks
       - id: check-yaml
-      - id: requirements-txt-fixer
-        files: ^(requirements.*\.txt)$
       - id: end-of-file-fixer
         exclude: ^.*/VERSION$
       - id: fix-byte-order-marker
@@ -55,7 +53,7 @@ repos:
     rev: v2.15.0
     hooks:
       - id: pretty-format-yaml
-        args: [--autofix, --indent, '2', --offset, '2']
+        args: [--autofix, --indent, '2', --preserve-quotes, --offset, '2']
 
   - repo: https://github.com/pycqa/isort
     rev: 7.0.0
@@ -108,6 +106,11 @@ repos:
           - -iii
           - -ll
         require_serial: true
+
+  - repo: https://github.com/astral-sh/uv-pre-commit
+    rev: 0.9.18
+    hooks:
+      - id: uv-lock
 
   - repo: meta
     hooks:

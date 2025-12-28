@@ -33,21 +33,16 @@ jobs:
         with:
           python-version: ${{ env.DEFAULT_PYTHON }}
 
-      - name: Cache pip
-        uses: actions/cache@v5
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
         with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-python-${{ env.DEFAULT_PYTHON }}-changelog-${{ hashFiles('pyproject.toml', 'requirements-docs.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-python-${{ env.DEFAULT_PYTHON }}-changelog-${{ hashFiles('pyproject.toml', 'requirements-docs.txt') }}
-            ${{ runner.os }}-python-${{ env.DEFAULT_PYTHON }}-changelog-
+          enable-cache: 'false'
 
-      - name: Upgrade pip
-        run: python -m pip install --upgrade pip setuptools wheel
+      # no uv cache here because fresh install takes about 1 second
 
       - name: Install dependencies
         run: |
-          pip install -e . -r requirements-docs.txt
+          uv sync --group docs
 
       - name: Check changelog entry exists
         run: |
@@ -61,5 +56,5 @@ jobs:
           # Fetch the pull request' base branch so towncrier will be able to
           # compare the current branch with the base branch.
           git fetch --no-tags origin +refs/heads/${{ github.base_ref }}:refs/remotes/origin/${{ github.base_ref }}
-          towncrier check --compare-with origin/${{ github.base_ref }}
-          towncrier --draft
+          uv run towncrier check --compare-with origin/${{ github.base_ref }}
+          uv run towncrier --draft

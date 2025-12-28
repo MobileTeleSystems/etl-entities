@@ -63,6 +63,48 @@ exclude = ["docs", "tests"]
 [tool.setuptools.package-data]
 "*" = ["py.typed", "VERSION"]
 
+
+[dependency-groups]
+test = [
+    "coverage>=7.2.7",
+    "omegaconf>=2.3.0",
+    "pytest>=7.4.4",
+]
+test-pydantic-1 = ["pydantic<2"]
+test-pydantic-2 = ["pydantic>=2,<3"]
+dev = [
+    "black~=25.12.0",
+    "mypy~=1.19.1",
+    "pre-commit~=4.5.1",
+    "wemake-python-styleguide~=1.5.0",
+    "types-psutil~=7.2.0",
+]
+docs = [
+    "furo~=2025.12.19",
+    "numpydoc~=1.10.0",
+    "packaging~=25.0",
+    # sphinx-toolbox doesn't support Sphinx 9 yet
+    "sphinx~=8.2.3",
+    "sphinx-copybutton~=0.5.2",
+    "sphinx-last-updated-by-git~=0.3.8",
+    "sphinx-toolbox~=4.1.0",
+    "sphinxcontrib-towncrier~=0.5.0a0",
+    "towncrier~=25.8.0",
+]
+
+[tool.uv]
+default-groups = []
+conflicts = [
+    [
+        { group = "test-pydantic-1" },
+        { group = "test-pydantic-2" },
+    ],
+]
+
+[tool.uv.dependency-groups]
+dev = {requires-python = ">=3.12"}
+docs = {requires-python = ">=3.12"}
+
 [tool.isort]
 profile = "black"
 multi_line_output = 3
