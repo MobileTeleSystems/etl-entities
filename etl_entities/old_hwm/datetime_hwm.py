@@ -23,7 +23,7 @@ from etl_entities.old_hwm.column_hwm import ColumnHWM
     category=UserWarning,
 )
 @register_hwm_type("old_column_datetime")
-class DateTimeHWM(ColumnHWM[datetime]):
+class DateTimeHWM(ColumnHWM[datetime]):  # noqa: PLW1641
     """DateTime HWM type
 
     .. deprecated:: 2.0.0

@@ -22,4 +22,5 @@ class AbsolutePath(GenericPath):
             super().__init__()
 
         if not self.is_absolute():
-            raise ValueError(f"{self.__class__.__name__} should start with '/'")
+            msg = f"{self.__class__.__name__} should start with '/'"
+            raise ValueError(msg)

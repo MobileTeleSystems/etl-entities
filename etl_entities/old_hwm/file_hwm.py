@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import os
 from abc import abstractmethod
-from typing import Generic, TypeVar
+from typing import ClassVar, Generic, TypeVar
 
 from etl_entities.entity import GenericModel
 from etl_entities.instance import AbsolutePath
@@ -15,7 +15,7 @@ FileHWMValueType = TypeVar("FileHWMValueType")
 FileHWMSerializedType = TypeVar("FileHWMSerializedType")
 
 
-class FileHWM(
+class FileHWM(  # noqa: PLW1641
     HWM[FileHWMValueType, FileHWMSerializedType],
     GenericModel,
     Generic[FileHWMValueType, FileHWMSerializedType],
@@ -47,8 +47,8 @@ class FileHWM(
     source: RemoteFolder
     value: FileHWMValueType
 
-    class Config:  # noqa: WPS431
-        json_encoders = {AbsolutePath: os.fspath}
+    class Config:
+        json_encoders: ClassVar = {AbsolutePath: os.fspath}
 
     @property
     @abstractmethod
@@ -70,7 +70,7 @@ class FileHWM(
         Unique name of HWM
         """
 
-        return "#".join([self.name, self.source.qualified_name, self.process.qualified_name])
+        return f"{self.name}#{self.source.qualified_name}#{self.process.qualified_name}"
 
     def __bool__(self):
         """Check if HWM value is set

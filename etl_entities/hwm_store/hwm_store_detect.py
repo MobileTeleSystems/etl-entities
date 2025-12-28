@@ -11,7 +11,8 @@ from etl_entities.hwm_store.hwm_store_class_registry import HWMStoreClassRegistr
 
 def parse_config(value: Any, key: str) -> tuple[str, Sequence, Mapping]:
     if not isinstance(value, (str, Mapping)):
-        raise ValueError(f"Wrong value {value!r} for {key!r} config item")
+        msg = f"Wrong value {value!r} for {key!r} config item, expected str or dict"
+        raise TypeError(msg)
 
     store_type = "unknown"
     args: Sequence[Any] = []
@@ -22,7 +23,8 @@ def parse_config(value: Any, key: str) -> tuple[str, Sequence, Mapping]:
 
     # If more than one store type detected, raise error
     if len(value) > 1:
-        raise ValueError(f"Multiple HWM store types provided: {', '.join(value)}. Only one is allowed.")
+        msg = f"Multiple HWM store types provided: {', '.join(value)}. Only one is allowed."
+        raise ValueError(msg)
 
     for alias in HWMStoreClassRegistry.aliases():
         if alias not in value:
@@ -64,7 +66,8 @@ def resolve_attr(conf: Mapping, hwm_key: str) -> Any:
                 obj = conf[name]
                 conf = obj
     except Exception as e:
-        raise ValueError(f"The configuration does not contain a required key {hwm_key!r}") from e
+        msg = f"The configuration does not contain a required key {hwm_key!r}"
+        raise ValueError(msg) from e
 
     return obj
 
@@ -144,16 +147,19 @@ def detect_hwm_store(key: str) -> Callable:
     """
 
     if not isinstance(key, str):
-        raise ValueError("key name must be a string")
+        msg = "key name must be a string"
+        raise TypeError(msg)
 
     if not key:
-        raise ValueError("Key value must be specified")
+        msg = "Key value must be specified"
+        raise ValueError(msg)
 
-    def pre_wrapper(func: Callable):  # noqa: WPS430
+    def pre_wrapper(func: Callable):
         @wraps(func)
         def wrapper(config: Mapping, *args, **kwargs):
+            msg = "Config must be specified"
             if not config:
-                raise ValueError("Config must be specified")
+                raise ValueError(msg)
 
             root = resolve_attr(config, key)
             store_type, store_args, store_kwargs = parse_config(root, key)

@@ -106,7 +106,7 @@ def test_column_frozen():
                 setattr(column1, attr, value)
 
 
-def test_column_compare():  # noqa: WPS210
+def test_column_compare():
     name1 = "some1"
     name2 = "some2"
 
@@ -143,7 +143,7 @@ def test_column_compare():  # noqa: WPS210
 
 
 @pytest.mark.parametrize(
-    "partition, partition_qualified_name",
+    ("partition", "partition_qualified_name"),
     [({"some1": "value1", "some2": "value2"}, "|some1=value1/some2=value2"), ({}, "")],
 )
 def test_column_qualified_name(

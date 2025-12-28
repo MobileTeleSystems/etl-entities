@@ -14,15 +14,15 @@ from etl_entities.hwm.key_value.key_value_int_hwm import KeyValueIntHWM
 
 __all__ = [
     "HWM",
-    "ColumnHWM",
     "ColumnDateHWM",
     "ColumnDateTimeHWM",
+    "ColumnHWM",
     "ColumnIntHWM",
     "FileHWM",
     "FileListHWM",
     "FileModifiedTimeHWM",
+    "HWMTypeRegistry",
     "KeyValueHWM",
     "KeyValueIntHWM",
-    "HWMTypeRegistry",
     "register_hwm_type",
 ]

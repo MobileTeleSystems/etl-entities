@@ -76,8 +76,8 @@ class HWM(ABC, Entity, GenericModel, Generic[ValueType, SerializedType]):
         new_value = self._check_new_value(value)
 
         if self.value != new_value:
-            object.__setattr__(self, "value", new_value)  # noqa: WPS609
-            object.__setattr__(self, "modified_time", datetime.now())  # noqa: WPS609
+            object.__setattr__(self, "value", new_value)
+            object.__setattr__(self, "modified_time", datetime.now())  # noqa: DTZ005
 
         return self
 
@@ -108,7 +108,7 @@ class HWM(ABC, Entity, GenericModel, Generic[ValueType, SerializedType]):
         """
 
         result = json.loads(self.json())
-        result["type"] = HWMTypeRegistry.get_key(self.__class__)  # type: ignore
+        result["type"] = HWMTypeRegistry.get_key(self.__class__)  # type: ignore[arg-type]
         result["value"] = self.serialize_value()
         return result
 

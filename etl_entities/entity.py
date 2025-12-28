@@ -15,7 +15,7 @@ except (ImportError, AttributeError):
 
 
 class BaseModel(PydanticBaseModel):
-    class Config:  # noqa: WPS431
+    class Config:
         frozen = True
         arbitrary_types_allowed = True
         allow_population_by_field_name = True
@@ -29,7 +29,7 @@ class BaseModel(PydanticBaseModel):
 
 
 class GenericModel(PydanticGenericModel):
-    class Config:  # noqa: WPS431
+    class Config:
         frozen = True
         arbitrary_types_allowed = True
         allow_population_by_field_name = True

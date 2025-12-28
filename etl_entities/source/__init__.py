@@ -3,4 +3,4 @@
 from etl_entities.source.db import Column, Table
 from etl_entities.source.file import RemoteFolder
 
-__all__ = ["Column", "Table", "RemoteFolder"]
+__all__ = ["Column", "RemoteFolder", "Table"]

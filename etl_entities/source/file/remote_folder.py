@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import os
-from typing import Union
+from typing import ClassVar, Union
 
 import typing_extensions
 
@@ -56,8 +56,8 @@ class RemoteFolder(BaseModel, Entity):
     name: AbsolutePath
     instance: Union[GenericURL, Cluster]
 
-    class Config:  # noqa: WPS431
-        json_encoders = {AbsolutePath: os.fspath}
+    class Config:
+        json_encoders: ClassVar = {AbsolutePath: os.fspath}
 
     @validator("name", pre=True)
     def check_absolute_path(cls, value):  # noqa: N805
@@ -65,7 +65,8 @@ class RemoteFolder(BaseModel, Entity):
 
         for symbol in PROHIBITED_PATH_SYMBOLS:
             if symbol in str(value):
-                raise ValueError(f"Folder name cannot contain symbols {' '.join(PROHIBITED_PATH_SYMBOLS)}")
+                msg = f"Folder name cannot contain symbols {' '.join(PROHIBITED_PATH_SYMBOLS)}"
+                raise ValueError(msg)
 
         return value
 

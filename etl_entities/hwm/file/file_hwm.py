@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import os
 from abc import abstractmethod
-from typing import Generic, Optional, TypeVar
+from typing import Any, ClassVar, Generic, Optional, TypeVar
 
 try:
     from pydantic.v1 import Field, validator
@@ -18,10 +18,10 @@ from etl_entities.instance import AbsolutePath
 FileHWMValueType = TypeVar("FileHWMValueType")
 
 
-class FileHWM(
+class FileHWM(  # noqa: PLW1641
     HWM[FileHWMValueType],
-    Generic[FileHWMValueType],
     GenericModel,
+    Generic[FileHWMValueType],
 ):
     """Basic file HWM type
 
@@ -56,11 +56,11 @@ class FileHWM(
     entity: Optional[AbsolutePath] = Field(default=None, alias="directory")
     value: FileHWMValueType
 
-    class Config:  # noqa: WPS431
-        json_encoders = {AbsolutePath: os.fspath}
+    class Config:
+        json_encoders: ClassVar = {AbsolutePath: os.fspath}
 
     @abstractmethod
-    def covers(self, value: FileHWMValueType) -> bool:
+    def covers(self, value: Any) -> bool:
         """Return ``True`` if input value is already covered by HWM"""
 
     def __eq__(self, other):

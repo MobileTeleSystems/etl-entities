@@ -46,9 +46,6 @@ jobs:
         run: |
           uv sync --group dev
 
-      - name: Run flake8
-        run: uv run -m flake8 --config setup.cfg .
-
       - name: Run mypy
         run: uv run -m mypy etl_entities
 

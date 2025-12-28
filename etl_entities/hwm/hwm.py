@@ -12,6 +12,8 @@ try:
 except (ImportError, AttributeError):
     from pydantic import Field, validate_model  # type: ignore[no-redef, assignment]
 
+from typing_extensions import Self
+
 from etl_entities.entity import GenericModel
 from etl_entities.hwm.hwm_type_registry import HWMTypeRegistry
 
@@ -19,7 +21,7 @@ ValueType = TypeVar("ValueType")
 HWMType = TypeVar("HWMType", bound="HWM")
 
 
-class HWM(ABC, Generic[ValueType], GenericModel):
+class HWM(ABC, GenericModel, Generic[ValueType]):
     """Generic HWM type
 
     Parameters
@@ -56,10 +58,10 @@ class HWM(ABC, Generic[ValueType], GenericModel):
     expression: Any = None
     modified_time: datetime = Field(default_factory=datetime.now)
 
-    class Config:  # noqa: WPS431
+    class Config:
         extra = "forbid"
 
-    def set_value(self: HWMType, value: ValueType | None) -> HWMType:
+    def set_value(self, value: ValueType | None) -> Self:
         """Replaces current HWM value with the passed one, and return HWM.
 
         .. note::
@@ -85,8 +87,8 @@ class HWM(ABC, Generic[ValueType], GenericModel):
         new_value = self._check_new_value(value)
 
         if self.value != new_value:
-            object.__setattr__(self, "value", new_value)  # noqa: WPS609
-            object.__setattr__(self, "modified_time", datetime.now())  # noqa: WPS609
+            object.__setattr__(self, "value", new_value)
+            object.__setattr__(self, "modified_time", datetime.now())  # noqa: DTZ005
 
         return self
 
@@ -123,7 +125,7 @@ class HWM(ABC, Generic[ValueType], GenericModel):
         return result
 
     @classmethod
-    def deserialize(cls: type[HWMType], inp: dict) -> HWMType:
+    def deserialize(cls, inp: dict) -> Self:
         """Return HWM from dict representation
 
         Returns
@@ -165,7 +167,8 @@ class HWM(ABC, Generic[ValueType], GenericModel):
         if type_name:
             hwm_type = HWMTypeRegistry.get(type_name)
             if not issubclass(cls, hwm_type):
-                raise ValueError(f"Type {type_name!r} does not match class {cls.__qualname__!r}")
+                msg = f"Type {type_name!r} does not match class {cls.__qualname__!r}"
+                raise ValueError(msg)
 
         return super().deserialize(value)
 

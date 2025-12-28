@@ -22,7 +22,9 @@ class RelativePath(GenericPath):
             super().__init__()
 
         if self.is_absolute():
-            raise ValueError(f"{self.__class__.__name__} cannot start with '/'")
+            msg = f"{self.__class__.__name__} cannot start with '/'"
+            raise ValueError(msg)
 
         if not self.parts:
-            raise ValueError(f"{self.__class__.__name__} cannot be empty")
+            msg = f"{self.__class__.__name__} cannot be empty"
+            raise ValueError(msg)

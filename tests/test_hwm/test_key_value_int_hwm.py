@@ -8,7 +8,7 @@ from etl_entities.hwm import KeyValueIntHWM
 
 
 @pytest.mark.parametrize(
-    "value, expected_value",
+    ("value", "expected_value"),
     [
         ({0: 100, 1: 200}, frozendict({0: 100, 1: 200})),
         ({0: "100", 1: "200"}, frozendict({0: 100, 1: 200})),
@@ -53,7 +53,7 @@ def test_key_value_int_hwm_valid_input(value, expected_value):
     "invalid_value",
     [
         {1: 1.5},
-        {1.5: 1},  # noqa: WPS449
+        {1.5: 1},
         {1: "offset_value"},
         {"offset_value": 1},
         {"partition": "offset_value"},
@@ -241,4 +241,4 @@ def test_key_value_int_hwm_reset():
     assert hwm.value == value
 
     hwm = hwm.reset()
-    assert hwm.value == {}  # noqa: WPS520
+    assert hwm.value == {}

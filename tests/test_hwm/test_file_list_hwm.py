@@ -9,7 +9,7 @@ from etl_entities.instance import AbsolutePath, RelativePath
 
 
 @pytest.mark.parametrize(
-    "input_file, result_file",
+    ("input_file", "result_file"),
     [
         ("/absolute/path", AbsolutePath("/absolute/path")),
         (PurePosixPath("/absolute/path"), AbsolutePath("/absolute/path")),
@@ -134,8 +134,8 @@ def test_file_list_hwm_set_value():
     with pytest.raises(ValueError):
         hwm.set_value("relative/path")
 
+    hwm_with_directory = FileListHWM(name=name, directory="/another/path")
     with pytest.raises(ValueError):
-        hwm_with_directory = FileListHWM(name=name, directory="/another/path")
         hwm_with_directory.set_value(file1)
 
 
@@ -560,4 +560,4 @@ def test_file_list_hwm_reset():
     assert sorted(hwm.value) == value
 
     hwm = hwm.reset()
-    assert sorted(hwm.value) == []  # noqa: WPS520
+    assert sorted(hwm.value) == []

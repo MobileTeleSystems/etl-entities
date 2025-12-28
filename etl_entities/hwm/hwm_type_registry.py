@@ -41,7 +41,8 @@ class HWMTypeRegistry:
 
         result = cls._mapping.get(type_name)
         if not result:
-            raise KeyError(f"Unknown HWM type {type_name!r}")
+            msg = f"Unknown HWM type {type_name!r}"
+            raise KeyError(msg)
 
         return result
 
@@ -72,7 +73,8 @@ class HWMTypeRegistry:
 
         result = cls._mapping.inverse.get(klass)
         if not result:
-            raise KeyError(f"You should register {klass.__qualname__!r} class using @register_hwm_type decorator")
+            msg = f"You should register {klass.__qualname__!r} class using @register_hwm_type decorator"
+            raise KeyError(msg)
 
         return result
 

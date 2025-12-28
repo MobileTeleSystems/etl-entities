@@ -9,8 +9,11 @@ from etl_entities.old_hwm.hwm import HWM
 from etl_entities.old_hwm.int_hwm import IntHWM
 
 __all__ = [
+    "HWM",
+    "ColumnHWM",
     "DateHWM",
     "DateTimeHWM",
+    "FileHWM",
     "FileListHWM",
     "IntHWM",
 ]

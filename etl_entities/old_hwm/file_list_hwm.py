@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import os
 from pathlib import PurePosixPath
-from typing import FrozenSet, Iterable, List
+from typing import ClassVar, FrozenSet, Iterable, List
 
 import typing_extensions
 
@@ -26,7 +26,7 @@ FileListType = FrozenSet[RelativePath]
     category=UserWarning,
 )
 @register_hwm_type("old_file_list")
-class FileListHWM(FileHWM[FileListType, List[str]]):
+class FileListHWM(FileHWM[FileListType, List[str]]):  # noqa: PLW1641
     """File List HWM type
 
     .. deprecated:: 2.0.0
@@ -68,13 +68,14 @@ class FileListHWM(FileHWM[FileListType, List[str]]):
 
     value: FileListType = Field(default_factory=frozenset)
 
-    class Config:  # noqa: WPS431
-        json_encoders = {RelativePath: os.fspath}
+    class Config:
+        json_encoders: ClassVar = {RelativePath: os.fspath}
 
     @validator("value", pre=True)
     def validate_value(cls, value, values):  # noqa: N805
         if "source" not in values:
-            raise ValueError("Missing `source` key")
+            msg = "Missing `source` key"
+            raise ValueError(msg)
 
         source = values["source"]
 

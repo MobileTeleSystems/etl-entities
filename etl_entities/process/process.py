@@ -84,7 +84,8 @@ class Process(BaseModel, Entity):
         dag = values.get("dag")
 
         if bool(task) ^ bool(dag):
-            raise ValueError("task and dag should be both set or both empty")
+            msg = "task and dag should be both set or both empty"
+            raise ValueError(msg)
 
         return task
 
@@ -147,7 +148,7 @@ class Process(BaseModel, Entity):
             assert process2.qualified_name == "abc.cde.currentapp@somehost"
         """
 
-        return "@".join([self.full_name, self.host])
+        return f"{self.full_name}@{self.host}"
 
     def __enter__(self):
         """
@@ -164,17 +165,29 @@ class Process(BaseModel, Entity):
                 ...
         """
 
-        # hack to avoid circular imports
-        from etl_entities.process.process_stack_manager import ProcessStackManager
+        # avoid circular imports
+        from etl_entities.process.process_stack_manager import ProcessStackManager  # noqa: PLC0415
 
-        log.debug(f"{self.__class__.__name__}: Entered stack at level {ProcessStackManager.get_current_level()}")
+        log.debug(
+            "|%s| Entered stack at level %d",
+            self.__class__.__name__,
+            ProcessStackManager.get_current_level(),
+        )
         ProcessStackManager.push(self)
-        log.info(f"{self.__class__.__name__}: Using process {self}")
+        log.debug(
+            "|%s| Using process %s",
+            self.__class__.__name__,
+            self,
+        )
         return self
 
     def __exit__(self, exc_type, _exc_value, _traceback):
-        from etl_entities.process.process_stack_manager import ProcessStackManager
+        from etl_entities.process.process_stack_manager import ProcessStackManager  # noqa: PLC0415
 
-        log.debug(f"{self.__class__.__name__}: Exiting stack at level {ProcessStackManager.get_current_level() - 1}")
+        log.debug(
+            "|%s| Exiting stack at level %d",
+            self.__class__.__name__,
+            ProcessStackManager.get_current_level() - 1,
+        )
         ProcessStackManager.pop()
         return False

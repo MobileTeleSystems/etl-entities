@@ -8,10 +8,10 @@ from etl_entities.instance.path import AbsolutePath, GenericPath, RelativePath
 from etl_entities.instance.url import GenericURL
 
 __all__ = [
-    "Cluster",
-    "Host",
     "AbsolutePath",
+    "Cluster",
     "GenericPath",
-    "RelativePath",
     "GenericURL",
+    "Host",
+    "RelativePath",
 ]

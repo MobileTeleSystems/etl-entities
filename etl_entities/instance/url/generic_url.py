@@ -27,4 +27,5 @@ class GenericURL(AnyUrl):
 
         for field in self.PROHIBITED_PARTS:
             if getattr(self, field):
-                raise ValueError(f"URL cannot contain {field} field")
+                msg = f"URL cannot contain {field} field"
+                raise ValueError(msg)

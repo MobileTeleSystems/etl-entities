@@ -181,7 +181,7 @@ def test_process_compare():
 
 
 @pytest.mark.parametrize(
-    "task, dag, prefix",
+    ("task", "dag", "prefix"),
     [
         ("", "", ""),
         ("abc", "cde", "cde.abc."),
@@ -201,7 +201,7 @@ def test_process_qualified_name(task, dag, prefix):
 
 
 @pytest.mark.parametrize(
-    "task, dag",
+    ("task", "dag"),
     [
         ("", ""),
         ("abc", "cde"),

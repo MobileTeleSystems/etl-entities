@@ -29,8 +29,8 @@ class BaseHWMStore(BaseModel, ABC):
         >>> HWMStoreStackManager.get_current()
         DefaultHWMStore()
         """
-        # hack to avoid circular imports
-        from etl_entities.hwm_store.hwm_store_stack_manager import HWMStoreStackManager
+        # avoid circular imports
+        from etl_entities.hwm_store.hwm_store_stack_manager import HWMStoreStackManager  # noqa: PLC0415
 
         log.debug("|%s| Entered stack at level %d", self.__class__.__name__, HWMStoreStackManager.get_current_level())
         HWMStoreStackManager.push(self)
@@ -39,7 +39,7 @@ class BaseHWMStore(BaseModel, ABC):
         return self
 
     def __exit__(self, _exc_type, _exc_value, _traceback):
-        from etl_entities.hwm_store.hwm_store_stack_manager import HWMStoreStackManager
+        from etl_entities.hwm_store.hwm_store_stack_manager import HWMStoreStackManager  # noqa: PLC0415
 
         log.debug(
             "|%s| Exiting stack at level %d",

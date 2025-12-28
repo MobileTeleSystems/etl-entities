@@ -22,4 +22,5 @@ class GenericPath(PurePosixPath):
             super().__init__()
 
         if ".." in self.parts or "~" in self.parts:
-            raise ValueError(f"{self.__class__.__name__} cannot contain '..' or '~'")
+            msg = f"{self.__class__.__name__} cannot contain '..' or '~'"
+            raise ValueError(msg)

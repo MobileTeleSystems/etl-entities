@@ -9,7 +9,7 @@ from etl_entities.source import Column, Table
 
 
 @pytest.mark.parametrize(
-    "hwm_class, value",
+    ("hwm_class", "value"),
     [
         (DateHWM, date.today()),
         (DateTimeHWM, datetime.now()),
@@ -80,7 +80,7 @@ def test_column_hwm_valid_input(hwm_class, value):
 
 
 @pytest.mark.parametrize(
-    "hwm_class, value, wrong_values",
+    ("hwm_class", "value", "wrong_values"),
     [
         (DateHWM, date.today(), ["1.1", "1", "2021-01-01T11:22:33", DateHWM]),
         (DateTimeHWM, datetime.now(), ["1.1", "1", DateTimeHWM]),
@@ -124,7 +124,7 @@ def test_column_hwm_wrong_input(hwm_class, value, wrong_values):
 
 
 @pytest.mark.parametrize(
-    "hwm_class, value",
+    ("hwm_class", "value"),
     [
         (DateHWM, date.today()),
         (DateTimeHWM, datetime.now()),
@@ -177,15 +177,15 @@ def test_column_hwm_frozen(hwm_class):
                 setattr(hwm, attr, value)
 
 
-@pytest.mark.parametrize(  # noqa: WPS210
-    "hwm_class, value, delta",
+@pytest.mark.parametrize(
+    ("hwm_class", "value", "delta"),
     [
         (DateHWM, date.today(), timedelta(days=2)),
         (DateTimeHWM, datetime.now(), timedelta(seconds=2)),
         (IntHWM, 1, 2),
     ],
 )
-def test_column_hwm_compare(hwm_class, value, delta):  # noqa: WPS210
+def test_column_hwm_compare(hwm_class, value, delta):
     column1 = Column(name="some1")
     column2 = Column(name="some2")
 
@@ -241,15 +241,15 @@ def test_column_hwm_compare(hwm_class, value, delta):  # noqa: WPS210
                         assert item2 < item1
 
 
-@pytest.mark.parametrize(  # noqa: WPS210
-    "hwm_class, value, delta",
+@pytest.mark.parametrize(
+    ("hwm_class", "value", "delta"),
     [
         (DateHWM, date.today(), timedelta(days=2)),
         (DateTimeHWM, datetime.now(), timedelta(seconds=2)),
         (IntHWM, 1, 2),
     ],
 )
-def test_column_hwm_covers(hwm_class, value, delta):  # noqa: WPS210
+def test_column_hwm_covers(hwm_class, value, delta):
     column = Column(name="some1")
     table = Table(name="abc.another1", instance="proto1://url1")
 
@@ -267,14 +267,14 @@ def test_column_hwm_covers(hwm_class, value, delta):  # noqa: WPS210
 
 
 @pytest.mark.parametrize(
-    "hwm_class, value",
+    ("hwm_class", "value"),
     [
         (DateHWM, date.today()),
         (DateTimeHWM, datetime.now()),
         (IntHWM, 1),
     ],
 )
-def test_column_hwm_compare_other_type(hwm_class, value):  # noqa: WPS210
+def test_column_hwm_compare_other_type(hwm_class, value):
     other_types = {DateHWM, DateTimeHWM, IntHWM} - {hwm_class}
 
     column = Column(name="some")
@@ -295,7 +295,7 @@ def test_column_hwm_compare_other_type(hwm_class, value):  # noqa: WPS210
 
 
 @pytest.mark.parametrize(
-    "hwm_class, value, delta",
+    ("hwm_class", "value", "delta"),
     [
         (DateHWM, date.today(), timedelta(days=2)),
         (DateTimeHWM, datetime.now(), timedelta(seconds=2)),
@@ -330,7 +330,7 @@ def test_column_hwm_add(hwm_class, value, delta):
 
 
 @pytest.mark.parametrize(
-    "hwm_class, value, delta",
+    ("hwm_class", "value", "delta"),
     [
         (DateHWM, date.today(), timedelta(days=2)),
         (DateTimeHWM, datetime.now(), timedelta(seconds=2)),
@@ -363,7 +363,7 @@ def test_column_hwm_sub(hwm_class, value, delta):
 
 
 @pytest.mark.parametrize(
-    "hwm_class, value, delta",
+    ("hwm_class", "value", "delta"),
     [
         (DateHWM, date.today(), timedelta(days=2)),
         (DateTimeHWM, datetime.now(), timedelta(seconds=2)),
@@ -442,14 +442,14 @@ def test_column_hwm_update(hwm_class, value, delta):
     ],
 )
 @pytest.mark.parametrize(
-    "column, column_qualified_name",
+    ("column", "column_qualified_name"),
     [
         (Column(name="id", partition={"partition": "abc", "another": "cde"}), "id|partition=abc/another=cde"),
         (Column(name="id"), "id"),
     ],
 )
 @pytest.mark.parametrize(
-    "table, table_qualified_name",
+    ("table", "table_qualified_name"),
     [
         (
             Table(name="mydb.mytable", instance="dbtype://host.name:1234/schema"),
@@ -460,7 +460,7 @@ def test_column_hwm_update(hwm_class, value, delta):
     ],
 )
 @pytest.mark.parametrize(
-    "process, process_qualified_name",
+    ("process", "process_qualified_name"),
     [
         (Process(name="myprocess", host="myhost"), "myprocess@myhost"),
         (Process(name="myprocess", task="abc", dag="cde", host="myhost"), "cde.abc.myprocess@myhost"),
@@ -484,7 +484,7 @@ def test_column_hwm_qualified_name(
 
 
 @pytest.mark.parametrize(
-    "hwm_class, hwm_type, value, serialized_value, wrong_values",
+    ("hwm_class", "hwm_type", "value", "serialized_value", "wrong_values"),
     [
         (DateHWM, "old_column_date", date(year=2021, month=12, day=1), "2021-12-01", ["1", DateHWM, "unknown", []]),
         (
@@ -531,7 +531,7 @@ def test_column_hwm_serialization(hwm_class, hwm_type, value, serialized_value, 
 
 
 @pytest.mark.parametrize(
-    "hwm_class, new_class, value",
+    ("hwm_class", "new_class", "value"),
     [
         (DateHWM, ColumnDateHWM, date.today()),
         (DateTimeHWM, ColumnDateTimeHWM, datetime.now()),

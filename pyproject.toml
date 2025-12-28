@@ -75,7 +75,6 @@ test-pydantic-2 = ["pydantic>=2,<3"]
 dev = [
     "mypy~=1.19.1",
     "pre-commit~=4.5.1",
-    "wemake-python-styleguide~=1.5.0",
     "types-psutil~=7.2.0",
 ]
 docs = [
@@ -108,6 +107,36 @@ docs = {requires-python = ">=3.12"}
 target-version = "py37"
 line-length = 120
 extend-exclude = ["docs/", "Makefile"]
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "D",
+    "ANN",
+    "FIX002",
+    "TD",
+    "UP006",
+    "UP007",
+    "UP045",
+    "TC001",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = [
+    "S",
+    "ANN",
+    "D",
+    "ARG",
+    "DTZ",
+    "PT011",
+    "PLR2004",
+    "PLR0913",
+    "PLR0915",
+    "RUF005",
+    "EM101",
+    "TRY003",
+]
+"tests/libs/*" = ["INP001"]
 
 [tool.mypy]
 plugins = 'pydantic.mypy'

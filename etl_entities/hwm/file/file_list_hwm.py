@@ -11,6 +11,8 @@ try:
 except (ImportError, AttributeError):
     from pydantic import Field, validator  # type: ignore[no-redef, assignment]
 
+from typing_extensions import Self
+
 from etl_entities.hwm import FileHWM
 from etl_entities.hwm.hwm_type_registry import register_hwm_type
 from etl_entities.instance import AbsolutePath
@@ -70,7 +72,7 @@ class FileListHWM(FileHWM[FileListType]):
 
     value: FileListType = Field(default_factory=frozenset)
 
-    def covers(self, value: str | os.PathLike) -> bool:  # type: ignore
+    def covers(self, value: str | os.PathLike) -> bool:
         """Return ``True`` if input value is already covered by HWM
 
         Examples
@@ -86,7 +88,7 @@ class FileListHWM(FileHWM[FileListType]):
 
         return value in self
 
-    def update(self: FileListHWMType, value: str | os.PathLike | Iterable[str | os.PathLike]) -> FileListHWMType:
+    def update(self, value: str | os.PathLike | Iterable[str | os.PathLike]) -> Self:
         """Updates current HWM value with some implementation-specific logic, and return HWM.
 
         .. note::
@@ -120,7 +122,7 @@ class FileListHWM(FileHWM[FileListType]):
 
         return self
 
-    def reset(self: FileListHWMType) -> FileListHWMType:
+    def reset(self) -> Self:
         """Reset current HWM value and return HWM.
 
         .. note::
@@ -144,7 +146,7 @@ class FileListHWM(FileHWM[FileListType]):
         """
         return self.set_value(frozenset())
 
-    def __add__(self: FileListHWMType, value: str | os.PathLike | Iterable[str | os.PathLike]) -> FileListHWMType:
+    def __add__(self, value: str | os.PathLike | Iterable[str | os.PathLike]) -> Self:
         """Adds path or paths to HWM value, and return copy of HWM
 
         Parameters
@@ -175,7 +177,7 @@ class FileListHWM(FileHWM[FileListType]):
 
         return self
 
-    def __sub__(self: FileListHWMType, value: str | os.PathLike | Iterable[str | os.PathLike]) -> FileListHWMType:
+    def __sub__(self, value: str | os.PathLike | Iterable[str | os.PathLike]) -> Self:
         """Remove path or paths from HWM value, and return copy of HWM
 
         Parameters
@@ -256,12 +258,13 @@ class FileListHWM(FileHWM[FileListType]):
 
         for item in value:
             if not isinstance(item, AbsolutePath):
-                item = AbsolutePath(item)
+                item = AbsolutePath(item)  # noqa: PLW2901
 
             if directory:
                 if sys.version_info >= (3, 9):
                     if not item.is_relative_to(directory):
-                        raise ValueError(f"Item {item} is not within directory {directory}")  # noqa: WPS220
+                        msg = f"Item {item} is not within directory {directory}"
+                        raise ValueError(msg)
                 else:
                     item.relative_to(directory)
 

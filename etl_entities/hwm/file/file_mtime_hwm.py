@@ -5,7 +5,7 @@ from __future__ import annotations
 from datetime import datetime
 from typing import Iterable, Optional, TypeVar
 
-from typing_extensions import Protocol, runtime_checkable
+from typing_extensions import Protocol, Self, runtime_checkable
 
 try:
     from pydantic.v1 import validator
@@ -21,18 +21,18 @@ FileModifiedTimeHWMType = TypeVar("FileModifiedTimeHWMType", bound="FileModified
 @runtime_checkable
 class StatWithMtime(Protocol):
     @property
-    def st_mtime(self) -> float | None: ...  # noqa: E704
+    def st_mtime(self) -> float | None: ...
 
 
 @runtime_checkable
 class PathWithStats(Protocol):
-    def is_file(self) -> bool: ...  # noqa: E704
-    def exists(self) -> bool: ...  # noqa: E704
-    def stat(self) -> StatWithMtime: ...  # noqa: E704
+    def is_file(self) -> bool: ...
+    def exists(self) -> bool: ...
+    def stat(self) -> StatWithMtime: ...
 
 
 @register_hwm_type("file_modification_time")
-class FileModifiedTimeHWM(FileHWM[Optional[datetime]]):  # noqa: WPS338r
+class FileModifiedTimeHWM(FileHWM[Optional[datetime]]):
     """HWM based on tracking file modification time.
 
     Uses ``Pathlib.Path(file).stat().st_mtime`` under the hood.
@@ -97,12 +97,12 @@ class FileModifiedTimeHWM(FileHWM[Optional[datetime]]):  # noqa: WPS338r
         return value
 
     @validator("value")
-    def _always_include_tz(cls, value: datetime | None):  # noqa: N805r
+    def _always_include_tz(cls, value: datetime | None):  # noqa: N805
         if value and value.tzinfo is None:
             return value.astimezone()
         return value
 
-    def covers(self, value: datetime | int | float | PathWithStats) -> bool:  # type: ignore
+    def covers(self, value: datetime | float | PathWithStats) -> bool:
         """Return ``True`` if input value is already covered by HWM
 
         Examples
@@ -128,9 +128,9 @@ class FileModifiedTimeHWM(FileHWM[Optional[datetime]]):  # noqa: WPS338r
         return self.value is not None and new_value is not None and self.value.timestamp() >= new_value.timestamp()
 
     def update(
-        self: FileModifiedTimeHWMType,
-        value: datetime | int | float | PathWithStats | Iterable[PathWithStats],
-    ) -> FileModifiedTimeHWMType:
+        self,
+        value: datetime | float | PathWithStats | Iterable[PathWithStats],
+    ) -> Self:
         """Updates current HWM value with some implementation-specific logic, and return HWM.
 
         .. note::
@@ -176,7 +176,7 @@ class FileModifiedTimeHWM(FileHWM[Optional[datetime]]):  # noqa: WPS338r
 
         return self
 
-    def reset(self: FileModifiedTimeHWMType) -> FileModifiedTimeHWMType:
+    def reset(self) -> Self:
         """Reset current HWM value and return HWM.
 
         .. note::

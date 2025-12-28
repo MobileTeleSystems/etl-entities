@@ -24,7 +24,7 @@ from etl_entities.old_hwm.column_hwm import ColumnHWM
     category=UserWarning,
 )
 @register_hwm_type("old_column_date")
-class DateHWM(ColumnHWM[date]):
+class DateHWM(ColumnHWM[date]):  # noqa: PLW1641
     """Date HWM type
 
     .. deprecated:: 2.0.0

@@ -38,7 +38,8 @@ class HWMStoreClassRegistry:
 
         result = cls._mapping.get(alias)
         if not result:
-            raise KeyError(f"Unknown HWM Store type {alias!r}")
+            msg = f"Unknown HWM Store type {alias!r}"
+            raise KeyError(msg)
 
         return result
 

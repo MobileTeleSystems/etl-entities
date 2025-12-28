@@ -12,6 +12,8 @@ try:
 except (ImportError, AttributeError):
     from pydantic import Field, validator  # type: ignore[no-redef, assignment]
 
+from typing_extensions import Self
+
 from etl_entities.entity import GenericModel
 from etl_entities.hwm.hwm import HWM
 
@@ -20,7 +22,7 @@ KeyValueHWMKeyType = TypeVar("KeyValueHWMKeyType")
 KeyValueHWMType = TypeVar("KeyValueHWMType", bound="KeyValueHWM")
 
 
-class KeyValueHWM(HWM[frozendict], Generic[KeyValueHWMKeyType, KeyValueHWMValueType], GenericModel):
+class KeyValueHWM(HWM[frozendict], GenericModel, Generic[KeyValueHWMKeyType, KeyValueHWMValueType]):  # noqa: PLW1641
     """HWM type storing ``key -> value`` map.
 
     Parameters
@@ -51,16 +53,14 @@ class KeyValueHWM(HWM[frozendict], Generic[KeyValueHWMKeyType, KeyValueHWMValueT
     """
 
     entity: Optional[str] = Field(default=None, alias="topic")
-    if sys.version_info >= (3, 9):  # noqa: WPS604
+    if sys.version_info >= (3, 9):
         value: frozendict[KeyValueHWMKeyType, KeyValueHWMValueType] = Field(default_factory=frozendict)
     else:
         value: frozendict = Field(default_factory=frozendict)
 
-    def update(self: KeyValueHWMType, new_data: dict) -> KeyValueHWMType:
+    def update(self, new_data: dict) -> Self:
         """
-        Updates the HWM value based on provided new key-value data. This method only updates
-        the value if the new value is greater than the current valur for a given key
-        or if the key does not exist in the current value.
+        Updates the HWM value based on provided new key-value data.
 
         .. note::
             Changes the HWM value in place and returns the modified instance.
@@ -68,7 +68,8 @@ class KeyValueHWM(HWM[frozendict], Generic[KeyValueHWMKeyType, KeyValueHWMValueT
         Parameters
         ----------
         new_data : dict
-            A dictionary representing new key-value data. For example: keys are partitions and values are offsets.
+            A dictionary representing new key-value data.
+            For example: keys are partitions and values are offsets.
 
         Returns
         -------
@@ -84,30 +85,12 @@ class KeyValueHWM(HWM[frozendict], Generic[KeyValueHWMKeyType, KeyValueHWMValueT
         >>> hwm = hwm.update({1: 125, 2: 130})
         >>> hwm.value
         frozendict.frozendict({0: 100, 1: 125, 2: 130})
-        >>> # Value for key 1 is not updated as 123 is less than current 125
-        >>> hwm = hwm.update({1: 123})
-        >>> hwm.value
-        frozendict.frozendict({0: 100, 1: 125, 2: 130})
         """
 
-        modified = False
-        new_dict = {int(key): int(value) for key, value in new_data.items()}
-        current_dict = dict(self.value)
-
-        for new_key, new_value in new_dict.items():
-            current_value = current_dict.get(new_key)
-            if current_value is None or new_value > current_value:
-                current_dict[new_key] = new_value
-                modified = True
-
-        # update the frozendict only if modifications were made.
-        # this avoids unnecessary reassignment and creation of a new frozendict object,
-        if modified:
-            self.set_value(frozendict(current_dict))
-
+        self.set_value(frozendict(new_data))
         return self
 
-    def reset(self: KeyValueHWMType) -> KeyValueHWMType:
+    def reset(self) -> Self:
         """Reset current HWM value and return HWM.
 
         .. note::
@@ -128,7 +111,7 @@ class KeyValueHWM(HWM[frozendict], Generic[KeyValueHWMKeyType, KeyValueHWMValueT
         >>> hwm = hwm.reset()
         >>> dict(hwm.value)
         {}
-        """  # noqa: P102
+        """
         return self.set_value(frozendict())
 
     def __eq__(self, other):

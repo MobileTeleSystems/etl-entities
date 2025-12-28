@@ -62,7 +62,7 @@ def import_plugin(entrypoint: EntryPoint):
         raise ImportError(error_msg) from e
 
 
-def import_plugins(group: str, whitelist: list[str] | None = None, blacklist: list[str] | None = None):  # noqa: WPS213
+def import_plugins(group: str, whitelist: list[str] | None = None, blacklist: list[str] | None = None):
     """
     Import all plugins registered for ETL entities.
     """
@@ -77,8 +77,8 @@ def import_plugins(group: str, whitelist: list[str] | None = None, blacklist: li
 
     log.debug("|Plugins| Found %d plugins", plugins_count)
     log.debug("|Plugins| Plugin load options:")
-    log.debug("whitelist", whitelist or [])
-    log.debug("blacklist", blacklist or [])
+    log.debug("whitelist: %r", whitelist or [])
+    log.debug("blacklist: %r", blacklist or [])
 
     for i, entrypoint in enumerate(entrypoints):
         if whitelist and entrypoint.name not in whitelist:

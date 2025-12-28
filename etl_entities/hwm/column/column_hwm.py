@@ -9,6 +9,8 @@ try:
 except (ImportError, AttributeError):
     from pydantic import Field  # type: ignore[no-redef, assignment]
 
+from typing_extensions import Self
+
 from etl_entities.entity import GenericModel
 from etl_entities.hwm.hwm import HWM
 
@@ -16,7 +18,7 @@ ColumnValueType = TypeVar("ColumnValueType")
 ColumnHWMType = TypeVar("ColumnHWMType", bound="ColumnHWM")
 
 
-class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], GenericModel):
+class ColumnHWM(HWM[Optional[ColumnValueType]], GenericModel, Generic[ColumnValueType]):  # noqa: PLW1641
     """Base column HWM type
 
     Parameters
@@ -49,7 +51,7 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], Generi
     entity: Optional[str] = Field(default=None, alias="source")
     value: Optional[ColumnValueType] = None
 
-    def __add__(self: ColumnHWMType, value: ColumnValueType) -> ColumnHWMType:
+    def __add__(self, value: ColumnValueType) -> Self:
         """Increase HWM value and return copy of HWM
 
         Parameters
@@ -81,7 +83,7 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], Generi
 
         return self
 
-    def __sub__(self: ColumnHWMType, value: ColumnValueType) -> ColumnHWMType:
+    def __sub__(self, value: ColumnValueType) -> Self:
         """Decrease HWM value, and return copy of HWM
 
         Parameters
@@ -138,7 +140,7 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], Generi
         other_fields = other.dict(exclude={"modified_time"})
         return self_fields == other_fields
 
-    def update(self: ColumnHWMType, value: ColumnValueType) -> ColumnHWMType:
+    def update(self, value: ColumnValueType) -> Self:
         """Updates current HWM value with some implementation-specific logic, and return HWM.
 
         .. note::
@@ -169,7 +171,7 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], Generi
 
         return self
 
-    def reset(self: ColumnHWMType) -> ColumnHWMType:
+    def reset(self) -> Self:
         """Reset current HWM value and return HWM.
 
         .. note::
@@ -215,8 +217,9 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], Generi
         self_fields = self.dict(exclude={"value", "modified_time"})
         other_fields = other.dict(exclude={"value", "modified_time"})
         if self_fields != other_fields:
+            msg = "Cannot compare ColumnHWM with different entity or expression"
             raise NotImplementedError(
-                "Cannot compare ColumnHWM with different entity or expression",
+                msg,
             )
 
         return self.value < other.value

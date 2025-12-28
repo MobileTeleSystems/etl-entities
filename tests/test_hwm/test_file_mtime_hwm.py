@@ -14,7 +14,7 @@ from etl_entities.instance import AbsolutePath
 
 
 @pytest.mark.parametrize(
-    "input_value, expected_value",
+    ("input_value", "expected_value"),
     [
         # values are always timezone-aware
         (
@@ -94,7 +94,7 @@ def test_file_modified_time_hwm_wrong_input():
 
 
 @pytest.mark.parametrize(
-    "input_value, expected_value",
+    ("input_value", "expected_value"),
     [
         (
             datetime(2023, 12, 30, 11, 22, 33, 456789),

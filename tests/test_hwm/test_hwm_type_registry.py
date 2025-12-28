@@ -12,7 +12,7 @@ from etl_entities.hwm import (
 
 
 @pytest.mark.parametrize(
-    "hwm_class, hwm_type, value, serialized_value",
+    ("hwm_class", "hwm_type", "value", "serialized_value"),
     [
         (ColumnDateHWM, "column_date", date(year=2021, month=12, day=1), "2021-12-01"),
         (

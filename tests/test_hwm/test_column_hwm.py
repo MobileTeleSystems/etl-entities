@@ -13,7 +13,7 @@ from etl_entities.hwm import (
 
 
 @pytest.mark.parametrize(
-    "hwm_class, input_value, value",
+    ("hwm_class", "input_value", "value"),
     [
         (ColumnDateHWM, date(2023, 12, 30), date(2023, 12, 30)),
         (ColumnDateHWM, "2023-12-30", date(2023, 12, 30)),
@@ -29,7 +29,7 @@ from etl_entities.hwm import (
         ),
         (ColumnIntHWM, 1, 1),
         (ColumnIntHWM, "1", 1),
-        (ColumnIntHWM, Decimal("1"), 1),
+        (ColumnIntHWM, Decimal(1), 1),
         (ColumnIntHWM, 1.0, 1),
         (ColumnIntHWM, "1.0", 1),
         (ColumnIntHWM, Decimal("1.0"), 1),
@@ -64,7 +64,7 @@ def test_column_hwm_valid_input(hwm_class, input_value, value):
 
 
 @pytest.mark.parametrize(
-    "hwm_class, value, wrong_values",
+    ("hwm_class", "value", "wrong_values"),
     [
         (ColumnDateHWM, date.today(), ["abc", "1.1", "1", "2021-01-01T11:22:33", 1111, [], ColumnDateHWM]),
         (ColumnDateTimeHWM, datetime.now(), ["abc", "1.1", "1", 1111, [], ColumnDateTimeHWM]),
@@ -95,7 +95,7 @@ def test_column_hwm_wrong_input(hwm_class, value, wrong_values):
 
 
 @pytest.mark.parametrize(
-    "hwm_class, value",
+    ("hwm_class", "value"),
     [
         (ColumnDateHWM, date.today()),
         (ColumnDateTimeHWM, datetime.now()),
@@ -142,15 +142,15 @@ def test_column_hwm_frozen(hwm_class):
                 setattr(hwm, attr, value)
 
 
-@pytest.mark.parametrize(  # noqa: WPS210
-    "hwm_class, value, delta",
+@pytest.mark.parametrize(
+    ("hwm_class", "value", "delta"),
     [
         (ColumnDateHWM, date.today(), timedelta(days=2)),
         (ColumnDateTimeHWM, datetime.now(), timedelta(seconds=2)),
         (ColumnIntHWM, 1, 2),
     ],
 )
-def test_column_hwm_compare(hwm_class, value, delta):  # noqa: WPS210
+def test_column_hwm_compare(hwm_class, value, delta):
     entity1 = "column_name_1"
     entity2 = "column_name_2"
 
@@ -224,7 +224,7 @@ def test_column_hwm_compare(hwm_class, value, delta):  # noqa: WPS210
         ColumnIntHWM,
     ],
 )
-def test_column_hwm_compare_other_type(hwm_class):  # noqa: WPS210
+def test_column_hwm_compare_other_type(hwm_class):
     name = secrets.token_hex(8)
     other_types = {ColumnDateHWM, ColumnDateTimeHWM, ColumnIntHWM} - {hwm_class}
     table = "table_name"
@@ -255,7 +255,7 @@ def test_column_hwm_compare_other_type(hwm_class):  # noqa: WPS210
 
 
 @pytest.mark.parametrize(
-    "hwm_class, value, delta",
+    ("hwm_class", "value", "delta"),
     [
         (ColumnDateHWM, date.today(), timedelta(days=2)),
         (ColumnDateTimeHWM, datetime.now(), timedelta(seconds=2)),
@@ -289,7 +289,7 @@ def test_column_hwm_add(hwm_class, value, delta):
 
 
 @pytest.mark.parametrize(
-    "hwm_class, value, delta",
+    ("hwm_class", "value", "delta"),
     [
         (ColumnDateHWM, date.today(), timedelta(days=2)),
         (ColumnDateTimeHWM, datetime.now(), timedelta(seconds=2)),
@@ -321,7 +321,7 @@ def test_column_hwm_sub(hwm_class, value, delta):
 
 
 @pytest.mark.parametrize(
-    "hwm_class, hwm_type, value, serialized_value",
+    ("hwm_class", "hwm_type", "value", "serialized_value"),
     [
         (
             ColumnDateHWM,
@@ -390,7 +390,7 @@ def test_column_hwm_serialization(hwm_class, hwm_type, value, serialized_value):
 )
 def test_column_hwm_unregistered_type(hwm_class):
     class UnregisteredHWM(hwm_class):
-        pass  # noqa: WPS604
+        pass
 
     err_msg = f"You should register '{UnregisteredHWM.__qualname__}' class using @register_hwm_type decorator"
 
@@ -399,7 +399,7 @@ def test_column_hwm_unregistered_type(hwm_class):
 
 
 @pytest.mark.parametrize(
-    "hwm_class, value, delta",
+    ("hwm_class", "value", "delta"),
     [
         (ColumnDateHWM, date.today(), timedelta(days=2)),
         (ColumnDateTimeHWM, datetime.now(), timedelta(seconds=2)),
@@ -469,7 +469,7 @@ def test_column_hwm_update(hwm_class, value, delta):
 
 
 @pytest.mark.parametrize(
-    "hwm_class, value",
+    ("hwm_class", "value"),
     [
         (ColumnDateHWM, date.today()),
         (ColumnDateTimeHWM, datetime.now()),

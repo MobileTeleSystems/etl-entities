@@ -14,7 +14,7 @@ ColumnValueType = TypeVar("ColumnValueType")
 
 # see https://github.com/python/mypy/issues/5374#issuecomment-1071157357
 @total_ordering  # type: ignore[misc]
-class ColumnHWM(HWM[Optional[ColumnValueType], str], GenericModel, Generic[ColumnValueType]):
+class ColumnHWM(HWM[Optional[ColumnValueType], str], GenericModel, Generic[ColumnValueType]):  # noqa: PLW1641
     """Base column HWM type
 
     .. deprecated:: 2.0.0
@@ -107,7 +107,7 @@ class ColumnHWM(HWM[Optional[ColumnValueType], str], GenericModel, Generic[Colum
             )
         """
 
-        return "#".join([self.column.qualified_name, self.source.qualified_name, self.process.qualified_name])
+        return f"{self.column.qualified_name}#{self.source.qualified_name}#{self.process.qualified_name}"
 
     def covers(self, value: ColumnValueType) -> bool:
         """Return ``True`` if input value is already covered by HWM
@@ -330,9 +330,8 @@ class ColumnHWM(HWM[Optional[ColumnValueType], str], GenericModel, Generic[Colum
                 if self_fields == other_fields:
                     return self.value < other.value
 
-                raise NotImplementedError(  # NOSONAR
-                    "Cannot compare ColumnHWM with different column, source or process",
-                )
+                msg = "Cannot compare ColumnHWM with different column, source or process"
+                raise NotImplementedError(msg)
 
             return NotImplemented
 

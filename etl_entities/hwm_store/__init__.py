@@ -12,8 +12,8 @@ from etl_entities.hwm_store.memory_hwm_store import MemoryHWMStore
 __all__ = [
     "BaseHWMStore",
     "HWMStoreClassRegistry",
-    "register_hwm_store_class",
-    "detect_hwm_store",
     "HWMStoreStackManager",
     "MemoryHWMStore",
+    "detect_hwm_store",
+    "register_hwm_store_class",
 ]

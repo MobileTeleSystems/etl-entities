@@ -11,7 +11,7 @@ from etl_entities.source import RemoteFolder
 
 
 @pytest.mark.parametrize(
-    "input_file, result_file",
+    ("input_file", "result_file"),
     [
         ("some", RelativePath("some")),
         (PosixPath("some"), RelativePath("some")),
@@ -575,7 +575,7 @@ def test_file_list_hwm_len():
 
 
 @pytest.mark.parametrize(
-    "process, process_qualified_name",
+    ("process", "process_qualified_name"),
     [
         (Process(name="myprocess", host="myhost"), "myprocess@myhost"),
         (Process(name="myprocess", task="abc", dag="cde", host="myhost"), "cde.abc.myprocess@myhost"),
@@ -626,7 +626,7 @@ def test_file_list_hwm_serialization():
     assert hwm2.serialize() == serialized3
     assert FileListHWM.deserialize(serialized3) == hwm2
 
-    for wrong_value in [FileListHWM, None, ""]:  # noqa: WPS335
+    for wrong_value in [FileListHWM, None, ""]:
         serialized4 = serialized1.copy()
         serialized4["value"] = wrong_value
         with pytest.raises((TypeError, ValueError)):

@@ -24,7 +24,7 @@ from etl_entities.old_hwm.column_hwm import ColumnHWM
     category=UserWarning,
 )
 @register_hwm_type("old_column_int")
-class IntHWM(ColumnHWM[StrictInt]):
+class IntHWM(ColumnHWM[StrictInt]):  # noqa: PLW1641
     """Integer HWM type
 
     .. deprecated:: 2.0.0

@@ -69,7 +69,8 @@ class ColumnDateHWM(ColumnHWM[date]):
         # we need to deserialize values, as pydantic parses fields in unexpected way:
         # https://docs.pydantic.dev/latest/api/standard_library_types/#datetimedatetime
         if isinstance(value, int):
-            raise ValueError("Cannot convert integer to date")
+            msg = "Cannot convert integer to date"
+            raise TypeError(msg)
 
         if isinstance(value, str):
             result = strict_str_validator(value).strip()
