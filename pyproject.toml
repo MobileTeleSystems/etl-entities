@@ -75,7 +75,7 @@ test-pydantic-1 = ["pydantic<2"]
 test-pydantic-2 = ["pydantic>=2,<3"]
 dev = [
     "mypy~=1.19.1",
-    "prek~=0.2.25",
+    "prek>=0.2.25,<0.4.0",
     "types-psutil~=7.2.0",
 ]
 docs = [
