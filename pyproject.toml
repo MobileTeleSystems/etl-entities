@@ -48,11 +48,11 @@ file = "README.rst"
 content-type = "text/x-rst"
 
 [project.urls]
-Homepage = "https://github.com/MobileTeleSystems/etl-entities"
+Homepage = "https://github.com/MTSWebServices/etl-entities"
 Documentation = "https://etl-entities.readthedocs.io/"
-Source = "https://github.com/MobileTeleSystems/etl-entities"
-"CI/CD" = "https://github.com/MobileTeleSystems/etl-entities/actions"
-Tracker = "https://github.com/MobileTeleSystems/etl-entities/issues"
+Source = "https://github.com/MTSWebServices/etl-entities"
+"CI/CD" = "https://github.com/MTSWebServices/etl-entities/actions"
+Tracker = "https://github.com/MTSWebServices/etl-entities/issues"
 
 [project.entry-points."tricoder_package_spy.register"]
 etl-entities = "etl_entities"
