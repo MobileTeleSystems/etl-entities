@@ -3,8 +3,9 @@
 from __future__ import annotations
 
 import os
+from collections.abc import Iterable
 from pathlib import PurePosixPath
-from typing import ClassVar, FrozenSet, Iterable, List
+from typing import ClassVar
 
 import typing_extensions
 
@@ -18,7 +19,7 @@ from etl_entities.hwm import register_hwm_type
 from etl_entities.instance import AbsolutePath, RelativePath
 from etl_entities.old_hwm.file_hwm import FileHWM
 
-FileListType = FrozenSet[RelativePath]
+FileListType = frozenset[RelativePath]
 
 
 @typing_extensions.deprecated(
@@ -26,7 +27,7 @@ FileListType = FrozenSet[RelativePath]
     category=UserWarning,
 )
 @register_hwm_type("old_file_list")
-class FileListHWM(FileHWM[FileListType, List[str]]):  # noqa: PLW1641
+class FileListHWM(FileHWM[FileListType, list[str]]):  # noqa: PLW1641
     """File List HWM type
 
     .. deprecated:: 2.0.0

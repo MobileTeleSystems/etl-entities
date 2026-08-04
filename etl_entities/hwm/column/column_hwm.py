@@ -2,7 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
-from typing import Generic, Optional, TypeVar
+from typing import Generic, TypeVar
 
 try:
     from pydantic.v1 import Field
@@ -18,7 +18,7 @@ ColumnValueType = TypeVar("ColumnValueType")
 ColumnHWMType = TypeVar("ColumnHWMType", bound="ColumnHWM")
 
 
-class ColumnHWM(HWM[Optional[ColumnValueType]], GenericModel, Generic[ColumnValueType]):  # noqa: PLW1641
+class ColumnHWM(HWM[ColumnValueType | None], GenericModel, Generic[ColumnValueType]):  # noqa: PLW1641
     """Base column HWM type
 
     Parameters

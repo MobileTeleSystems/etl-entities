@@ -2,8 +2,9 @@
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
+from collections.abc import Iterable
 from datetime import datetime
-from typing import Iterable, Optional, TypeVar
+from typing import TypeVar
 
 from typing_extensions import Protocol, Self, runtime_checkable
 
@@ -32,7 +33,7 @@ class PathWithStats(Protocol):
 
 
 @register_hwm_type("file_modification_time")
-class FileModifiedTimeHWM(FileHWM[Optional[datetime]]):
+class FileModifiedTimeHWM(FileHWM[datetime | None]):
     """HWM based on tracking file modification time.
 
     Uses ``Pathlib.Path(file).stat().st_mtime`` under the hood.

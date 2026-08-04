@@ -3,8 +3,8 @@
 from __future__ import annotations
 
 import os
-import sys
-from typing import FrozenSet, Iterable, TypeVar
+from collections.abc import Iterable
+from typing import TypeVar
 
 try:
     from pydantic.v1 import Field, validator
@@ -17,7 +17,7 @@ from etl_entities.hwm import FileHWM
 from etl_entities.hwm.hwm_type_registry import register_hwm_type
 from etl_entities.instance import AbsolutePath
 
-FileListType = FrozenSet[AbsolutePath]
+FileListType = frozenset[AbsolutePath]
 FileListHWMType = TypeVar("FileListHWMType", bound="FileListHWM")
 
 
@@ -260,13 +260,9 @@ class FileListHWM(FileHWM[FileListType]):
             if not isinstance(item, AbsolutePath):
                 item = AbsolutePath(item)  # noqa: PLW2901
 
-            if directory:
-                if sys.version_info >= (3, 9):
-                    if not item.is_relative_to(directory):
-                        msg = f"Item {item} is not within directory {directory}"
-                        raise ValueError(msg)
-                else:
-                    item.relative_to(directory)
+            if directory and not item.is_relative_to(directory):
+                msg = f"Item {item} is not within directory {directory}"
+                raise ValueError(msg)
 
             data.append(item)
 

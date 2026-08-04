@@ -2,9 +2,9 @@
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
-from collections.abc import Sequence
+from collections.abc import Callable, Mapping, Sequence
 from functools import wraps
-from typing import Any, Callable, Mapping
+from typing import Any
 
 from etl_entities.hwm_store.hwm_store_class_registry import HWMStoreClassRegistry
 

@@ -2,9 +2,12 @@
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
-from typing import ClassVar, Collection, TypeVar
+from typing import TYPE_CHECKING, ClassVar, TypeVar
 
 from etl_entities.hwm_store.base_hwm_store import BaseHWMStore
+
+if TYPE_CHECKING:
+    from collections.abc import Collection
 
 T = TypeVar("T", bound=BaseHWMStore)
 

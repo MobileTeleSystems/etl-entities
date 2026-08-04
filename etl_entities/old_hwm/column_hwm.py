@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from functools import total_ordering
-from typing import Generic, Optional, TypeVar
+from typing import Generic, TypeVar
 
 from etl_entities.entity import GenericModel
 from etl_entities.old_hwm.hwm import HWM
@@ -14,7 +14,7 @@ ColumnValueType = TypeVar("ColumnValueType")
 
 # see https://github.com/python/mypy/issues/5374#issuecomment-1071157357
 @total_ordering  # type: ignore[misc]
-class ColumnHWM(HWM[Optional[ColumnValueType], str], GenericModel, Generic[ColumnValueType]):  # noqa: PLW1641
+class ColumnHWM(HWM[ColumnValueType | None, str], GenericModel, Generic[ColumnValueType]):  # noqa: PLW1641
     """Base column HWM type
 
     .. deprecated:: 2.0.0

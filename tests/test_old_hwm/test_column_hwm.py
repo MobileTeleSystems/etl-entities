@@ -210,7 +210,7 @@ def test_column_hwm_compare(hwm_class, value, delta):
 
     items = (hwm1, hwm2, hwm3, hwm4)
     next_items = (hwm5, hwm6, hwm7, hwm8)
-    valid_pairs = list(zip(items, next_items))
+    valid_pairs = list(zip(items, next_items, strict=False))
 
     assert hwm == hwm1
 

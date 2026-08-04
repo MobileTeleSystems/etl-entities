@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import re
-from typing import OrderedDict
+from collections import OrderedDict
 
 import typing_extensions
 

@@ -2,7 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
-import sys
 from typing import Generic, TypeVar
 
 from frozendict import frozendict
@@ -53,10 +52,7 @@ class KeyValueHWM(HWM[frozendict], GenericModel, Generic[KeyValueHWMKeyType, Key
     """
 
     entity: str | None = Field(default=None, alias="topic")
-    if sys.version_info >= (3, 9):
-        value: frozendict[KeyValueHWMKeyType, KeyValueHWMValueType] = Field(default_factory=frozendict)
-    else:
-        value: frozendict = Field(default_factory=frozendict)
+    value: frozendict[KeyValueHWMKeyType, KeyValueHWMValueType] = Field(default_factory=frozendict)
 
     def update(self, new_data: dict) -> Self:
         """
