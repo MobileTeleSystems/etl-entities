@@ -4,7 +4,7 @@
 
 from __future__ import annotations
 
-from typing import ClassVar, Tuple
+from typing import ClassVar
 
 try:
     from pydantic.v1 import AnyUrl
@@ -20,7 +20,7 @@ class GenericURL(AnyUrl):
         ``user``, ``password``, ``query`` and ``fragment`` parts are not allowed
     """
 
-    PROHIBITED_PARTS: ClassVar[Tuple[str, ...]] = ("user", "password", "query", "fragment")
+    PROHIBITED_PARTS: ClassVar[tuple[str, ...]] = ("user", "password", "query", "fragment")
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

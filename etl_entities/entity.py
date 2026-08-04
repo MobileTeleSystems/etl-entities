@@ -40,17 +40,3 @@ class GenericModel(PydanticGenericModel):
     @classmethod
     def deserialize(cls, inp: dict):
         return cls.parse_obj(inp)
-
-
-class Entity:
-    """
-    Generic entity representation
-    """
-
-    @property
-    def qualified_name(self) -> str:
-        """
-        Unique entity name
-        """
-
-        return str(self)

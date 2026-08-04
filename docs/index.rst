@@ -30,16 +30,6 @@
     hwm_store/hwm_store_stack_manager
     hwm_store/detect_hwm_store
 
-
-.. toctree::
-    :maxdepth: 2
-    :caption: Deprecated
-    :hidden:
-
-    old_hwm/index
-    source/index
-    process/index
-
 .. toctree::
     :maxdepth: 2
     :caption: Plugins

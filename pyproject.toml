@@ -34,7 +34,6 @@ dependencies = [
     "bidict",
     "frozendict",
     "importlib_metadata>=3.6.0",
-    "psutil",
     "pydantic<3",
     "typing-extensions>=4.5.0",
 ]
@@ -74,7 +73,6 @@ dev = [
     "mypy~=2.3.0",
     "prek~=0.4.12",
     "ruff~=0.16.1",
-    "types-psutil~=7.2.0",
 ]
 docs = [
     "furo~=2025.12.19",
@@ -108,7 +106,6 @@ norecursedirs = [".git", ".venv"]
 cache_dir = ".pytest_cache"
 log_cli_level = "INFO"
 addopts = '--doctest-modules --ignore-glob="tests/libs/**"'
-filterwarnings = ["ignore:Deprecated in v2.0, will be removed in v3.0:UserWarning"]
 
 [tool.coverage.run]
 source_pkgs = ["etl_entities"]
