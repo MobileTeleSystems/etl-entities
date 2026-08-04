@@ -121,7 +121,7 @@ def test_detect_hwm_store_wrong_options(config_constructor):
 
     conf = config_constructor({"hwm_store": {"memory": {"unknown": "arg"}}})
 
-    with pytest.raises(ValueError, match="extra fields not permitted"):
+    with pytest.raises(ValueError, match="Extra inputs are not permitted"):
         main(conf)
 
 

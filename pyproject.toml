@@ -17,7 +17,6 @@ description = "ETL Entities lib for onETL"
 classifiers = [
     "Development Status :: 5 - Production/Stable",
     "Framework :: Pydantic",
-    "Framework :: Pydantic :: 1",
     "Framework :: Pydantic :: 2",
     "Intended Audience :: Developers",
     "Operating System :: OS Independent",
@@ -34,7 +33,7 @@ dependencies = [
     "bidict",
     "frozendict",
     "importlib_metadata>=3.6.0",
-    "pydantic<3",
+    "pydantic>=2,<3",
     "typing-extensions>=4.5.0",
 ]
 dynamic = ["version"]
@@ -67,8 +66,6 @@ test = [
     "omegaconf~=2.3.1",
     "pytest~=9.1.1",
 ]
-test-pydantic-1 = ["pydantic<2"]
-test-pydantic-2 = ["pydantic>=2,<3"]
 dev = [
     "mypy~=2.3.0",
     "prek~=0.4.12",
@@ -89,12 +86,6 @@ docs = [
 
 [tool.uv]
 default-groups = []
-conflicts = [
-    [
-        { group = "test-pydantic-1" },
-        { group = "test-pydantic-2" },
-    ],
-]
 
 [tool.uv.dependency-groups]
 dev = {requires-python = ">=3.12"}

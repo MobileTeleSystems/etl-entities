@@ -4,10 +4,7 @@ from __future__ import annotations
 
 from decimal import Decimal, InvalidOperation
 
-try:
-    from pydantic.v1 import StrictInt, validator
-except (ImportError, AttributeError):
-    from pydantic import StrictInt, validator  # type: ignore[no-redef, assignment]
+from pydantic import StrictInt, field_validator
 
 from etl_entities.hwm.column.column_hwm import ColumnHWM
 from etl_entities.hwm.hwm_type_registry import register_hwm_type
@@ -60,8 +57,9 @@ class ColumnIntHWM(ColumnHWM[int]):
 
     value: StrictInt | None = None
 
-    @validator("value", pre=True)
-    def _validate_value(cls, raw_value):  # noqa: N805
+    @field_validator("value", mode="before")
+    @classmethod
+    def _validate_value(cls, raw_value):
         if raw_value is None or raw_value == "null":
             return None
 
@@ -72,9 +70,12 @@ class ColumnIntHWM(ColumnHWM[int]):
                 # pydantic will raise validation error
                 return raw_value
 
-        real_value = int(raw_value)
-        if raw_value == real_value:
-            return real_value
+        try:
+            real_value = int(raw_value)
+            if raw_value == real_value:
+                return real_value
+        except (ValueError, TypeError):
+            pass
 
         # pydantic will raise validation error
         return raw_value

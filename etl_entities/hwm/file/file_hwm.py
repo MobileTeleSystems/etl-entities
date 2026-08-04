@@ -2,17 +2,12 @@
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
-import os
 from abc import abstractmethod
-from typing import Any, ClassVar, Generic, TypeVar
+from typing import Any, Generic, TypeVar
 
-try:
-    from pydantic.v1 import Field, validator
-except (ImportError, AttributeError):
-    from pydantic import Field, validator  # type: ignore[no-redef, assignment]
+from pydantic import ConfigDict, Field, field_validator
 
-from etl_entities.entity import GenericModel
-from etl_entities.hwm.file.absolute_path import AbsolutePath
+from etl_entities.hwm.file.absolute_path import AbsolutePath, parse_absolute_path
 from etl_entities.hwm.hwm import HWM
 
 FileHWMValueType = TypeVar("FileHWMValueType")
@@ -20,7 +15,6 @@ FileHWMValueType = TypeVar("FileHWMValueType")
 
 class FileHWM(  # noqa: PLW1641
     HWM[FileHWMValueType],
-    GenericModel,
     Generic[FileHWMValueType],
 ):
     """Basic file HWM type
@@ -56,8 +50,7 @@ class FileHWM(  # noqa: PLW1641
     entity: AbsolutePath | None = Field(default=None, alias="directory")
     value: FileHWMValueType
 
-    class Config:
-        json_encoders: ClassVar = {AbsolutePath: os.fspath}
+    model_config = ConfigDict(extra="forbid")
 
     @abstractmethod
     def covers(self, value: Any) -> bool:
@@ -80,13 +73,14 @@ class FileHWM(  # noqa: PLW1641
         if not isinstance(other, type(self)):
             return NotImplemented
 
-        self_fields = self.dict(exclude={"modified_time"})
-        other_fields = other.dict(exclude={"modified_time"})
+        self_fields = self.model_dump(exclude={"modified_time"}, warnings=False)
+        other_fields = other.model_dump(exclude={"modified_time"}, warnings=False)
 
         return self_fields == other_fields
 
-    @validator("entity", pre=True)
-    def _validate_directory(cls, value):  # noqa: N805
+    @field_validator("entity", mode="before")
+    @classmethod
+    def _validate_directory(cls, value):
         if value is None:
             return None
-        return AbsolutePath(value)
+        return parse_absolute_path(value)

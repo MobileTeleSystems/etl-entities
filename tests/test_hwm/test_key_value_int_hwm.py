@@ -92,22 +92,22 @@ def test_key_value_int_hwm_set_value():
 
     hwm = KeyValueIntHWM(name=name)
 
-    hwm1 = hwm.copy()
+    hwm1 = hwm.model_copy()
     hwm1.set_value(value)
     assert hwm1.value == frozendict(value)
     assert hwm1.modified_time > hwm.modified_time
 
-    hwm2 = hwm.copy()
+    hwm2 = hwm.model_copy()
     hwm2.set_value(value1)
     assert hwm2.value == frozendict(value1)
     assert hwm2.modified_time > hwm.modified_time
 
-    hwm3 = hwm.copy()
+    hwm3 = hwm.model_copy()
     hwm3.set_value(value2)
     assert hwm3.value == frozendict(value2)
     assert hwm3.modified_time > hwm.modified_time
 
-    hwm4 = hwm.copy()
+    hwm4 = hwm.model_copy()
     hwm4.set_value(value3)
     assert hwm4.value == frozendict(value3)
     assert hwm4.modified_time > hwm.modified_time
@@ -129,7 +129,7 @@ def test_key_value_int_hwm_frozen():
 
     for attr in ("value", "entity", "expression", "description", "modified_time"):
         for item in (1, "abc", None, value1, value2, value3, value, modified_time):
-            with pytest.raises(TypeError):
+            with pytest.raises(ValueError, match="Instance is frozen"):
                 setattr(hwm, attr, item)
 
 

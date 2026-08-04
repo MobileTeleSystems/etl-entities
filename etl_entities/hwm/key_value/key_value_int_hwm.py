@@ -5,14 +5,10 @@ from __future__ import annotations
 from collections.abc import Mapping
 
 from frozendict import frozendict
+from pydantic import field_validator
 from typing_extensions import Self
 
-try:
-    from pydantic.v1 import validator
-except (ImportError, AttributeError):
-    from pydantic import validator  # type: ignore[no-redef, assignment]
-
-from etl_entities.hwm.hwm_type_registry import register_hwm_type
+from etl_entities.hwm.hwm_type_registry import HWMTypeRegistry, register_hwm_type
 from etl_entities.hwm.key_value.key_value_hwm import KeyValueHWM
 
 
@@ -65,30 +61,24 @@ class KeyValueIntHWM(KeyValueHWM[int, int]):
     """
 
     def serialize(self) -> dict:
-        # Convert self.value to a regular dictionary if it is a frozendict
-        # This is necessary because frozendict objects are not natively serializable to JSON.
-        return {
-            "name": self.name,
-            "value": dict(self.value),
-            "description": self.description,
-            "entity": self.entity,
-            "expression": self.expression,
-            "modified_time": self.modified_time.isoformat() if self.modified_time else None,
-            "type": "key_value_int",
-        }
+        result = self.model_dump(mode="json", exclude={"value"}, warnings=False)
+        result["value"] = dict(self.value)
+        result["type"] = HWMTypeRegistry.get_key(self.__class__)
+        return result
 
-    @validator("value", pre=True)
-    def _validate_int_values(cls, key_value):  # noqa: N805
+    @field_validator("value", mode="before")
+    @classmethod
+    def _validate_int_values(cls, key_value):
         if isinstance(key_value, Mapping):
             result = {}
             for key, value in key_value.items():
                 if not isinstance(key, (int, str)):
                     msg = f"key should be integer, got {key!r}"
-                    raise TypeError(msg)
+                    raise ValueError(msg)  # noqa: TRY004
 
                 if not isinstance(value, (int, str)):
                     msg = f"Value should be integer, got {value!r}"
-                    raise TypeError(msg)
+                    raise ValueError(msg)  # noqa: TRY004
 
                 result[int(key)] = int(value)
             return frozendict(result)
@@ -130,7 +120,7 @@ class KeyValueIntHWM(KeyValueHWM[int, int]):
         """
 
         modified = False
-        current_dict = dict(self.value)
+        current_dict = {int(key): int(value) for key, value in self.value.items()}
         new_dict = {int(key): int(value) for key, value in new_data.items()}
 
         for new_key, new_value in new_dict.items():

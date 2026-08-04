@@ -6,12 +6,8 @@ from collections.abc import Iterable
 from datetime import datetime
 from typing import TypeVar
 
+from pydantic import field_validator
 from typing_extensions import Protocol, Self, runtime_checkable
-
-try:
-    from pydantic.v1 import validator
-except (ImportError, AttributeError):
-    from pydantic import validator  # type: ignore[no-redef, assignment]
 
 from etl_entities.hwm import FileHWM
 from etl_entities.hwm.hwm_type_registry import register_hwm_type
@@ -91,14 +87,9 @@ class FileModifiedTimeHWM(FileHWM[datetime | None]):
 
     value: datetime | None = None
 
-    @validator("value", pre=True)
-    def _parse_isoformat(cls, value):  # noqa: N805
-        if isinstance(value, str):
-            return datetime.fromisoformat(value)
-        return value
-
-    @validator("value")
-    def _always_include_tz(cls, value: datetime | None):  # noqa: N805
+    @field_validator("value", mode="after")
+    @classmethod
+    def _always_include_tz(cls, value: datetime | None):
         if value and value.tzinfo is None:
             return value.astimezone()
         return value

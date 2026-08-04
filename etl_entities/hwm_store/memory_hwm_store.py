@@ -2,10 +2,7 @@
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
-try:
-    from pydantic.v1 import PrivateAttr
-except (ImportError, AttributeError):
-    from pydantic import PrivateAttr  # type: ignore[no-redef, assignment]
+from pydantic import ConfigDict, PrivateAttr
 
 from etl_entities.hwm import HWM
 from etl_entities.hwm.hwm_type_registry import HWMTypeRegistry
@@ -43,8 +40,7 @@ class MemoryHWMStore(BaseHWMStore):
 
     _data: dict[str, dict] = PrivateAttr(default_factory=dict)
 
-    class Config:
-        extra = "forbid"
+    model_config = ConfigDict(extra="forbid")
 
     def get_hwm(self, name: str) -> HWM | None:
         if name not in self._data:

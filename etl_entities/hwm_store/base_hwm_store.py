@@ -100,7 +100,7 @@ class BaseHWMStore(BaseModel, ABC):
 
     def _log_parameters(self) -> None:
         log.info("Using %s as HWM Store", self.__class__.__name__)
-        options = self.dict(by_alias=True, exclude_none=True)
+        options = self.model_dump(exclude_none=True, warnings=False)
 
         if options:
             log.info("|%s| Using options:", self.__class__.__name__)

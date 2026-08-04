@@ -7,17 +7,13 @@ resolution-markers = [
     "python_full_version == '3.12.*'",
     "python_full_version < '3.12'",
 ]
-conflicts = [[
-    { package = "etl-entities", group = "test-pydantic-1" },
-    { package = "etl-entities", group = "test-pydantic-2" },
-]]
 
 [[package]]
 name = "accessible-pygments"
 version = "0.0.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "pygments", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
+    { name = "pygments" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/bc/c1/bbac6a50d02774f91572938964c582fff4270eee73ab822a4aeea4d8b11b/accessible_pygments-0.0.5.tar.gz", hash = "sha256:40918d3e6a2b619ad424cb91e556bd3bd8865443d9f22f1dcdf79e33c8046872", size = 1377899, upload-time = "2024-05-10T11:23:10.216Z" }
 wheels = [
@@ -53,10 +49,10 @@ name = "apeye"
 version = "1.4.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "apeye-core", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "domdf-python-tools", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "platformdirs", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "requests", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
+    { name = "apeye-core" },
+    { name = "domdf-python-tools" },
+    { name = "platformdirs" },
+    { name = "requests" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/4f/6b/cc65e31843d7bfda8313a9dc0c77a21e8580b782adca53c7cb3e511fe023/apeye-1.4.1.tar.gz", hash = "sha256:14ea542fad689e3bfdbda2189a354a4908e90aee4bf84c15ab75d68453d76a36", size = 99219, upload-time = "2023-08-14T15:32:41.381Z" }
 wheels = [
@@ -68,8 +64,8 @@ name = "apeye-core"
 version = "1.1.5"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "domdf-python-tools", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "idna", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
+    { name = "domdf-python-tools" },
+    { name = "idna" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/e5/4c/4f108cfd06923bd897bf992a6ecb6fb122646ee7af94d7f9a64abd071d4c/apeye_core-1.1.5.tar.gz", hash = "sha256:5de72ed3d00cc9b20fea55e54b7ab8f5ef8500eb33a5368bc162a5585e238a55", size = 96511, upload-time = "2024-01-30T17:45:48.727Z" }
 wheels = [
@@ -122,7 +118,7 @@ name = "autodocsumm"
 version = "0.2.15"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "sphinx", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
+    { name = "sphinx" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/46/b7/f28dea12fae1d1ad1e706f5cf6d16e8d735f305ebee86fd9390e099bd27d/autodocsumm-0.2.15.tar.gz", hash = "sha256:eaf431e7a5a39e41a215311173c8b95e83859059df1ccf3b79c64bf3d5582b3c", size = 46674, upload-time = "2026-03-26T20:44:07.074Z" }
 wheels = [
@@ -143,8 +139,8 @@ name = "beautifulsoup4"
 version = "4.15.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "soupsieve", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "typing-extensions", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
+    { name = "soupsieve" },
+    { name = "typing-extensions" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/43/65/318323f98dbee45d42dff61d8f047181bc6f2268a9068cfad035a46be5af/beautifulsoup4-4.15.0.tar.gz", hash = "sha256:288e3ca7d54b06f2ac191970bc275c1939cb46d450b255bf6718b04aa37ab4f7", size = 632571, upload-time = "2026-06-07T16:44:20.453Z" }
 wheels = [
@@ -165,8 +161,8 @@ name = "cachecontrol"
 version = "0.14.4"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "msgpack", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "requests", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
+    { name = "msgpack" },
+    { name = "requests" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/2d/f6/c972b32d80760fb79d6b9eeb0b3010a46b89c0b23cf6329417ff7886cd22/cachecontrol-0.14.4.tar.gz", hash = "sha256:e6220afafa4c22a47dd0badb319f84475d79108100d04e26e8542ef7d3ab05a1", size = 16150, upload-time = "2025-11-14T04:32:13.138Z" }
 wheels = [
@@ -175,7 +171,7 @@ wheels = [
 
 [package.optional-dependencies]
 filecache = [
-    { name = "filelock", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
+    { name = "filelock" },
 ]
 
 [[package]]
@@ -279,7 +275,7 @@ name = "click"
 version = "8.4.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "colorama", marker = "(python_full_version >= '3.12' and sys_platform == 'win32') or (python_full_version < '3.12' and extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2') or (sys_platform != 'win32' and extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
+    { name = "colorama", marker = "sys_platform == 'win32'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/76/d4/81420972a676e8ffea40450d8c8c92943e7218a78fe9b64359836cc9876b/click-8.4.2.tar.gz", hash = "sha256:9a6cea6e60b17ebe0a44c5cc636d94f09bd66142c1cd7d8b4cd731c4917a15f6", size = 338000, upload-time = "2026-06-24T17:45:15.148Z" }
 wheels = [
@@ -398,8 +394,8 @@ name = "dict2css"
 version = "0.6.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "domdf-python-tools", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "tinycss2", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
+    { name = "domdf-python-tools" },
+    { name = "tinycss2" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/83/ae/242596e550f79aa85ab6b5310caadd0b592063dc0c20c397d25707981f65/dict2css-0.6.0.tar.gz", hash = "sha256:143e55cb71c98a88c79f2c41e08a5fa4d875659275756f794e31ccd69936ce88", size = 9268, upload-time = "2026-05-21T08:34:29.598Z" }
 wheels = [
@@ -420,8 +416,8 @@ name = "domdf-python-tools"
 version = "3.10.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "natsort", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "typing-extensions", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
+    { name = "natsort" },
+    { name = "typing-extensions" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/36/8b/ab2d8a292bba8fe3135cacc8bfd3576710a14b8f2d0a8cde19130d5c9d21/domdf_python_tools-3.10.0.tar.gz", hash = "sha256:2ae308d2f4f1e9145f5f4ba57f840fbfd1c2983ee26e4824347789649d3ae298", size = 100458, upload-time = "2025-02-12T17:34:05.747Z" }
 wheels = [
@@ -435,38 +431,31 @@ dependencies = [
     { name = "bidict" },
     { name = "frozendict" },
     { name = "importlib-metadata" },
-    { name = "pydantic", version = "1.10.26", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-12-etl-entities-test-pydantic-1'" },
-    { name = "pydantic", version = "2.13.4", source = { registry = "https://pypi.org/simple" }, marker = "extra == 'group-12-etl-entities-test-pydantic-2' or extra != 'group-12-etl-entities-test-pydantic-1'" },
+    { name = "pydantic" },
     { name = "typing-extensions" },
 ]
 
 [package.dev-dependencies]
 dev = [
-    { name = "mypy", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "prek", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "ruff", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
+    { name = "mypy", marker = "python_full_version >= '3.12'" },
+    { name = "prek", marker = "python_full_version >= '3.12'" },
+    { name = "ruff", marker = "python_full_version >= '3.12'" },
 ]
 docs = [
-    { name = "furo", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "numpydoc", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "packaging", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "sphinx", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "sphinx-copybutton", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "sphinx-last-updated-by-git", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "sphinx-toolbox", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "sphinxcontrib-towncrier", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "towncrier", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
+    { name = "furo", marker = "python_full_version >= '3.12'" },
+    { name = "numpydoc", marker = "python_full_version >= '3.12'" },
+    { name = "packaging", marker = "python_full_version >= '3.12'" },
+    { name = "sphinx", marker = "python_full_version >= '3.12'" },
+    { name = "sphinx-copybutton", marker = "python_full_version >= '3.12'" },
+    { name = "sphinx-last-updated-by-git", marker = "python_full_version >= '3.12'" },
+    { name = "sphinx-toolbox", marker = "python_full_version >= '3.12'" },
+    { name = "sphinxcontrib-towncrier", marker = "python_full_version >= '3.12'" },
+    { name = "towncrier", marker = "python_full_version >= '3.12'" },
 ]
 test = [
     { name = "coverage" },
     { name = "omegaconf" },
     { name = "pytest" },
-]
-test-pydantic-1 = [
-    { name = "pydantic", version = "1.10.26", source = { registry = "https://pypi.org/simple" } },
-]
-test-pydantic-2 = [
-    { name = "pydantic", version = "2.13.4", source = { registry = "https://pypi.org/simple" } },
 ]
 
 [package.metadata]
@@ -474,7 +463,7 @@ requires-dist = [
     { name = "bidict" },
     { name = "frozendict" },
     { name = "importlib-metadata", specifier = ">=3.6.0" },
-    { name = "pydantic", specifier = "<3" },
+    { name = "pydantic", specifier = ">=2,<3" },
     { name = "typing-extensions", specifier = ">=4.5.0" },
 ]
 
@@ -500,15 +489,13 @@ test = [
     { name = "omegaconf", specifier = "~=2.3.1" },
     { name = "pytest", specifier = "~=9.1.1" },
 ]
-test-pydantic-1 = [{ name = "pydantic", specifier = "<2" }]
-test-pydantic-2 = [{ name = "pydantic", specifier = ">=2,<3" }]
 
 [[package]]
 name = "exceptiongroup"
 version = "1.3.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "typing-extensions", marker = "python_full_version < '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
+    { name = "typing-extensions" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/50/79/66800aadf48771f6b62f7eb014e352e5d06856655206165d775e675a02c9/exceptiongroup-1.3.1.tar.gz", hash = "sha256:8b412432c6055b0b7d14c310000ae93352ed6754f70fa8f7c34141f91c4e3219", size = 30371, upload-time = "2025-11-21T23:01:54.787Z" }
 wheels = [
@@ -558,11 +545,11 @@ name = "furo"
 version = "2025.12.19"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "accessible-pygments", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "beautifulsoup4", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "pygments", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "sphinx", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "sphinx-basic-ng", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
+    { name = "accessible-pygments" },
+    { name = "beautifulsoup4" },
+    { name = "pygments" },
+    { name = "sphinx" },
+    { name = "sphinx-basic-ng" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/ec/20/5f5ad4da6a5a27c80f2ed2ee9aee3f9e36c66e56e21c00fde467b2f8f88f/furo-2025.12.19.tar.gz", hash = "sha256:188d1f942037d8b37cd3985b955839fea62baa1730087dc29d157677c857e2a7", size = 1661473, upload-time = "2025-12-19T17:34:40.889Z" }
 wheels = [
@@ -574,8 +561,8 @@ name = "html5lib"
 version = "1.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "six", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "webencodings", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
+    { name = "six" },
+    { name = "webencodings" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/ac/b6/b55c3f49042f1df3dcd422b7f224f939892ee94f22abcf503a9b7339eaf2/html5lib-1.1.tar.gz", hash = "sha256:b2e5b40261e20f354d198eae92afc10d750afb487ed5e50f9c4eaf07c184146f", size = 272215, upload-time = "2020-06-22T23:32:38.834Z" }
 wheels = [
@@ -626,7 +613,7 @@ name = "jinja2"
 version = "3.1.6"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "markupsafe", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
+    { name = "markupsafe" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/df/bf/f7da0350254c0ed7c72f3e33cef02e048281fec7ecec5f032d4aac52226b/jinja2-3.1.6.tar.gz", hash = "sha256:0137fb05990d35f1275a587e9aee6d56da821fc83491a0fb838183be43f66d6d", size = 245115, upload-time = "2025-03-05T20:05:02.478Z" }
 wheels = [
@@ -883,11 +870,11 @@ name = "mypy"
 version = "2.3.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "ast-serialize", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "librt", marker = "(python_full_version >= '3.12' and platform_python_implementation != 'PyPy') or (python_full_version < '3.12' and extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2') or (platform_python_implementation == 'PyPy' and extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "mypy-extensions", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "pathspec", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "typing-extensions", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
+    { name = "ast-serialize" },
+    { name = "librt", marker = "platform_python_implementation != 'PyPy'" },
+    { name = "mypy-extensions" },
+    { name = "pathspec" },
+    { name = "typing-extensions" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/12/af/4e516a05d3ca2eb9283e9ec45b2c02225c1514dd6da49fd3c9eaa6639370/mypy-2.3.0.tar.gz", hash = "sha256:465965d41cd9a2726694e983e8ce7113259327bec798115d1e1dfa2a52fb666e", size = 3988104, upload-time = "2026-07-13T11:34:53.387Z" }
 wheels = [
@@ -960,7 +947,7 @@ name = "numpydoc"
 version = "1.10.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "sphinx", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
+    { name = "sphinx" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/e9/3c/dfccc9e7dee357fb2aa13c3890d952a370dd0ed071e0f7ed62ed0df567c1/numpydoc-1.10.0.tar.gz", hash = "sha256:3f7970f6eee30912260a6b31ac72bba2432830cd6722569ec17ee8d3ef5ffa01", size = 94027, upload-time = "2025-12-02T16:39:12.937Z" }
 wheels = [
@@ -1042,57 +1029,8 @@ wheels = [
 
 [[package]]
 name = "pydantic"
-version = "1.10.26"
-source = { registry = "https://pypi.org/simple" }
-resolution-markers = [
-    "python_full_version >= '3.15'",
-    "python_full_version >= '3.13' and python_full_version < '3.15'",
-    "python_full_version == '3.12.*'",
-    "python_full_version < '3.12'",
-]
-dependencies = [
-    { name = "typing-extensions", marker = "extra == 'group-12-etl-entities-test-pydantic-1'" },
-]
-sdist = { url = "https://files.pythonhosted.org/packages/7b/da/fd89f987a376c807cd81ea0eff4589aade783bbb702637b4734ef2c743a2/pydantic-1.10.26.tar.gz", hash = "sha256:8c6aa39b494c5af092e690127c283d84f363ac36017106a9e66cb33a22ac412e", size = 357906, upload-time = "2025-12-18T15:47:46.557Z" }
-wheels = [
-    { url = "https://files.pythonhosted.org/packages/71/08/2587a6d4314e7539eec84acd062cb7b037638edb57a0335d20e4c5b8878c/pydantic-1.10.26-cp310-cp310-macosx_10_9_x86_64.whl", hash = "sha256:f7ae36fa0ecef8d39884120f212e16c06bb096a38f523421278e2f39c1784546", size = 2444588, upload-time = "2025-12-18T15:46:28.882Z" },
-    { url = "https://files.pythonhosted.org/packages/47/e6/10df5f08c105bcbb4adbee7d1108ff4b347702b110fed058f6a03f1c6b73/pydantic-1.10.26-cp310-cp310-macosx_11_0_arm64.whl", hash = "sha256:d95a76cf503f0f72ed7812a91de948440b2bf564269975738a4751e4fadeb572", size = 2255972, upload-time = "2025-12-18T15:46:31.72Z" },
-    { url = "https://files.pythonhosted.org/packages/ba/7d/fdb961e7adc2c31f394feba6f560ef2c74c446f0285e2c2eb87d2b7206c7/pydantic-1.10.26-cp310-cp310-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:a943ce8e00ad708ed06a1d9df5b4fd28f5635a003b82a4908ece6f24c0b18464", size = 2857175, upload-time = "2025-12-18T15:46:34Z" },
-    { url = "https://files.pythonhosted.org/packages/8f/6c/f21e27dda475d4c562bd01b5874284dd3180f336c1e669413b743ca8b278/pydantic-1.10.26-cp310-cp310-musllinux_1_2_x86_64.whl", hash = "sha256:465ad8edb29b15c10b779b16431fe8e77c380098badf6db367b7a1d3e572cf53", size = 2947001, upload-time = "2025-12-18T15:46:35.922Z" },
-    { url = "https://files.pythonhosted.org/packages/6d/f6/27ea206232cbb6ec24dc4e4e8888a9a734f96a1eaf13504be4b30ef26aa7/pydantic-1.10.26-cp310-cp310-win_amd64.whl", hash = "sha256:80e6be6272839c8a7641d26ad569ab77772809dd78f91d0068dc0fc97f071945", size = 2066217, upload-time = "2025-12-18T15:46:37.614Z" },
-    { url = "https://files.pythonhosted.org/packages/1d/c1/d521e64c8130e1ad9d22c270bed3fabcc0940c9539b076b639c88fd32a8d/pydantic-1.10.26-cp311-cp311-macosx_10_9_x86_64.whl", hash = "sha256:116233e53889bcc536f617e38c1b8337d7fa9c280f0fd7a4045947515a785637", size = 2428347, upload-time = "2025-12-18T15:46:39.41Z" },
-    { url = "https://files.pythonhosted.org/packages/2c/08/f4b804a00c16e3ea994cb640a7c25c579b4f1fa674cde6a19fa0dfb0ae4f/pydantic-1.10.26-cp311-cp311-macosx_11_0_arm64.whl", hash = "sha256:c3cfdd361addb6eb64ccd26ac356ad6514cee06a61ab26b27e16b5ed53108f77", size = 2212605, upload-time = "2025-12-18T15:46:41.006Z" },
-    { url = "https://files.pythonhosted.org/packages/5d/78/0df4b9efef29bbc5e39f247fcba99060d15946b4463d82a5589cf7923d71/pydantic-1.10.26-cp311-cp311-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:0e4451951a9a93bf9a90576f3e25240b47ee49ab5236adccb8eff6ac943adf0f", size = 2753560, upload-time = "2025-12-18T15:46:43.215Z" },
-    { url = "https://files.pythonhosted.org/packages/68/66/6ab6c1d3a116d05d2508fce64f96e35242938fac07544d611e11d0d363a0/pydantic-1.10.26-cp311-cp311-musllinux_1_2_x86_64.whl", hash = "sha256:9858ed44c6bea5f29ffe95308db9e62060791c877766c67dd5f55d072c8612b5", size = 2859235, upload-time = "2025-12-18T15:46:45.112Z" },
-    { url = "https://files.pythonhosted.org/packages/61/4e/f1676bb0fcdf6ed2ce4670d7d1fc1d6c3a06d84497644acfbe02649503f1/pydantic-1.10.26-cp311-cp311-win_amd64.whl", hash = "sha256:ac1089f723e2106ebde434377d31239e00870a7563245072968e5af5cc4d33df", size = 2066646, upload-time = "2025-12-18T15:46:46.816Z" },
-    { url = "https://files.pythonhosted.org/packages/02/6c/cd97a5a776c4515e6ee2ae81c2f2c5be51376dda6c31f965d7746ce0019f/pydantic-1.10.26-cp312-cp312-macosx_10_13_x86_64.whl", hash = "sha256:468d5b9cacfcaadc76ed0a4645354ab6f263ec01a63fb6d05630ea1df6ae453f", size = 2433795, upload-time = "2025-12-18T15:46:49.321Z" },
-    { url = "https://files.pythonhosted.org/packages/47/12/de20affa30dcef728fcf9cc98e13ff4438c7a630de8d2f90eb38eba0891c/pydantic-1.10.26-cp312-cp312-macosx_11_0_arm64.whl", hash = "sha256:2c1b0b914be31671000ca25cf7ea17fcaaa68cfeadf6924529c5c5aa24b7ab1f", size = 2227387, upload-time = "2025-12-18T15:46:50.877Z" },
-    { url = "https://files.pythonhosted.org/packages/7b/1d/9d65dcc5b8c17ba590f1f9f486e9306346831902318b7ee93f63516f4003/pydantic-1.10.26-cp312-cp312-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:15b13b9f8ba8867095769e1156e0d7fbafa1f65b898dd40fd1c02e34430973cb", size = 2629594, upload-time = "2025-12-18T15:46:53.42Z" },
-    { url = "https://files.pythonhosted.org/packages/3f/76/acb41409356789e23e1a7ef58f93821410c96409183ce314ddb58d97f23e/pydantic-1.10.26-cp312-cp312-musllinux_1_2_x86_64.whl", hash = "sha256:ad7025ca324ae263d4313998e25078dcaec5f9ed0392c06dedb57e053cc8086b", size = 2745305, upload-time = "2025-12-18T15:46:55.987Z" },
-    { url = "https://files.pythonhosted.org/packages/22/72/a98c0c5e527a66057d969fedd61675223c7975ade61acebbca9f1abd6dc0/pydantic-1.10.26-cp312-cp312-win_amd64.whl", hash = "sha256:4482b299874dabb88a6c3759e3d85c6557c407c3b586891f7d808d8a38b66b9c", size = 1937647, upload-time = "2025-12-18T15:46:57.905Z" },
-    { url = "https://files.pythonhosted.org/packages/28/b9/17a5a5a421c23ac27486b977724a42c9d5f8b7f0f4aab054251066223900/pydantic-1.10.26-cp313-cp313-macosx_10_13_x86_64.whl", hash = "sha256:1ae7913bb40a96c87e3d3f6fe4e918ef53bf181583de4e71824360a9b11aef1c", size = 2494599, upload-time = "2025-12-18T15:47:00.209Z" },
-    { url = "https://files.pythonhosted.org/packages/e6/8e/6e3bd4241076cf227b443d7577245dd5d181ecf40b3182fcb908bc8c197d/pydantic-1.10.26-cp313-cp313-macosx_11_0_arm64.whl", hash = "sha256:8154c13f58d4de5d3a856bb6c909c7370f41fb876a5952a503af6b975265f4ba", size = 2254391, upload-time = "2025-12-18T15:47:02.268Z" },
-    { url = "https://files.pythonhosted.org/packages/a8/30/a1c4092eda2145ecbead6c92db489b223e101e1ba0da82576d0cf73dd422/pydantic-1.10.26-cp313-cp313-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:f8af0507bf6118b054a9765fb2e402f18a8b70c964f420d95b525eb711122d62", size = 2609445, upload-time = "2025-12-18T15:47:04.909Z" },
-    { url = "https://files.pythonhosted.org/packages/3a/2a/0491f1729ee4b7b6bc859ec22f69752f0c09bee1b66ac6f5f701136f34c3/pydantic-1.10.26-cp313-cp313-musllinux_1_2_x86_64.whl", hash = "sha256:dcb5a7318fb43189fde6af6f21ac7149c4bcbcfffc54bc87b5becddc46084847", size = 2732124, upload-time = "2025-12-18T15:47:07.464Z" },
-    { url = "https://files.pythonhosted.org/packages/2a/56/b59f3b2f84e1df2b04ae768a1bb04d9f0288ff71b67cdcbb07683757b2c0/pydantic-1.10.26-cp313-cp313-win_amd64.whl", hash = "sha256:71cde228bc0600cf8619f0ee62db050d1880dcc477eba0e90b23011b4ee0f314", size = 1939888, upload-time = "2025-12-18T15:47:09.618Z" },
-    { url = "https://files.pythonhosted.org/packages/d2/8b/0c3dc02d4b97790b0f199bf933f677c14e7be4a8d21307c5f2daae06aa41/pydantic-1.10.26-cp314-cp314-macosx_10_15_x86_64.whl", hash = "sha256:6b40730cc81d53d515dc0b8bb5c9b43fadb9bed46de4a3c03bd95e8571616dba", size = 2502689, upload-time = "2025-12-18T15:47:12.308Z" },
-    { url = "https://files.pythonhosted.org/packages/d4/9d/d31aeea45542b2ae4b09ecba92b88aaba696b801c31919811aa979a1242d/pydantic-1.10.26-cp314-cp314-macosx_11_0_arm64.whl", hash = "sha256:c3bbb9c0eecdf599e4db9b372fa9cc55be12e80a0d9c6d307950a39050cb0e37", size = 2269494, upload-time = "2025-12-18T15:47:14.53Z" },
-    { url = "https://files.pythonhosted.org/packages/78/c1/3a4d069593283ca4dd0006039ba33644e21e432cddc09da706ac50441610/pydantic-1.10.26-cp314-cp314-manylinux2014_x86_64.manylinux_2_17_x86_64.whl", hash = "sha256:cc2e3fe7bc4993626ef6b6fa855defafa1d6f8996aa1caef2deb83c5ac4d043a", size = 2620047, upload-time = "2025-12-18T15:47:17.089Z" },
-    { url = "https://files.pythonhosted.org/packages/e0/0e/340c3d29197d99c15ab04093d43bb9c9d0fd17c2a34b80cb9d36ed732b09/pydantic-1.10.26-cp314-cp314-musllinux_1_2_x86_64.whl", hash = "sha256:36d9e46b588aaeb1dcd2409fa4c467fe0b331f3cc9f227b03a7a00643704e962", size = 2747625, upload-time = "2025-12-18T15:47:19.21Z" },
-    { url = "https://files.pythonhosted.org/packages/1e/58/f12ab3727339b172c830b32151919456b67787cdfe8808b2568b322fb15c/pydantic-1.10.26-cp314-cp314-win_amd64.whl", hash = "sha256:81ce3c8616d12a7be31b4aadfd3434f78f6b44b75adbfaec2fe1ad4f7f999b8c", size = 1976436, upload-time = "2025-12-18T15:47:21.384Z" },
-    { url = "https://files.pythonhosted.org/packages/1f/98/556e82f00b98486def0b8af85da95e69d2be7e367cf2431408e108bc3095/pydantic-1.10.26-py3-none-any.whl", hash = "sha256:c43ad70dc3ce7787543d563792426a16fd7895e14be4b194b5665e36459dd917", size = 166975, upload-time = "2025-12-18T15:47:44.927Z" },
-]
-
-[[package]]
-name = "pydantic"
 version = "2.13.4"
 source = { registry = "https://pypi.org/simple" }
-resolution-markers = [
-    "python_full_version >= '3.15'",
-    "python_full_version >= '3.13' and python_full_version < '3.15'",
-    "python_full_version == '3.12.*'",
-    "python_full_version < '3.12'",
-]
 dependencies = [
     { name = "annotated-types" },
     { name = "pydantic-core" },
@@ -1234,13 +1172,13 @@ name = "pytest"
 version = "9.1.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "colorama", marker = "sys_platform == 'win32' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "exceptiongroup", marker = "python_full_version < '3.11' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
+    { name = "colorama", marker = "sys_platform == 'win32'" },
+    { name = "exceptiongroup", marker = "python_full_version < '3.11'" },
     { name = "iniconfig" },
     { name = "packaging" },
     { name = "pluggy" },
     { name = "pygments" },
-    { name = "tomli", marker = "python_full_version < '3.11' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
+    { name = "tomli", marker = "python_full_version < '3.11'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/e4/47/b9efed96c114afcfa3c9d3fe98a76a1d14c74a9e266d397cf6eb64be5e01/pytest-9.1.1.tar.gz", hash = "sha256:1088fbde8f2b49d95a549a195707afa7a76a3ce9bcadc26b6d71f0ffda5fe313", size = 1636369, upload-time = "2026-06-19T10:58:32.857Z" }
 wheels = [
@@ -1316,10 +1254,10 @@ name = "requests"
 version = "2.34.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "certifi", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "charset-normalizer", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "idna", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "urllib3", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
+    { name = "certifi" },
+    { name = "charset-normalizer" },
+    { name = "idna" },
+    { name = "urllib3" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/ac/c3/e2a2b89f2d3e2179abd6d00ebd70bff6273f37fb3e0cc209f48b39d00cbf/requests-2.34.2.tar.gz", hash = "sha256:f288924cae4e29463698d6d60bc6a4da69c89185ad1e0bcc4104f584e960b9ed", size = 142856, upload-time = "2026-05-14T19:25:27.735Z" }
 wheels = [
@@ -1349,7 +1287,7 @@ name = "roman-numerals-py"
 version = "4.1.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "roman-numerals", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
+    { name = "roman-numerals" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/cb/b5/de96fca640f4f656eb79bbee0e79aeec52e3e0e359f8a3e6a0d366378b64/roman_numerals_py-4.1.0.tar.gz", hash = "sha256:f5d7b2b4ca52dd855ef7ab8eb3590f428c0b1ea480736ce32b01fef2a5f8daf9", size = 4274, upload-time = "2025-12-17T18:25:41.153Z" }
 wheels = [
@@ -1422,23 +1360,23 @@ name = "sphinx"
 version = "8.2.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "alabaster", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "babel", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "colorama", marker = "(python_full_version >= '3.12' and sys_platform == 'win32') or (python_full_version < '3.12' and extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2') or (sys_platform != 'win32' and extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "docutils", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "imagesize", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "jinja2", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "packaging", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "pygments", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "requests", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "roman-numerals-py", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "snowballstemmer", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "sphinxcontrib-applehelp", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "sphinxcontrib-devhelp", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "sphinxcontrib-htmlhelp", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "sphinxcontrib-jsmath", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "sphinxcontrib-qthelp", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "sphinxcontrib-serializinghtml", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
+    { name = "alabaster" },
+    { name = "babel" },
+    { name = "colorama", marker = "sys_platform == 'win32'" },
+    { name = "docutils" },
+    { name = "imagesize" },
+    { name = "jinja2" },
+    { name = "packaging" },
+    { name = "pygments" },
+    { name = "requests" },
+    { name = "roman-numerals-py" },
+    { name = "snowballstemmer" },
+    { name = "sphinxcontrib-applehelp" },
+    { name = "sphinxcontrib-devhelp" },
+    { name = "sphinxcontrib-htmlhelp" },
+    { name = "sphinxcontrib-jsmath" },
+    { name = "sphinxcontrib-qthelp" },
+    { name = "sphinxcontrib-serializinghtml" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/38/ad/4360e50ed56cb483667b8e6dadf2d3fda62359593faabbe749a27c4eaca6/sphinx-8.2.3.tar.gz", hash = "sha256:398ad29dee7f63a75888314e9424d40f52ce5a6a87ae88e7071e80af296ec348", size = 8321876, upload-time = "2025-03-02T22:31:59.658Z" }
 wheels = [
@@ -1450,7 +1388,7 @@ name = "sphinx-autodoc-typehints"
 version = "3.5.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "sphinx", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
+    { name = "sphinx" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/34/4f/4fd5583678bb7dc8afa69e9b309e6a99ee8d79ad3a4728f4e52fd7cb37c7/sphinx_autodoc_typehints-3.5.2.tar.gz", hash = "sha256:5fcd4a3eb7aa89424c1e2e32bedca66edc38367569c9169a80f4b3e934171fdb", size = 37839, upload-time = "2025-10-16T00:50:15.743Z" }
 wheels = [
@@ -1462,7 +1400,7 @@ name = "sphinx-basic-ng"
 version = "1.0.0b2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "sphinx", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
+    { name = "sphinx" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/98/0b/a866924ded68efec7a1759587a4e478aec7559d8165fac8b2ad1c0e774d6/sphinx_basic_ng-1.0.0b2.tar.gz", hash = "sha256:9ec55a47c90c8c002b5960c57492ec3021f5193cb26cebc2dc4ea226848651c9", size = 20736, upload-time = "2023-07-08T18:40:54.166Z" }
 wheels = [
@@ -1474,7 +1412,7 @@ name = "sphinx-copybutton"
 version = "0.5.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "sphinx", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
+    { name = "sphinx" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/fc/2b/a964715e7f5295f77509e59309959f4125122d648f86b4fe7d70ca1d882c/sphinx-copybutton-0.5.2.tar.gz", hash = "sha256:4cf17c82fb9646d1bc9ca92ac280813a3b605d8c421225fd9913154103ee1fbd", size = 23039, upload-time = "2023-04-14T08:10:22.998Z" }
 wheels = [
@@ -1486,9 +1424,9 @@ name = "sphinx-jinja2-compat"
 version = "0.4.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "jinja2", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "markupsafe", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "standard-imghdr", marker = "python_full_version >= '3.13' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
+    { name = "jinja2" },
+    { name = "markupsafe" },
+    { name = "standard-imghdr", marker = "python_full_version >= '3.13'" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/43/98/43313781f29e8c6c46fec907430310172d6f207e95e4fbea9289990fbbfe/sphinx_jinja2_compat-0.4.1.tar.gz", hash = "sha256:0188f0802d42c3da72997533b55a00815659a78d3f81d4b4747b1fb15a5728e6", size = 5222, upload-time = "2025-08-06T20:06:25.824Z" }
 wheels = [
@@ -1500,7 +1438,7 @@ name = "sphinx-last-updated-by-git"
 version = "0.3.8"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "sphinx", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
+    { name = "sphinx" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/03/fd/de1685b6dab173dff31da24e0d3b29f02873fc24a1cdbb7678721ddc8581/sphinx_last_updated_by_git-0.3.8.tar.gz", hash = "sha256:c145011f4609d841805b69a9300099fc02fed8f5bb9e5bcef77d97aea97b7761", size = 10785, upload-time = "2024-08-11T07:15:54.601Z" }
 wheels = [
@@ -1512,14 +1450,14 @@ name = "sphinx-prompt"
 version = "1.10.2"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "certifi", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "docutils", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "idna", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "jinja2", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "pygments", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "requests", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "sphinx", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "urllib3", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
+    { name = "certifi" },
+    { name = "docutils" },
+    { name = "idna" },
+    { name = "jinja2" },
+    { name = "pygments" },
+    { name = "requests" },
+    { name = "sphinx" },
+    { name = "urllib3" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/d0/a3/91293c0e0f0b76d0697ba7a41541929ca3f5457671d008bd84a9bde17e21/sphinx_prompt-1.10.2.tar.gz", hash = "sha256:47b592ba75caebd044b0eddf7a5a1b6e0aef6df587b034377cd101a999b686ba", size = 5566, upload-time = "2025-11-28T09:23:18.057Z" }
 wheels = [
@@ -1531,9 +1469,9 @@ name = "sphinx-tabs"
 version = "3.5.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "docutils", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "pygments", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "sphinx", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
+    { name = "docutils" },
+    { name = "pygments" },
+    { name = "sphinx" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/ce/30/ca5b0de830f369968d8e3483dd45a8908fd10169c05cd9837f0bd075982e/sphinx_tabs-3.5.0.tar.gz", hash = "sha256:91dba1187e4c35fd37380a56ac228bbd54c6c649b2351829f3bf033718277537", size = 17006, upload-time = "2026-03-03T23:00:30.404Z" }
 wheels = [
@@ -1545,24 +1483,24 @@ name = "sphinx-toolbox"
 version = "4.3.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "apeye", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "autodocsumm", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "beautifulsoup4", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "cachecontrol", extra = ["filecache"], marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "dict2css", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "docutils", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "domdf-python-tools", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "filelock", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "html5lib", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "roman", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "ruamel-yaml", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "sphinx", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "sphinx-autodoc-typehints", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "sphinx-jinja2-compat", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "sphinx-prompt", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "sphinx-tabs", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "tabulate", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "typing-extensions", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
+    { name = "apeye" },
+    { name = "autodocsumm" },
+    { name = "beautifulsoup4" },
+    { name = "cachecontrol", extra = ["filecache"] },
+    { name = "dict2css" },
+    { name = "docutils" },
+    { name = "domdf-python-tools" },
+    { name = "filelock" },
+    { name = "html5lib" },
+    { name = "roman" },
+    { name = "ruamel-yaml" },
+    { name = "sphinx" },
+    { name = "sphinx-autodoc-typehints" },
+    { name = "sphinx-jinja2-compat" },
+    { name = "sphinx-prompt" },
+    { name = "sphinx-tabs" },
+    { name = "tabulate" },
+    { name = "typing-extensions" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/e2/89/7a309544590129c8c68b301d08d7a0660e7b07866c949e447eb2e10d4efa/sphinx_toolbox-4.3.0.tar.gz", hash = "sha256:07ec26176744ee3abe3c1eb4407419e81468f4536f332dcafc4e3240b0d6fae2", size = 117606, upload-time = "2026-07-28T09:33:40.06Z" }
 wheels = [
@@ -1628,8 +1566,8 @@ name = "sphinxcontrib-towncrier"
 version = "0.5.0a0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "sphinx", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "towncrier", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
+    { name = "sphinx" },
+    { name = "towncrier" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/21/fe/72ed57093e28af10595c50839b183c5fdf0952482e9ef0ca6eb90eb85c5d/sphinxcontrib_towncrier-0.5.0a0.tar.gz", hash = "sha256:294e69df6e275e7a86df7ea6a927cc7c28c2c370a884cd5c45de6ec989858f27", size = 62453, upload-time = "2025-02-28T01:59:16.894Z" }
 wheels = [
@@ -1659,7 +1597,7 @@ name = "tinycss2"
 version = "1.5.1"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "webencodings", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
+    { name = "webencodings" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/a3/ae/2ca4913e5c0f09781d75482874c3a95db9105462a92ddd303c7d285d3df2/tinycss2-1.5.1.tar.gz", hash = "sha256:d339d2b616ba90ccce58da8495a78f46e55d4d25f9fd71dfd526f07e7d53f957", size = 88195, upload-time = "2025-11-23T10:29:10.082Z" }
 wheels = [
@@ -1725,8 +1663,8 @@ name = "towncrier"
 version = "25.8.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
-    { name = "click", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
-    { name = "jinja2", marker = "python_full_version >= '3.12' or (extra == 'group-12-etl-entities-test-pydantic-1' and extra == 'group-12-etl-entities-test-pydantic-2')" },
+    { name = "click" },
+    { name = "jinja2" },
 ]
 sdist = { url = "https://files.pythonhosted.org/packages/c2/eb/5bf25a34123698d3bbab39c5bc5375f8f8bcbcc5a136964ade66935b8b9d/towncrier-25.8.0.tar.gz", hash = "sha256:eef16d29f831ad57abb3ae32a0565739866219f1ebfbdd297d32894eb9940eb1", size = 76322, upload-time = "2025-08-30T11:41:55.393Z" }
 wheels = [
