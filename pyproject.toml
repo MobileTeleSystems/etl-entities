@@ -74,9 +74,9 @@ test = [
 test-pydantic-1 = ["pydantic<2"]
 test-pydantic-2 = ["pydantic>=2,<3"]
 dev = [
-    "mypy>=2.1,<2.4",
-    "prek~=0.4.5",
-    "ruff>=0.15.18,<0.17.0",
+    "mypy~=2.3.0",
+    "prek~=0.4.12",
+    "ruff~=0.16.1",
     "types-psutil~=7.2.0",
 ]
 docs = [
@@ -155,6 +155,7 @@ ignore = [
     "UP007",
     "UP045",
     "TC001",
+    "CPY001",
 ]
 
 [tool.ruff.lint.per-file-ignores]
@@ -168,6 +169,7 @@ ignore = [
     "PLR2004",
     "PLR0913",
     "PLR0915",
+    "PLR0917",
     "RUF005",
     "EM101",
     "TRY003",
