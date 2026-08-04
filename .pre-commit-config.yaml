@@ -130,4 +130,6 @@ repos:
 ci:
   skip:
     - mypy # checked with Github Actions
+    - ruff-format # checked with Github Actions
+    - ruff-check # checked with Github Actions
     - towncrier # checked with Github Actions
