@@ -86,31 +86,39 @@ repos:
       - id: uv-lock
         priority: 7
 
-  - repo: https://github.com/astral-sh/ruff-pre-commit
-    rev: v0.16.1
-    hooks:
-      - id: ruff-format
-        priority: 7
-      - id: ruff-check
-        args: [--fix]
-        priority: 8
-
   - repo: local
     hooks:
-      - id: mypy
-        name: mypy
-        entry: python3 -m mypy etl_entities
-        language: system
-        types: [python]
-        pass_filenames: false
-        priority: 9
       - id: towncrier
         name: towncrier
         entry: towncrier build --draft
         language: system
         types: [rst]
         pass_filenames: false
-        priority: 5
+        priority: 7
+
+      - id: ruff-format
+        name: ruff-format
+        language: system
+        entry: ruff format .
+        types: [python]
+        pass_filenames: false
+        priority: 7
+
+      - id: ruff-check
+        name: ruff-check
+        language: system
+        entry: ruff check --fix
+        types: [python]
+        pass_filenames: false
+        priority: 8
+
+      - id: mypy
+        name: mypy
+        entry: mypy etl_entities
+        language: system
+        types: [python]
+        pass_filenames: false
+        priority: 9
 
   - repo: meta
     hooks:

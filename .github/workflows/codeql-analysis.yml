@@ -46,8 +46,11 @@ jobs:
         run: |
           uv sync --group dev
 
-      - name: Run mypy
-        run: uv run -m mypy etl_entities
+      - name: Run linters
+        run: |
+          uv run ruff format --check
+          uv run ruff check
+          uv run -m mypy etl_entities
 
   codeql:
     name: CodeQL
