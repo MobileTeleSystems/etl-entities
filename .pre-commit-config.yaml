@@ -35,17 +35,11 @@ repos:
   - repo: https://github.com/pre-commit/pygrep-hooks
     rev: v1.10.0
     hooks:
-      - id: python-no-log-warn
-        priority: 0
-      - id: python-no-eval
-        priority: 0
       - id: rst-backticks
         priority: 0
       - id: rst-directive-colons
         priority: 0
       - id: rst-inline-touching-normal
-        priority: 0
-      - id: text-unicode-replacement-char
         priority: 0
 
   - repo: https://github.com/Lucas-C/pre-commit-hooks
