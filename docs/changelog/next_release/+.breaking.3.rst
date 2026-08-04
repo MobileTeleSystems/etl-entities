@@ -1,0 +1,6 @@
+Drop ``etl_entities.instance`` module with classes:
+  * Cluster
+  * Host
+  * GenericPath
+  * AbsolutePath
+  * RelativePath

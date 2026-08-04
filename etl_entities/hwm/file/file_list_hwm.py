@@ -14,8 +14,8 @@ except (ImportError, AttributeError):
 from typing_extensions import Self
 
 from etl_entities.hwm import FileHWM
+from etl_entities.hwm.file.absolute_path import AbsolutePath
 from etl_entities.hwm.hwm_type_registry import register_hwm_type
-from etl_entities.instance import AbsolutePath
 
 FileListType = frozenset[AbsolutePath]
 FileListHWMType = TypeVar("FileListHWMType", bound="FileListHWM")
@@ -62,7 +62,7 @@ class FileListHWM(FileHWM[FileListType]):
     .. code:: python
 
         from etl_entities.hwm import FileListHWM
-        from etl_entities.instance import AbsolutePath
+        from etl_entities.hwm.file.absolute_path import AbsolutePath
 
         hwm = FileListHWM(
             name="hwm_name",
@@ -221,7 +221,7 @@ class FileListHWM(FileHWM[FileListType]):
         --------
 
         >>> from etl_entities.hwm import FileListHWM
-        >>> from etl_entities.instance import AbsolutePath
+        >>> from etl_entities.hwm.file.absolute_path import AbsolutePath
         >>> hwm = FileListHWM(value={"/some/path"}, name="my_hwm")
         >>> "/some/path" in hwm
         True

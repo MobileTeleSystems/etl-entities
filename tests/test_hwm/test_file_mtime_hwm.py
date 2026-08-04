@@ -4,13 +4,12 @@ import os
 import secrets
 import time
 from datetime import datetime, timedelta, timezone
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from unittest.mock import Mock
 
 import pytest
 
 from etl_entities.hwm import FileModifiedTimeHWM
-from etl_entities.instance import AbsolutePath
 
 
 @pytest.mark.parametrize(
@@ -70,7 +69,7 @@ def test_file_modified_time_hwm_valid_input(input_value, expected_value):
     assert hwm.name == name
     assert hwm.value == expected_value
     assert hwm.description == "my hwm"
-    assert hwm.entity == AbsolutePath("/absolute")
+    assert hwm.entity == PurePosixPath("/absolute")
     assert hwm.expression == "something"
     assert hwm.modified_time == modified_time
 
@@ -145,8 +144,8 @@ def test_file_modified_time_hwm_compare():
     value1 = datetime(2025, 1, 1, 11, 22, 33, 456789, tzinfo=timezone.utc)
     value2 = datetime(2025, 1, 1, 11, 22, 33, 456789, tzinfo=timezone(timedelta(hours=1)))
 
-    folder1 = AbsolutePath("/some/path")
-    folder2 = AbsolutePath("/another/path")
+    folder1 = PurePosixPath("/some/path")
+    folder2 = PurePosixPath("/another/path")
 
     hwm1 = FileModifiedTimeHWM(name=name1, value=value1)
     hwm2 = FileModifiedTimeHWM(name=name2, value=value1)

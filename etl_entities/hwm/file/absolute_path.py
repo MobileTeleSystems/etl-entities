@@ -8,14 +8,13 @@ import sys
 from pathlib import PurePosixPath
 
 
-class GenericPath(PurePosixPath):
-    """Generic path representation without '..' and '~'."""
+class AbsolutePath(PurePosixPath):
+    """Absolute path representation
+
+    Same as :obj:`pathlib.PurePosixPath`, but path can only start with ``/``
+    """
 
     def __init__(self, *args):
-        # Call the parent class __init__ method
-
-        # In Python 3.12 and later, paths are stored in _raw_paths.
-        # For earlier versions, fall back to _parts.
         if sys.version_info >= (3, 12):
             super().__init__(*args)
         else:
@@ -23,4 +22,8 @@ class GenericPath(PurePosixPath):
 
         if ".." in self.parts or "~" in self.parts:
             msg = f"{self.__class__.__name__} cannot contain '..' or '~'"
+            raise ValueError(msg)
+
+        if not self.is_absolute():
+            msg = f"{self.__class__.__name__} should start with '/'"
             raise ValueError(msg)

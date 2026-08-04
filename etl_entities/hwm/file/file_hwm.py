@@ -12,8 +12,8 @@ except (ImportError, AttributeError):
     from pydantic import Field, validator  # type: ignore[no-redef, assignment]
 
 from etl_entities.entity import GenericModel
+from etl_entities.hwm.file.absolute_path import AbsolutePath
 from etl_entities.hwm.hwm import HWM
-from etl_entities.instance import AbsolutePath
 
 FileHWMValueType = TypeVar("FileHWMValueType")
 
