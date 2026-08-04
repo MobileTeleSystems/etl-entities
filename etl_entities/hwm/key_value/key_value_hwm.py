@@ -5,15 +5,9 @@ from __future__ import annotations
 from typing import Generic, TypeVar
 
 from frozendict import frozendict
-
-try:
-    from pydantic.v1 import Field, validator
-except (ImportError, AttributeError):
-    from pydantic import Field, validator  # type: ignore[no-redef, assignment]
-
+from pydantic import Field, field_validator
 from typing_extensions import Self
 
-from etl_entities.entity import GenericModel
 from etl_entities.hwm.hwm import HWM
 
 KeyValueHWMValueType = TypeVar("KeyValueHWMValueType")
@@ -21,7 +15,7 @@ KeyValueHWMKeyType = TypeVar("KeyValueHWMKeyType")
 KeyValueHWMType = TypeVar("KeyValueHWMType", bound="KeyValueHWM")
 
 
-class KeyValueHWM(HWM[frozendict], GenericModel, Generic[KeyValueHWMKeyType, KeyValueHWMValueType]):  # noqa: PLW1641
+class KeyValueHWM(HWM[frozendict], Generic[KeyValueHWMKeyType, KeyValueHWMValueType]):  # noqa: PLW1641
     """HWM type storing ``key -> value`` map.
 
     Parameters
@@ -133,12 +127,13 @@ class KeyValueHWM(HWM[frozendict], GenericModel, Generic[KeyValueHWMKeyType, Key
         if not isinstance(other, type(self)):
             return NotImplemented
 
-        self_fields = self.dict(exclude={"modified_time"})
-        other_fields = other.dict(exclude={"modified_time"})
+        self_fields = self.model_dump(exclude={"modified_time"}, warnings=False)
+        other_fields = other.model_dump(exclude={"modified_time"}, warnings=False)
         return self_fields == other_fields
 
-    @validator("value", pre=True, always=True)
-    def _convert_dict_to_frozendict(cls, v):  # noqa: N805
+    @field_validator("value", mode="before")
+    @classmethod
+    def _convert_dict_to_frozendict(cls, v):
         if isinstance(v, dict):
             return frozendict(v)
         return v

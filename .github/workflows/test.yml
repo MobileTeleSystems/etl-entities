@@ -14,7 +14,7 @@ concurrency:
 
 env:
   DEFAULT_PYTHON: '3.14'
-  MIN_COVERAGE: 93
+  MIN_COVERAGE: 96
 
 permissions:
   contents: write
@@ -23,19 +23,15 @@ permissions:
 
 jobs:
   tests:
-    name: Run tests (Python ${{ matrix.python-version }}, Pydantic ${{ matrix.pydantic-version }}, ${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
+    name: Run tests (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
 
     strategy:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-latest
-            python-version: '3.14'
-            pydantic-version: '2'
-          - os: ubuntu-latest
-            python-version: '3.10'
-            pydantic-version: '1'
+          - python-version: '3.14'
+          - python-version: '3.10'
 
     steps:
       - name: Checkout code
@@ -59,14 +55,13 @@ jobs:
         run: |
           mkdir reports/ || echo "Directory exists"
           make test-ci \
-            UV_ARGS="--group test-pydantic-${{ matrix.pydantic-version }}" \
-            PYTEST_ARGS="--junitxml=reports/junit/python${{ matrix.python-version }}-pydantic${{ matrix.pydantic-version }}.xml"
+            PYTEST_ARGS="--junitxml=reports/junit/python${{ matrix.python-version }}.xml"
 
       - name: Upload coverage results
         uses: actions/upload-artifact@v7
         if: success() || failure()
         with:
-          name: coverage-python-${{ matrix.python-version }}-pydantic-${{ matrix.pydantic-version }}-os-${{ matrix.os }}
+          name: coverage-python-${{ matrix.python-version }}
           path: reports/*
           # https://github.com/actions/upload-artifact/issues/602
           include-hidden-files: true

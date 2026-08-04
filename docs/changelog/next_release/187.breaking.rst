@@ -1,0 +1,1 @@
+Drop Pydantic v1 support.

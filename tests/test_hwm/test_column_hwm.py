@@ -106,12 +106,12 @@ def test_column_hwm_set_value(hwm_class, value):
     name = secrets.token_hex(8)
     hwm = hwm_class(name=name)
 
-    hwm1 = hwm.copy()
+    hwm1 = hwm.model_copy()
     hwm1.set_value(value)
     assert hwm1.value == value
     assert hwm1.modified_time > hwm.modified_time
 
-    hwm2 = hwm1.copy()
+    hwm2 = hwm1.model_copy()
     hwm2.set_value(None)
     assert hwm2.value is None
     assert hwm2.modified_time > hwm.modified_time
@@ -138,7 +138,7 @@ def test_column_hwm_frozen(hwm_class):
 
     for attr in ("value", "name", "description", "entity", "expression", "modified_time"):
         for value in (1, "abc", date.today(), datetime.now(), None, name, modified_time):
-            with pytest.raises(TypeError):
+            with pytest.raises(ValueError, match="Instance is frozen"):
                 setattr(hwm, attr, value)
 
 
@@ -267,8 +267,8 @@ def test_column_hwm_add(hwm_class, value, delta):
     hwm = hwm_class(name=name)
 
     # if something has been changed, update modified_time
-    hwm1 = hwm.copy(update={"value": value})
-    hwm2 = hwm.copy(update={"value": value + delta})
+    hwm1 = hwm.model_copy(update={"value": value})
+    hwm2 = hwm.model_copy(update={"value": value + delta})
 
     hwm3 = hwm1 + delta
 
@@ -300,8 +300,8 @@ def test_column_hwm_sub(hwm_class, value, delta):
     name = secrets.token_hex(8)
     hwm = hwm_class(name=name)
 
-    hwm1 = hwm.copy(update={"value": value})
-    hwm2 = hwm.copy(update={"value": value - delta})
+    hwm1 = hwm.model_copy(update={"value": value})
+    hwm2 = hwm.model_copy(update={"value": value - delta})
     hwm3 = hwm1 - delta
 
     assert hwm3 == hwm2
@@ -411,7 +411,7 @@ def test_column_hwm_update(hwm_class, value, delta):
     empty_hwm = hwm_class(name=name)
 
     # if both new and current values are None, do nothing
-    old_hwm = empty_hwm.copy()
+    old_hwm = empty_hwm.model_copy()
     hwm = old_hwm.update(None)
 
     assert hwm == empty_hwm
@@ -421,9 +421,9 @@ def test_column_hwm_update(hwm_class, value, delta):
     assert hwm.modified_time == empty_hwm.modified_time
 
     # if current value is None, set new value
-    hwm1 = empty_hwm.copy(update={"value": value})
+    hwm1 = empty_hwm.model_copy(update={"value": value})
 
-    old_hwm2 = empty_hwm.copy()
+    old_hwm2 = empty_hwm.model_copy()
     hwm2 = old_hwm2.update(value)
 
     assert hwm2 == hwm1
@@ -432,10 +432,10 @@ def test_column_hwm_update(hwm_class, value, delta):
     assert hwm2.modified_time > hwm1.modified_time
 
     # if input value is less than or equal to current, do nothing
-    old_hwm3 = hwm1.copy()
+    old_hwm3 = hwm1.model_copy()
     hwm3 = old_hwm3.update(value - delta)
 
-    old_hwm4 = hwm1.copy()
+    old_hwm4 = hwm1.model_copy()
     hwm4 = old_hwm4.update(value)
 
     assert hwm4 == hwm3 == hwm1
@@ -445,9 +445,9 @@ def test_column_hwm_update(hwm_class, value, delta):
     assert hwm4.modified_time == hwm3.modified_time == hwm1.modified_time
 
     # if current value is less than input, use input as a new value and update modified_time
-    hwm5 = hwm1.copy(update={"value": value + delta})
+    hwm5 = hwm1.model_copy(update={"value": value + delta})
 
-    old_hwm6 = hwm1.copy()
+    old_hwm6 = hwm1.model_copy()
     hwm6 = old_hwm6.update(value + delta)
 
     assert hwm6 == hwm5

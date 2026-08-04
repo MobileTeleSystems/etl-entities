@@ -4,26 +4,28 @@
 
 from __future__ import annotations
 
-import sys
 from pathlib import PurePosixPath
+from typing import TYPE_CHECKING, Annotated
+
+from pydantic import AfterValidator, TypeAdapter
+
+if TYPE_CHECKING:
+    import os
 
 
-class AbsolutePath(PurePosixPath):
-    """Absolute path representation
+def validate(path: PurePosixPath):
+    if not path.is_absolute():
+        msg = "AbsolutePath should start with '/'"
+        raise ValueError(msg)
+    return path
 
-    Same as :obj:`pathlib.PurePosixPath`, but path can only start with ``/``
-    """
 
-    def __init__(self, *args):
-        if sys.version_info >= (3, 12):
-            super().__init__(*args)
-        else:
-            super().__init__()
+AbsolutePath = Annotated[PurePosixPath, AfterValidator(validate)]
+AbsolutePathAdapter = TypeAdapter(AbsolutePath)
 
-        if ".." in self.parts or "~" in self.parts:
-            msg = f"{self.__class__.__name__} cannot contain '..' or '~'"
-            raise ValueError(msg)
 
-        if not self.is_absolute():
-            msg = f"{self.__class__.__name__} should start with '/'"
-            raise ValueError(msg)
+def parse_absolute_path(path: str | os.PathLike) -> AbsolutePath:
+    try:
+        return AbsolutePathAdapter.validate_python(path)
+    except TypeError as e:
+        raise ValueError(*e.args) from e

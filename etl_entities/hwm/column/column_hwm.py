@@ -4,21 +4,16 @@ from __future__ import annotations
 
 from typing import Generic, TypeVar
 
-try:
-    from pydantic.v1 import Field
-except (ImportError, AttributeError):
-    from pydantic import Field  # type: ignore[no-redef, assignment]
-
+from pydantic import Field
 from typing_extensions import Self
 
-from etl_entities.entity import GenericModel
 from etl_entities.hwm.hwm import HWM
 
 ColumnValueType = TypeVar("ColumnValueType")
 ColumnHWMType = TypeVar("ColumnHWMType", bound="ColumnHWM")
 
 
-class ColumnHWM(HWM[ColumnValueType | None], GenericModel, Generic[ColumnValueType]):  # noqa: PLW1641
+class ColumnHWM(HWM[ColumnValueType | None], Generic[ColumnValueType]):  # noqa: PLW1641
     """Base column HWM type
 
     Parameters
@@ -79,7 +74,7 @@ class ColumnHWM(HWM[ColumnValueType | None], GenericModel, Generic[ColumnValueTy
 
         new_value = self.value + value  # type: ignore[operator]
         if self.value != new_value:
-            return self.copy().set_value(new_value)
+            return self.model_copy().set_value(new_value)
 
         return self
 
@@ -111,7 +106,7 @@ class ColumnHWM(HWM[ColumnValueType | None], GenericModel, Generic[ColumnValueTy
 
         new_value = self.value - value  # type: ignore[operator]
         if self.value != new_value:
-            return self.copy().set_value(new_value)
+            return self.model_copy().set_value(new_value)
 
         return self
 
@@ -136,8 +131,8 @@ class ColumnHWM(HWM[ColumnValueType | None], GenericModel, Generic[ColumnValueTy
         if not isinstance(other, type(self)):
             return NotImplemented
 
-        self_fields = self.dict(exclude={"modified_time"})
-        other_fields = other.dict(exclude={"modified_time"})
+        self_fields = self.model_dump(exclude={"modified_time"}, warnings=False)
+        other_fields = other.model_dump(exclude={"modified_time"}, warnings=False)
         return self_fields == other_fields
 
     def update(self, value: ColumnValueType) -> Self:
@@ -214,8 +209,8 @@ class ColumnHWM(HWM[ColumnValueType | None], GenericModel, Generic[ColumnValueTy
         if not isinstance(other, type(self)):
             return NotImplemented
 
-        self_fields = self.dict(exclude={"value", "modified_time"})
-        other_fields = other.dict(exclude={"value", "modified_time"})
+        self_fields = self.model_dump(exclude={"value", "modified_time"}, warnings=False)
+        other_fields = other.model_dump(exclude={"value", "modified_time"}, warnings=False)
         if self_fields != other_fields:
             msg = "Cannot compare ColumnHWM with different entity or expression"
             raise NotImplementedError(
