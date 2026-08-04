@@ -2,8 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
-from typing import Optional
-
 import typing_extensions
 
 try:
@@ -66,7 +64,7 @@ class IntHWM(ColumnHWM[StrictInt]):  # noqa: PLW1641
         old_hwm = IntHWM(column=column, source=table, value=1)
     """
 
-    value: Optional[StrictInt] = None
+    value: StrictInt | None = None
 
     @validator("value", pre=True)
     def validate_value(cls, value):  # noqa: N805

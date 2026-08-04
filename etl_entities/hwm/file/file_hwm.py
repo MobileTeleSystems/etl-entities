@@ -4,7 +4,7 @@ from __future__ import annotations
 
 import os
 from abc import abstractmethod
-from typing import Any, ClassVar, Generic, Optional, TypeVar
+from typing import Any, ClassVar, Generic, TypeVar
 
 try:
     from pydantic.v1 import Field, validator
@@ -53,7 +53,7 @@ class FileHWM(  # noqa: PLW1641
 
     """
 
-    entity: Optional[AbsolutePath] = Field(default=None, alias="directory")
+    entity: AbsolutePath | None = Field(default=None, alias="directory")
     value: FileHWMValueType
 
     class Config:

@@ -88,7 +88,7 @@ class FileModifiedTimeHWM(FileHWM[Optional[datetime]]):
         )
     """
 
-    value: Optional[datetime] = None
+    value: datetime | None = None
 
     @validator("value", pre=True)
     def _parse_isoformat(cls, value):  # noqa: N805

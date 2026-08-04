@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from datetime import date
-from typing import Optional
 
 try:
     from pydantic.v1 import validator
@@ -62,7 +61,7 @@ class ColumnDateHWM(ColumnHWM[date]):
         )
     """
 
-    value: Optional[date] = None
+    value: date | None = None
 
     @validator("value", pre=True)
     def _validate_value(cls, value):  # noqa: N805

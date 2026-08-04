@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import sys
-from typing import Generic, Optional, TypeVar
+from typing import Generic, TypeVar
 
 from frozendict import frozendict
 
@@ -52,7 +52,7 @@ class KeyValueHWM(HWM[frozendict], GenericModel, Generic[KeyValueHWMKeyType, Key
         HWM value modification time
     """
 
-    entity: Optional[str] = Field(default=None, alias="topic")
+    entity: str | None = Field(default=None, alias="topic")
     if sys.version_info >= (3, 9):
         value: frozendict[KeyValueHWMKeyType, KeyValueHWMValueType] = Field(default_factory=frozendict)
     else:

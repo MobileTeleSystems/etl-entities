@@ -45,7 +45,7 @@ class ColumnHWM(HWM[Optional[ColumnValueType], str], GenericModel, Generic[Colum
 
     column: Column
     source: Table
-    value: Optional[ColumnValueType] = None
+    value: ColumnValueType | None = None
 
     @property
     def name(self) -> str:

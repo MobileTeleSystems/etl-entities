@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Optional
 
 import typing_extensions
 
@@ -70,7 +69,7 @@ class DateTimeHWM(ColumnHWM[datetime]):  # noqa: PLW1641
         )
     """
 
-    value: Optional[datetime] = None
+    value: datetime | None = None
 
     @validator("value", pre=True)
     def validate_value(cls, value):  # noqa: N805

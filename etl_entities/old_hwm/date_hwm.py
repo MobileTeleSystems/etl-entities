@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from datetime import date
-from typing import Optional
 
 import typing_extensions
 
@@ -66,7 +65,7 @@ class DateHWM(ColumnHWM[date]):  # noqa: PLW1641
         old_hwm = DateHWM(column=column, source=table, value=date(year=2021, month=12, day=3))
     """
 
-    value: Optional[date] = None
+    value: date | None = None
 
     @validator("value", pre=True)
     def validate_value(cls, value):  # noqa: N805

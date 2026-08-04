@@ -48,8 +48,8 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], GenericModel, Generic[ColumnValu
         HWM value modification time
     """
 
-    entity: Optional[str] = Field(default=None, alias="source")
-    value: Optional[ColumnValueType] = None
+    entity: str | None = Field(default=None, alias="source")
+    value: ColumnValueType | None = None
 
     def __add__(self, value: ColumnValueType) -> Self:
         """Increase HWM value and return copy of HWM

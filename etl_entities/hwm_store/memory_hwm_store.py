@@ -2,8 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
-from typing import Dict
-
 try:
     from pydantic.v1 import PrivateAttr
 except (ImportError, AttributeError):
@@ -43,7 +41,7 @@ class MemoryHWMStore(BaseHWMStore):
     >>> hwm_store.get_hwm("long_unique_name") # not found again
     """
 
-    _data: Dict[str, dict] = PrivateAttr(default_factory=dict)
+    _data: dict[str, dict] = PrivateAttr(default_factory=dict)
 
     class Config:
         extra = "forbid"

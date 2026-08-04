@@ -18,11 +18,6 @@ Small changes can directly be crafted and submitted to the GitHub
 Repository as a Pull Request. This requires creating a **repo fork** using
 `instruction <https://docs.github.com/en/get-started/quickstart/fork-a-repo>`_.
 
-Important notes
----------------
-
-Please take into account that some companies still use old Python versions, like 3.7. So the changes should be compatible.
-
 Initial setup for local development
 -----------------------------------
 

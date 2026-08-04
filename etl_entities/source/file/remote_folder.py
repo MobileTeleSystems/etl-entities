@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 import os
-from typing import ClassVar, Union
+from typing import ClassVar
 
 import typing_extensions
 
@@ -54,7 +54,7 @@ class RemoteFolder(BaseModel, Entity):
     """
 
     name: AbsolutePath
-    instance: Union[GenericURL, Cluster]
+    instance: GenericURL | Cluster
 
     class Config:
         json_encoders: ClassVar = {AbsolutePath: os.fspath}

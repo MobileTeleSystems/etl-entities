@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 from decimal import Decimal, InvalidOperation
-from typing import Optional
 
 try:
     from pydantic.v1 import StrictInt, validator
@@ -59,7 +58,7 @@ class ColumnIntHWM(ColumnHWM[int]):
         )
     """
 
-    value: Optional[StrictInt] = None
+    value: StrictInt | None = None
 
     @validator("value", pre=True)
     def _validate_value(cls, raw_value):  # noqa: N805

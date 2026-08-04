@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import re
-from typing import Union
 
 import typing_extensions
 
@@ -65,7 +64,7 @@ class Table(BaseModel, Entity):
     """
 
     name: TableDBName
-    instance: Union[GenericURL, Cluster]
+    instance: GenericURL | Cluster
 
     @property
     def full_name(self) -> str:
