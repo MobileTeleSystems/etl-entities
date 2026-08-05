@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import pathlib
 from typing import Union
 
 import typing_extensions
@@ -57,7 +58,7 @@ class RemoteFolder(BaseModel, Entity):
     instance: Union[GenericURL, Cluster]
 
     class Config:  # noqa: WPS431
-        json_encoders = {AbsolutePath: os.fspath}
+        json_encoders = {pathlib.PurePosixPath: os.fspath}
 
     @validator("name", pre=True)
     def check_absolute_path(cls, value):  # noqa: N805

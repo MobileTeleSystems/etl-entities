@@ -3,11 +3,11 @@
 from __future__ import annotations
 
 import os
+import pathlib
 from abc import abstractmethod
 from typing import Generic, TypeVar
 
 from etl_entities.entity import GenericModel
-from etl_entities.instance import AbsolutePath
 from etl_entities.old_hwm.hwm import HWM
 from etl_entities.source import RemoteFolder
 
@@ -48,7 +48,7 @@ class FileHWM(
     value: FileHWMValueType
 
     class Config:  # noqa: WPS431
-        json_encoders = {AbsolutePath: os.fspath}
+        json_encoders = {pathlib.PurePosixPath: os.fspath}
 
     @property
     @abstractmethod

@@ -161,7 +161,7 @@ def test_column_qualified_name(
 
 
 @pytest.mark.parametrize(
-    "partition,",
+    "partition",
     [{"some1": "value1", "some2": "value2"}, {}],
 )
 def test_column_serialization(partition):

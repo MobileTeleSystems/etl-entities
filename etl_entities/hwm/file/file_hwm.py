@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import pathlib
 from abc import abstractmethod
 from typing import Generic, Optional, TypeVar
 
@@ -57,7 +58,7 @@ class FileHWM(
     value: FileHWMValueType
 
     class Config:  # noqa: WPS431
-        json_encoders = {AbsolutePath: os.fspath}
+        json_encoders = {pathlib.PurePosixPath: os.fspath}
 
     @abstractmethod
     def covers(self, value: FileHWMValueType) -> bool:
