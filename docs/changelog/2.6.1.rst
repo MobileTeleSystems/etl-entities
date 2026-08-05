@@ -1,0 +1,7 @@
+2.6.1 (2026-08-05)
+==================
+
+Bug Fixes
+---------
+
+Fix serialization of GenericPath and RelativePath in HWMs.
