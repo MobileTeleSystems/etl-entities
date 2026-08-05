@@ -42,7 +42,7 @@ setup(
     long_description_content_type="text/x-rst",
     license="Apache-2.0",
     license_files=("LICENSE.txt",),
-    url="https://github.com/MobileTeleSystems/etl-entities",
+    url="https://github.com/MTSWebServices/etl-entities",
     packages=find_packages(exclude=["docs", "docs.*", "tests", "tests.*"]),
     classifiers=[
         "Development Status :: 5 - Production/Stable",
@@ -64,9 +64,9 @@ setup(
     ],
     project_urls={
         "Documentation": "https://etl-entities.readthedocs.io/",
-        "Source": "https://github.com/MobileTeleSystems/etl-entities",
-        "CI/CD": "https://github.com/MobileTeleSystems/etl-entities/actions",
-        "Tracker": "https://github.com/MobileTeleSystems/etl-entities/issues",
+        "Source": "https://github.com/MTSWebServices/etl-entities",
+        "CI/CD": "https://github.com/MTSWebServices/etl-entities/actions",
+        "Tracker": "https://github.com/MTSWebServices/etl-entities/issues",
     },
     entry_points={"tricoder_package_spy.register": ["etl-entities=etl_entities"]},
     python_requires=">=3.7",

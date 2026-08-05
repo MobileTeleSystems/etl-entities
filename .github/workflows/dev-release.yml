@@ -19,7 +19,7 @@ jobs:
   wait-code-analysis:
     name: Release package
     runs-on: ubuntu-latest
-    if: github.repository == 'MobileTeleSystems/etl-entities'  # prevent running on forks
+    if: github.repository == 'MTSWebServices/etl-entities'  # prevent running on forks
 
     environment:
       name: test-pypi
