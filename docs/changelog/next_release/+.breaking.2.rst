@@ -1,5 +1,0 @@
-Drop deprecated classes:
-  * old HWMs
-  * Process
-  * ProcessStackManager
-  * Source
