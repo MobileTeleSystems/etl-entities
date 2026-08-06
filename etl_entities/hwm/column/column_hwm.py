@@ -1,22 +1,19 @@
-# SPDX-FileCopyrightText: 2021-2025 MTS PJSC
+# SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
-from typing import Generic, Optional, TypeVar
+from typing import Generic, TypeVar
 
-try:
-    from pydantic.v1 import Field
-except (ImportError, AttributeError):
-    from pydantic import Field  # type: ignore[no-redef, assignment]
+from pydantic import Field
+from typing_extensions import Self
 
-from etl_entities.entity import GenericModel
 from etl_entities.hwm.hwm import HWM
 
 ColumnValueType = TypeVar("ColumnValueType")
 ColumnHWMType = TypeVar("ColumnHWMType", bound="ColumnHWM")
 
 
-class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], GenericModel):
+class ColumnHWM(HWM[ColumnValueType | None], Generic[ColumnValueType]):  # noqa: PLW1641
     """Base column HWM type
 
     Parameters
@@ -46,10 +43,10 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], Generi
         HWM value modification time
     """
 
-    entity: Optional[str] = Field(default=None, alias="source")
-    value: Optional[ColumnValueType] = None
+    entity: str | None = Field(default=None, alias="source")
+    value: ColumnValueType | None = None
 
-    def __add__(self: ColumnHWMType, value: ColumnValueType) -> ColumnHWMType:
+    def __add__(self, value: ColumnValueType) -> Self:
         """Increase HWM value and return copy of HWM
 
         Parameters
@@ -77,11 +74,11 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], Generi
 
         new_value = self.value + value  # type: ignore[operator]
         if self.value != new_value:
-            return self.copy().set_value(new_value)
+            return self.model_copy().set_value(new_value)
 
         return self
 
-    def __sub__(self: ColumnHWMType, value: ColumnValueType) -> ColumnHWMType:
+    def __sub__(self, value: ColumnValueType) -> Self:
         """Decrease HWM value, and return copy of HWM
 
         Parameters
@@ -109,7 +106,7 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], Generi
 
         new_value = self.value - value  # type: ignore[operator]
         if self.value != new_value:
-            return self.copy().set_value(new_value)
+            return self.model_copy().set_value(new_value)
 
         return self
 
@@ -134,11 +131,11 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], Generi
         if not isinstance(other, type(self)):
             return NotImplemented
 
-        self_fields = self.dict(exclude={"modified_time"})
-        other_fields = other.dict(exclude={"modified_time"})
+        self_fields = self.model_dump(exclude={"modified_time"}, warnings=False)
+        other_fields = other.model_dump(exclude={"modified_time"}, warnings=False)
         return self_fields == other_fields
 
-    def update(self: ColumnHWMType, value: ColumnValueType) -> ColumnHWMType:
+    def update(self, value: ColumnValueType) -> Self:
         """Updates current HWM value with some implementation-specific logic, and return HWM.
 
         .. note::
@@ -169,7 +166,7 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], Generi
 
         return self
 
-    def reset(self: ColumnHWMType) -> ColumnHWMType:
+    def reset(self) -> Self:
         """Reset current HWM value and return HWM.
 
         .. note::
@@ -212,11 +209,12 @@ class ColumnHWM(HWM[Optional[ColumnValueType]], Generic[ColumnValueType], Generi
         if not isinstance(other, type(self)):
             return NotImplemented
 
-        self_fields = self.dict(exclude={"value", "modified_time"})
-        other_fields = other.dict(exclude={"value", "modified_time"})
+        self_fields = self.model_dump(exclude={"value", "modified_time"}, warnings=False)
+        other_fields = other.model_dump(exclude={"value", "modified_time"}, warnings=False)
         if self_fields != other_fields:
+            msg = "Cannot compare ColumnHWM with different entity or expression"
             raise NotImplementedError(
-                "Cannot compare ColumnHWM with different entity or expression",
+                msg,
             )
 
         return self.value < other.value

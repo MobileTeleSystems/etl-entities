@@ -1,28 +1,21 @@
-# SPDX-FileCopyrightText: 2021-2025 MTS PJSC
+# SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
-import os
-import pathlib
 from abc import abstractmethod
-from typing import Generic, Optional, TypeVar
+from typing import Any, Generic, TypeVar
 
-try:
-    from pydantic.v1 import Field, validator
-except (ImportError, AttributeError):
-    from pydantic import Field, validator  # type: ignore[no-redef, assignment]
+from pydantic import ConfigDict, Field, field_validator
 
-from etl_entities.entity import GenericModel
+from etl_entities.hwm.file.absolute_path import AbsolutePath, parse_absolute_path
 from etl_entities.hwm.hwm import HWM
-from etl_entities.instance import AbsolutePath
 
 FileHWMValueType = TypeVar("FileHWMValueType")
 
 
-class FileHWM(
+class FileHWM(  # noqa: PLW1641
     HWM[FileHWMValueType],
     Generic[FileHWMValueType],
-    GenericModel,
 ):
     """Basic file HWM type
 
@@ -54,14 +47,13 @@ class FileHWM(
 
     """
 
-    entity: Optional[AbsolutePath] = Field(default=None, alias="directory")
+    entity: AbsolutePath | None = Field(default=None, alias="directory")
     value: FileHWMValueType
 
-    class Config:  # noqa: WPS431
-        json_encoders = {pathlib.PurePosixPath: os.fspath}
+    model_config = ConfigDict(extra="forbid")
 
     @abstractmethod
-    def covers(self, value: FileHWMValueType) -> bool:
+    def covers(self, value: Any) -> bool:
         """Return ``True`` if input value is already covered by HWM"""
 
     def __eq__(self, other):
@@ -81,13 +73,14 @@ class FileHWM(
         if not isinstance(other, type(self)):
             return NotImplemented
 
-        self_fields = self.dict(exclude={"modified_time"})
-        other_fields = other.dict(exclude={"modified_time"})
+        self_fields = self.model_dump(exclude={"modified_time"}, warnings=False)
+        other_fields = other.model_dump(exclude={"modified_time"}, warnings=False)
 
         return self_fields == other_fields
 
-    @validator("entity", pre=True)
-    def _validate_directory(cls, value):  # noqa: N805
+    @field_validator("entity", mode="before")
+    @classmethod
+    def _validate_directory(cls, value):
         if value is None:
             return None
-        return AbsolutePath(value)
+        return parse_absolute_path(value)

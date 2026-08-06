@@ -11,16 +11,23 @@ on:
     paths:
       - .github/labels.yml
       - .github/workflows/repo-labels-sync.yml
+  workflow_dispatch:
 
 jobs:
   labeler:
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      issues: write # to update repo labels
+      pull-requests: write # to update repo labels
+
     steps:
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
 
       - name: Run Labeler
-        uses: crazy-max/ghaction-github-labeler@v5
+        uses: crazy-max/ghaction-github-labeler@v6
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
           yaml-file: .github/labels.yml

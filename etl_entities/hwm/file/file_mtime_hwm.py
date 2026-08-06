@@ -1,16 +1,13 @@
-# SPDX-FileCopyrightText: 2021-2025 MTS PJSC
+# SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
+from collections.abc import Iterable
 from datetime import datetime
-from typing import Iterable, Optional, TypeVar
+from typing import TypeVar
 
-from typing_extensions import Protocol, runtime_checkable
-
-try:
-    from pydantic.v1 import validator
-except (ImportError, AttributeError):
-    from pydantic import validator  # type: ignore[no-redef, assignment]
+from pydantic import field_validator
+from typing_extensions import Protocol, Self, runtime_checkable
 
 from etl_entities.hwm import FileHWM
 from etl_entities.hwm.hwm_type_registry import register_hwm_type
@@ -21,18 +18,18 @@ FileModifiedTimeHWMType = TypeVar("FileModifiedTimeHWMType", bound="FileModified
 @runtime_checkable
 class StatWithMtime(Protocol):
     @property
-    def st_mtime(self) -> float | None: ...  # noqa: E704
+    def st_mtime(self) -> float | None: ...
 
 
 @runtime_checkable
 class PathWithStats(Protocol):
-    def is_file(self) -> bool: ...  # noqa: E704
-    def exists(self) -> bool: ...  # noqa: E704
-    def stat(self) -> StatWithMtime: ...  # noqa: E704
+    def is_file(self) -> bool: ...
+    def exists(self) -> bool: ...
+    def stat(self) -> StatWithMtime: ...
 
 
 @register_hwm_type("file_modification_time")
-class FileModifiedTimeHWM(FileHWM[Optional[datetime]]):  # noqa: WPS338r
+class FileModifiedTimeHWM(FileHWM[datetime | None]):
     """HWM based on tracking file modification time.
 
     Uses ``Pathlib.Path(file).stat().st_mtime`` under the hood.
@@ -88,21 +85,16 @@ class FileModifiedTimeHWM(FileHWM[Optional[datetime]]):  # noqa: WPS338r
         )
     """
 
-    value: Optional[datetime] = None
+    value: datetime | None = None
 
-    @validator("value", pre=True)
-    def _parse_isoformat(cls, value):  # noqa: N805
-        if isinstance(value, str):
-            return datetime.fromisoformat(value)
-        return value
-
-    @validator("value")
-    def _always_include_tz(cls, value: datetime | None):  # noqa: N805r
+    @field_validator("value", mode="after")
+    @classmethod
+    def _always_include_tz(cls, value: datetime | None):
         if value and value.tzinfo is None:
             return value.astimezone()
         return value
 
-    def covers(self, value: datetime | int | float | PathWithStats) -> bool:  # type: ignore
+    def covers(self, value: datetime | float | PathWithStats) -> bool:
         """Return ``True`` if input value is already covered by HWM
 
         Examples
@@ -128,9 +120,9 @@ class FileModifiedTimeHWM(FileHWM[Optional[datetime]]):  # noqa: WPS338r
         return self.value is not None and new_value is not None and self.value.timestamp() >= new_value.timestamp()
 
     def update(
-        self: FileModifiedTimeHWMType,
-        value: datetime | int | float | PathWithStats | Iterable[PathWithStats],
-    ) -> FileModifiedTimeHWMType:
+        self,
+        value: datetime | float | PathWithStats | Iterable[PathWithStats],
+    ) -> Self:
         """Updates current HWM value with some implementation-specific logic, and return HWM.
 
         .. note::
@@ -176,7 +168,7 @@ class FileModifiedTimeHWM(FileHWM[Optional[datetime]]):  # noqa: WPS338r
 
         return self
 
-    def reset(self: FileModifiedTimeHWMType) -> FileModifiedTimeHWMType:
+    def reset(self) -> Self:
         """Reset current HWM value and return HWM.
 
         .. note::

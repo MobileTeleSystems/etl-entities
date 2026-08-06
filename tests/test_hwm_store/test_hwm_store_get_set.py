@@ -138,7 +138,7 @@ def test_hwm_store_get_save(hwm_delta):
     assert hwm_store.get_hwm(hwm.name) == hwm
 
     # changing HWM object does not change MemoryHWMStore data
-    hwm1 = hwm.copy().update(delta)
+    hwm1 = hwm.model_copy().update(delta)
     assert hwm_store.get_hwm(hwm.name) == hwm
 
     # it is changed only after explicit call of .set_hwm()

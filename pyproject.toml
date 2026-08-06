@@ -1,16 +1,166 @@
-[tool.isort]
-profile = "black"
-multi_line_output = 3
+[build-system]
+requires = [ "setuptools>=61.2", "setuptools-git-versioning>=3.0,<4"]
+build-backend = "setuptools.build_meta"
 
-[tool.black]
+[tool.setuptools-git-versioning]
+enabled = true
+version_file = "etl_entities/VERSION"
+count_commits_from_version_file = true
+dev_template = "{tag}.dev{env:GITHUB_RUN_ID:{ccount}}+git.{sha}"
+dirty_template = "{tag}.dev{env:GITHUB_RUN_ID:{ccount}}+git.{sha}.dirty"
+
+[project]
+name = "etl-entities"
+authors = [{name = "MWS Data Bridge", email = "onetools@mts.ru"}]
+license = {text = "Apache-2.0"}
+description = "ETL Entities lib for onETL"
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Framework :: Pydantic",
+    "Framework :: Pydantic :: 2",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Typing :: Typed",
+]
+requires-python = ">=3.10"
+dependencies = [
+    "bidict",
+    "frozendict",
+    "importlib_metadata>=3.6.0",
+    "pydantic>=2,<3",
+    "typing-extensions>=4.5.0",
+]
+dynamic = ["version"]
+
+[project.readme]
+file = "README.rst"
+content-type = "text/x-rst"
+
+[project.urls]
+Homepage = "https://github.com/MTSWebServices/etl-entities"
+Documentation = "https://etl-entities.readthedocs.io/"
+Source = "https://github.com/MTSWebServices/etl-entities"
+"CI/CD" = "https://github.com/MTSWebServices/etl-entities/actions"
+Tracker = "https://github.com/MTSWebServices/etl-entities/issues"
+
+[project.entry-points."tricoder_package_spy.register"]
+etl-entities = "etl_entities"
+
+[tool.setuptools.packages.find]
+include = ["etl_entities*"]
+exclude = ["docs", "tests"]
+
+[tool.setuptools.package-data]
+"*" = ["py.typed", "VERSION"]
+
+
+[dependency-groups]
+test = [
+    "coverage~=7.15.3",
+    "omegaconf~=2.3.1",
+    "pytest~=9.1.1",
+]
+dev = [
+    "mypy~=2.3.0",
+    "prek~=0.4.12",
+    "ruff~=0.16.1",
+]
+docs = [
+    "furo~=2025.12.19",
+    "numpydoc~=1.10.0",
+    "packaging~=25.0",
+    # sphinx-toolbox doesn't support Sphinx 9 yet
+    "sphinx~=8.2.3",
+    "sphinx-copybutton~=0.5.2",
+    "sphinx-last-updated-by-git~=0.3.8",
+    "sphinx-toolbox>=4.1,<4.4",
+    "sphinxcontrib-towncrier~=0.5.0a0",
+    "towncrier~=25.8.0",
+]
+
+[tool.uv]
+default-groups = []
+
+[tool.uv.dependency-groups]
+dev = {requires-python = ">=3.12"}
+docs = {requires-python = ">=3.12"}
+
+[pytest.ini_options]
+testpaths = ["tests"]
+norecursedirs = [".git", ".venv"]
+cache_dir = ".pytest_cache"
+log_cli_level = "INFO"
+addopts = '--doctest-modules --ignore-glob="tests/libs/**"'
+
+[tool.coverage.run]
+source_pkgs = ["etl_entities"]
+branch = true
+omit = ["tests/*"]
+parallel = true
+data_file = "reports/.coverage"
+
+[tool.coverage.report]
+exclude_also = [
+  "def __repr__",
+  "raise AssertionError",
+  "raise NotImplementedError",
+  "class .*\bProtocol:",
+  "@(abc\\.)?abstractmethod",
+  "\\.\\.\\.",
+  "def downgrade\\(\\)",
+]
+partial_also = [
+  "if .*TYPE_CHECKING:",
+  "if .*isEnabledFor.*:",
+  "if .*debug.*:",
+  "if .*sys.version_info.*:",
+  "if __name__ == .__main__.:",
+  "except .*ImportError",
+]
+
+[tool.ruff]
+target-version = "py310"
 line-length = 120
-target-version = ['py37', 'py38', 'py39', 'py310', 'py311']
-include = '\.pyi?$'
-exclude = '''(\.eggs|\.git|\.mypy_cache|\.tox|\.venv|_build|buck-out|build|dist)'''
+extend-exclude = ["docs/", "Makefile"]
+
+[tool.ruff.lint]
+select = ["ALL"]
+ignore = [
+    "D",
+    "ANN",
+    "FIX002",
+    "TD",
+    "TC001",
+    "CPY001",
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = [
+    "S",
+    "ANN",
+    "D",
+    "ARG",
+    "DTZ",
+    "PT011",
+    "PLR2004",
+    "PLR0913",
+    "PLR0915",
+    "PLR0917",
+    "RUF005",
+    "EM101",
+    "TRY003",
+]
+"tests/libs/*" = ["INP001"]
 
 [tool.mypy]
 plugins = 'pydantic.mypy'
-python_version = 3.7
+python_version = "3.10"
 follow_imports = "silent"
 ignore_missing_imports = true
 pretty = true

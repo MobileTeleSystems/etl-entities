@@ -1,21 +1,19 @@
-# SPDX-FileCopyrightText: 2021-2025 MTS PJSC
+# SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
 import os
-import sys
-from typing import FrozenSet, Iterable, TypeVar
+from collections.abc import Iterable
+from typing import TypeVar
 
-try:
-    from pydantic.v1 import Field, validator
-except (ImportError, AttributeError):
-    from pydantic import Field, validator  # type: ignore[no-redef, assignment]
+from pydantic import Field, ValidationInfo, field_validator
+from typing_extensions import Self
 
 from etl_entities.hwm import FileHWM
+from etl_entities.hwm.file.absolute_path import AbsolutePath, parse_absolute_path
 from etl_entities.hwm.hwm_type_registry import register_hwm_type
-from etl_entities.instance import AbsolutePath
 
-FileListType = FrozenSet[AbsolutePath]
+FileListType = frozenset[AbsolutePath]
 FileListHWMType = TypeVar("FileListHWMType", bound="FileListHWM")
 
 
@@ -60,7 +58,7 @@ class FileListHWM(FileHWM[FileListType]):
     .. code:: python
 
         from etl_entities.hwm import FileListHWM
-        from etl_entities.instance import AbsolutePath
+        from etl_entities.hwm.file.absolute_path import AbsolutePath
 
         hwm = FileListHWM(
             name="hwm_name",
@@ -70,7 +68,7 @@ class FileListHWM(FileHWM[FileListType]):
 
     value: FileListType = Field(default_factory=frozenset)
 
-    def covers(self, value: str | os.PathLike) -> bool:  # type: ignore
+    def covers(self, value: str | os.PathLike) -> bool:
         """Return ``True`` if input value is already covered by HWM
 
         Examples
@@ -86,7 +84,7 @@ class FileListHWM(FileHWM[FileListType]):
 
         return value in self
 
-    def update(self: FileListHWMType, value: str | os.PathLike | Iterable[str | os.PathLike]) -> FileListHWMType:
+    def update(self, value: str | os.PathLike | Iterable[str | os.PathLike]) -> Self:
         """Updates current HWM value with some implementation-specific logic, and return HWM.
 
         .. note::
@@ -120,7 +118,7 @@ class FileListHWM(FileHWM[FileListType]):
 
         return self
 
-    def reset(self: FileListHWMType) -> FileListHWMType:
+    def reset(self) -> Self:
         """Reset current HWM value and return HWM.
 
         .. note::
@@ -144,7 +142,7 @@ class FileListHWM(FileHWM[FileListType]):
         """
         return self.set_value(frozenset())
 
-    def __add__(self: FileListHWMType, value: str | os.PathLike | Iterable[str | os.PathLike]) -> FileListHWMType:
+    def __add__(self, value: str | os.PathLike | Iterable[str | os.PathLike]) -> Self:
         """Adds path or paths to HWM value, and return copy of HWM
 
         Parameters
@@ -171,11 +169,11 @@ class FileListHWM(FileHWM[FileListType]):
 
         new_value = self.value | self._check_new_value(value)
         if self.value != new_value:
-            return self.copy().set_value(new_value)
+            return self.model_copy().set_value(new_value)
 
         return self
 
-    def __sub__(self: FileListHWMType, value: str | os.PathLike | Iterable[str | os.PathLike]) -> FileListHWMType:
+    def __sub__(self, value: str | os.PathLike | Iterable[str | os.PathLike]) -> Self:
         """Remove path or paths from HWM value, and return copy of HWM
 
         Parameters
@@ -202,7 +200,7 @@ class FileListHWM(FileHWM[FileListType]):
 
         new_value = self.value - self._check_new_value(value)
         if self.value != new_value:
-            return self.copy().set_value(new_value)
+            return self.model_copy().set_value(new_value)
 
         return self
 
@@ -219,7 +217,7 @@ class FileListHWM(FileHWM[FileListType]):
         --------
 
         >>> from etl_entities.hwm import FileListHWM
-        >>> from etl_entities.instance import AbsolutePath
+        >>> from etl_entities.hwm.file.absolute_path import AbsolutePath
         >>> hwm = FileListHWM(value={"/some/path"}, name="my_hwm")
         >>> "/some/path" in hwm
         True
@@ -231,13 +229,14 @@ class FileListHWM(FileHWM[FileListType]):
             if not item.startswith("/"):
                 return False
 
-            item = AbsolutePath(item)
+            item = parse_absolute_path(item)
 
         return item in self.value
 
-    @validator("value", pre=True)
-    def _validate_value(cls, value, values: dict):  # noqa: N805
-        directory = values.get("entity")
+    @field_validator("value", mode="before")
+    @classmethod
+    def _validate_value(cls, value, info: ValidationInfo):
+        directory = info.data.get("entity")
         if isinstance(value, (os.PathLike, str)):
             return cls._deserialize_value([value], directory)
 
@@ -254,16 +253,12 @@ class FileListHWM(FileHWM[FileListType]):
     ) -> frozenset[AbsolutePath]:
         data = []
 
-        for item in value:
-            if not isinstance(item, AbsolutePath):
-                item = AbsolutePath(item)
+        for raw in value:
+            item = parse_absolute_path(raw)
 
-            if directory:
-                if sys.version_info >= (3, 9):
-                    if not item.is_relative_to(directory):
-                        raise ValueError(f"Item {item} is not within directory {directory}")  # noqa: WPS220
-                else:
-                    item.relative_to(directory)
+            if directory and not item.is_relative_to(directory):
+                msg = f"Item {item} is not within directory {directory}"
+                raise ValueError(msg)
 
             data.append(item)
 

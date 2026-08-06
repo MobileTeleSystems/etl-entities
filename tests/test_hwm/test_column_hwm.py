@@ -13,7 +13,7 @@ from etl_entities.hwm import (
 
 
 @pytest.mark.parametrize(
-    "hwm_class, input_value, value",
+    ("hwm_class", "input_value", "value"),
     [
         (ColumnDateHWM, date(2023, 12, 30), date(2023, 12, 30)),
         (ColumnDateHWM, "2023-12-30", date(2023, 12, 30)),
@@ -29,7 +29,7 @@ from etl_entities.hwm import (
         ),
         (ColumnIntHWM, 1, 1),
         (ColumnIntHWM, "1", 1),
-        (ColumnIntHWM, Decimal("1"), 1),
+        (ColumnIntHWM, Decimal(1), 1),
         (ColumnIntHWM, 1.0, 1),
         (ColumnIntHWM, "1.0", 1),
         (ColumnIntHWM, Decimal("1.0"), 1),
@@ -64,7 +64,7 @@ def test_column_hwm_valid_input(hwm_class, input_value, value):
 
 
 @pytest.mark.parametrize(
-    "hwm_class, value, wrong_values",
+    ("hwm_class", "value", "wrong_values"),
     [
         (ColumnDateHWM, date.today(), ["abc", "1.1", "1", "2021-01-01T11:22:33", 1111, [], ColumnDateHWM]),
         (ColumnDateTimeHWM, datetime.now(), ["abc", "1.1", "1", 1111, [], ColumnDateTimeHWM]),
@@ -95,7 +95,7 @@ def test_column_hwm_wrong_input(hwm_class, value, wrong_values):
 
 
 @pytest.mark.parametrize(
-    "hwm_class, value",
+    ("hwm_class", "value"),
     [
         (ColumnDateHWM, date.today()),
         (ColumnDateTimeHWM, datetime.now()),
@@ -106,12 +106,12 @@ def test_column_hwm_set_value(hwm_class, value):
     name = secrets.token_hex(8)
     hwm = hwm_class(name=name)
 
-    hwm1 = hwm.copy()
+    hwm1 = hwm.model_copy()
     hwm1.set_value(value)
     assert hwm1.value == value
     assert hwm1.modified_time > hwm.modified_time
 
-    hwm2 = hwm1.copy()
+    hwm2 = hwm1.model_copy()
     hwm2.set_value(None)
     assert hwm2.value is None
     assert hwm2.modified_time > hwm.modified_time
@@ -138,19 +138,19 @@ def test_column_hwm_frozen(hwm_class):
 
     for attr in ("value", "name", "description", "entity", "expression", "modified_time"):
         for value in (1, "abc", date.today(), datetime.now(), None, name, modified_time):
-            with pytest.raises(TypeError):
+            with pytest.raises(ValueError, match="Instance is frozen"):
                 setattr(hwm, attr, value)
 
 
-@pytest.mark.parametrize(  # noqa: WPS210
-    "hwm_class, value, delta",
+@pytest.mark.parametrize(
+    ("hwm_class", "value", "delta"),
     [
         (ColumnDateHWM, date.today(), timedelta(days=2)),
         (ColumnDateTimeHWM, datetime.now(), timedelta(seconds=2)),
         (ColumnIntHWM, 1, 2),
     ],
 )
-def test_column_hwm_compare(hwm_class, value, delta):  # noqa: WPS210
+def test_column_hwm_compare(hwm_class, value, delta):
     entity1 = "column_name_1"
     entity2 = "column_name_2"
 
@@ -182,7 +182,7 @@ def test_column_hwm_compare(hwm_class, value, delta):  # noqa: WPS210
 
     items = (hwm1, hwm2, hwm3, hwm4)
     next_items = (hwm5, hwm6, hwm7, hwm8)
-    valid_pairs = list(zip(items, next_items))
+    valid_pairs = list(zip(items, next_items, strict=False))
 
     # items with different attribute values (except modified_time) are not equal
     for item1 in items + next_items:
@@ -224,7 +224,7 @@ def test_column_hwm_compare(hwm_class, value, delta):  # noqa: WPS210
         ColumnIntHWM,
     ],
 )
-def test_column_hwm_compare_other_type(hwm_class):  # noqa: WPS210
+def test_column_hwm_compare_other_type(hwm_class):
     name = secrets.token_hex(8)
     other_types = {ColumnDateHWM, ColumnDateTimeHWM, ColumnIntHWM} - {hwm_class}
     table = "table_name"
@@ -255,7 +255,7 @@ def test_column_hwm_compare_other_type(hwm_class):  # noqa: WPS210
 
 
 @pytest.mark.parametrize(
-    "hwm_class, value, delta",
+    ("hwm_class", "value", "delta"),
     [
         (ColumnDateHWM, date.today(), timedelta(days=2)),
         (ColumnDateTimeHWM, datetime.now(), timedelta(seconds=2)),
@@ -267,8 +267,8 @@ def test_column_hwm_add(hwm_class, value, delta):
     hwm = hwm_class(name=name)
 
     # if something has been changed, update modified_time
-    hwm1 = hwm.copy(update={"value": value})
-    hwm2 = hwm.copy(update={"value": value + delta})
+    hwm1 = hwm.model_copy(update={"value": value})
+    hwm2 = hwm.model_copy(update={"value": value + delta})
 
     hwm3 = hwm1 + delta
 
@@ -289,7 +289,7 @@ def test_column_hwm_add(hwm_class, value, delta):
 
 
 @pytest.mark.parametrize(
-    "hwm_class, value, delta",
+    ("hwm_class", "value", "delta"),
     [
         (ColumnDateHWM, date.today(), timedelta(days=2)),
         (ColumnDateTimeHWM, datetime.now(), timedelta(seconds=2)),
@@ -300,8 +300,8 @@ def test_column_hwm_sub(hwm_class, value, delta):
     name = secrets.token_hex(8)
     hwm = hwm_class(name=name)
 
-    hwm1 = hwm.copy(update={"value": value})
-    hwm2 = hwm.copy(update={"value": value - delta})
+    hwm1 = hwm.model_copy(update={"value": value})
+    hwm2 = hwm.model_copy(update={"value": value - delta})
     hwm3 = hwm1 - delta
 
     assert hwm3 == hwm2
@@ -321,7 +321,7 @@ def test_column_hwm_sub(hwm_class, value, delta):
 
 
 @pytest.mark.parametrize(
-    "hwm_class, hwm_type, value, serialized_value",
+    ("hwm_class", "hwm_type", "value", "serialized_value"),
     [
         (
             ColumnDateHWM,
@@ -390,7 +390,7 @@ def test_column_hwm_serialization(hwm_class, hwm_type, value, serialized_value):
 )
 def test_column_hwm_unregistered_type(hwm_class):
     class UnregisteredHWM(hwm_class):
-        pass  # noqa: WPS604
+        pass
 
     err_msg = f"You should register '{UnregisteredHWM.__qualname__}' class using @register_hwm_type decorator"
 
@@ -399,7 +399,7 @@ def test_column_hwm_unregistered_type(hwm_class):
 
 
 @pytest.mark.parametrize(
-    "hwm_class, value, delta",
+    ("hwm_class", "value", "delta"),
     [
         (ColumnDateHWM, date.today(), timedelta(days=2)),
         (ColumnDateTimeHWM, datetime.now(), timedelta(seconds=2)),
@@ -411,7 +411,7 @@ def test_column_hwm_update(hwm_class, value, delta):
     empty_hwm = hwm_class(name=name)
 
     # if both new and current values are None, do nothing
-    old_hwm = empty_hwm.copy()
+    old_hwm = empty_hwm.model_copy()
     hwm = old_hwm.update(None)
 
     assert hwm == empty_hwm
@@ -421,9 +421,9 @@ def test_column_hwm_update(hwm_class, value, delta):
     assert hwm.modified_time == empty_hwm.modified_time
 
     # if current value is None, set new value
-    hwm1 = empty_hwm.copy(update={"value": value})
+    hwm1 = empty_hwm.model_copy(update={"value": value})
 
-    old_hwm2 = empty_hwm.copy()
+    old_hwm2 = empty_hwm.model_copy()
     hwm2 = old_hwm2.update(value)
 
     assert hwm2 == hwm1
@@ -432,10 +432,10 @@ def test_column_hwm_update(hwm_class, value, delta):
     assert hwm2.modified_time > hwm1.modified_time
 
     # if input value is less than or equal to current, do nothing
-    old_hwm3 = hwm1.copy()
+    old_hwm3 = hwm1.model_copy()
     hwm3 = old_hwm3.update(value - delta)
 
-    old_hwm4 = hwm1.copy()
+    old_hwm4 = hwm1.model_copy()
     hwm4 = old_hwm4.update(value)
 
     assert hwm4 == hwm3 == hwm1
@@ -445,9 +445,9 @@ def test_column_hwm_update(hwm_class, value, delta):
     assert hwm4.modified_time == hwm3.modified_time == hwm1.modified_time
 
     # if current value is less than input, use input as a new value and update modified_time
-    hwm5 = hwm1.copy(update={"value": value + delta})
+    hwm5 = hwm1.model_copy(update={"value": value + delta})
 
-    old_hwm6 = hwm1.copy()
+    old_hwm6 = hwm1.model_copy()
     hwm6 = old_hwm6.update(value + delta)
 
     assert hwm6 == hwm5
@@ -469,7 +469,7 @@ def test_column_hwm_update(hwm_class, value, delta):
 
 
 @pytest.mark.parametrize(
-    "hwm_class, value",
+    ("hwm_class", "value"),
     [
         (ColumnDateHWM, date.today()),
         (ColumnDateTimeHWM, datetime.now()),

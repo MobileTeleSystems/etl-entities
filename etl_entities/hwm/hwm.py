@@ -1,25 +1,23 @@
-# SPDX-FileCopyrightText: 2021-2025 MTS PJSC
+# SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
-from abc import ABC, abstractmethod
+from abc import abstractmethod
 from copy import deepcopy
 from datetime import datetime
 from typing import Any, Generic, TypeVar
 
-try:
-    from pydantic.v1 import Field, validate_model
-except (ImportError, AttributeError):
-    from pydantic import Field, validate_model  # type: ignore[no-redef, assignment]
+from pydantic import ConfigDict, Field
+from typing_extensions import Self
 
-from etl_entities.entity import GenericModel
+from etl_entities.entity import BaseModel
 from etl_entities.hwm.hwm_type_registry import HWMTypeRegistry
 
 ValueType = TypeVar("ValueType")
 HWMType = TypeVar("HWMType", bound="HWM")
 
 
-class HWM(ABC, Generic[ValueType], GenericModel):
+class HWM(BaseModel, Generic[ValueType]):
     """Generic HWM type
 
     Parameters
@@ -56,10 +54,9 @@ class HWM(ABC, Generic[ValueType], GenericModel):
     expression: Any = None
     modified_time: datetime = Field(default_factory=datetime.now)
 
-    class Config:  # noqa: WPS431
-        extra = "forbid"
+    model_config = ConfigDict(extra="forbid")
 
-    def set_value(self: HWMType, value: ValueType | None) -> HWMType:
+    def set_value(self, value: ValueType | None) -> Self:
         """Replaces current HWM value with the passed one, and return HWM.
 
         .. note::
@@ -85,8 +82,8 @@ class HWM(ABC, Generic[ValueType], GenericModel):
         new_value = self._check_new_value(value)
 
         if self.value != new_value:
-            object.__setattr__(self, "value", new_value)  # noqa: WPS609
-            object.__setattr__(self, "modified_time", datetime.now())  # noqa: WPS609
+            object.__setattr__(self, "value", new_value)
+            object.__setattr__(self, "modified_time", datetime.now())  # noqa: DTZ005
 
         return self
 
@@ -118,12 +115,12 @@ class HWM(ABC, Generic[ValueType], GenericModel):
         'some description'
         """
 
-        result = super().serialize()
+        result = self.model_dump(mode="json", warnings=False)
         result["type"] = HWMTypeRegistry.get_key(self.__class__)
         return result
 
     @classmethod
-    def deserialize(cls: type[HWMType], inp: dict) -> HWMType:
+    def deserialize(cls, inp: dict) -> Self:
         """Return HWM from dict representation
 
         Returns
@@ -165,9 +162,10 @@ class HWM(ABC, Generic[ValueType], GenericModel):
         if type_name:
             hwm_type = HWMTypeRegistry.get(type_name)
             if not issubclass(cls, hwm_type):
-                raise ValueError(f"Type {type_name!r} does not match class {cls.__qualname__!r}")
+                msg = f"Type {type_name!r} does not match class {cls.__qualname__!r}"
+                raise ValueError(msg)
 
-        return super().deserialize(value)
+        return cls.model_validate(value)
 
     @abstractmethod
     def update(self: HWMType, value: Any) -> HWMType:
@@ -178,11 +176,6 @@ class HWM(ABC, Generic[ValueType], GenericModel):
         """Reset HWM value with some implementation-specific logic and return HWM"""
 
     def _check_new_value(self, value):
-        validated_dict, _, validation_error = validate_model(
-            self.__class__,
-            self.copy(update={"value": value}).__dict__,
-        )
-        if validation_error:
-            raise validation_error
-
-        return validated_dict["value"]
+        new_dict = self.model_copy(update={"value": value}).model_dump(warnings=False)
+        new_model = self.model_validate(new_dict, by_name=True)
+        return new_model.value

@@ -18,7 +18,7 @@ def test_autoimport_success(request):
     assert value
 
     # check that the module and class are really what we expect
-    import dummy
+    import dummy  # noqa: PLC0415
 
     assert sys.modules["dummy"] is dummy
     assert value is dummy.DummyHWMStore

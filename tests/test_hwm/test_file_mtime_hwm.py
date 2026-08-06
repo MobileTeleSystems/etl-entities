@@ -4,17 +4,16 @@ import os
 import secrets
 import time
 from datetime import datetime, timedelta, timezone
-from pathlib import Path
+from pathlib import Path, PurePosixPath
 from unittest.mock import Mock
 
 import pytest
 
 from etl_entities.hwm import FileModifiedTimeHWM
-from etl_entities.instance import AbsolutePath
 
 
 @pytest.mark.parametrize(
-    "input_value, expected_value",
+    ("input_value", "expected_value"),
     [
         # values are always timezone-aware
         (
@@ -70,7 +69,7 @@ def test_file_modified_time_hwm_valid_input(input_value, expected_value):
     assert hwm.name == name
     assert hwm.value == expected_value
     assert hwm.description == "my hwm"
-    assert hwm.entity == AbsolutePath("/absolute")
+    assert hwm.entity == PurePosixPath("/absolute")
     assert hwm.expression == "something"
     assert hwm.modified_time == modified_time
 
@@ -94,7 +93,7 @@ def test_file_modified_time_hwm_wrong_input():
 
 
 @pytest.mark.parametrize(
-    "input_value, expected_value",
+    ("input_value", "expected_value"),
     [
         (
             datetime(2023, 12, 30, 11, 22, 33, 456789),
@@ -113,17 +112,17 @@ def test_file_modified_time_hwm_wrong_input():
 def test_file_modified_time_hwm_set_value(input_value, expected_value):
     hwm = FileModifiedTimeHWM(name="file_mtime")
 
-    hwm1 = hwm.copy()
+    hwm1 = hwm.model_copy()
     hwm1.set_value(input_value)
     assert hwm1.value == expected_value
     assert hwm1.modified_time > hwm.modified_time
 
-    hwm2 = hwm.copy()
+    hwm2 = hwm.model_copy()
     hwm2.set_value(input_value + timedelta(seconds=1))
     assert hwm2.value == expected_value + timedelta(seconds=1)
     assert hwm2.modified_time > hwm1.modified_time
 
-    hwm3 = hwm2.copy()
+    hwm3 = hwm2.model_copy()
     hwm3.set_value(input_value - timedelta(seconds=1))
     assert hwm3.value == expected_value - timedelta(seconds=1)
     assert hwm3.modified_time > hwm2.modified_time
@@ -134,7 +133,7 @@ def test_file_modified_time_hwm_frozen():
 
     for attr in ("value", "entity", "expression", "description", "modified_time"):
         for item in (1, "abc", None, datetime.now()):
-            with pytest.raises(TypeError):
+            with pytest.raises(ValueError, match="Instance is frozen"):
                 setattr(hwm, attr, item)
 
 
@@ -145,8 +144,8 @@ def test_file_modified_time_hwm_compare():
     value1 = datetime(2025, 1, 1, 11, 22, 33, 456789, tzinfo=timezone.utc)
     value2 = datetime(2025, 1, 1, 11, 22, 33, 456789, tzinfo=timezone(timedelta(hours=1)))
 
-    folder1 = AbsolutePath("/some/path")
-    folder2 = AbsolutePath("/another/path")
+    folder1 = PurePosixPath("/some/path")
+    folder2 = PurePosixPath("/another/path")
 
     hwm1 = FileModifiedTimeHWM(name=name1, value=value1)
     hwm2 = FileModifiedTimeHWM(name=name2, value=value1)
@@ -238,7 +237,7 @@ def test_file_modified_time_hwm_update_none(value):
     initial_hwm = FileModifiedTimeHWM(name="file_mtime", value=value)
 
     # empty value -> do nothing
-    hwm = initial_hwm.copy()
+    hwm = initial_hwm.model_copy()
     updated_hwm = hwm.update(None)
     updated_hwm = updated_hwm.update([])
     updated_hwm = updated_hwm.update({})
@@ -263,7 +262,7 @@ def test_file_modified_time_hwm_update_datetime(tzinfo: timezone | None):
     value = datetime(2025, 1, 1, 11, 22, 33, 456789, tzinfo=tzinfo)
     new_value = value + timedelta(seconds=1)
 
-    hwm = empty_hwm.copy()
+    hwm = empty_hwm.model_copy()
     updated_hwm = hwm.update(value)
     assert updated_hwm.value == value.astimezone()
     assert updated_hwm is hwm  # modified in-place
@@ -295,7 +294,7 @@ def test_file_modified_time_hwm_update_timestamp(tzinfo: timezone | None):
 
     value = datetime(2025, 1, 1, 11, 22, 33, 456789, tzinfo=tzinfo)
 
-    hwm = empty_hwm.copy()
+    hwm = empty_hwm.model_copy()
     updated_hwm = hwm.update(value.timestamp())
     assert updated_hwm.value == value.astimezone()
     assert updated_hwm is hwm  # modified in-place
@@ -334,7 +333,7 @@ def test_file_modified_time_hwm_update_filepath(tzinfo: timezone | None):
     old_file.exists.return_value = True
     old_file.is_file.return_value = True
 
-    hwm = empty_hwm.copy()
+    hwm = empty_hwm.model_copy()
     updated_hwm = hwm.update(old_file)
     assert updated_hwm.value == value.astimezone()
     assert updated_hwm is hwm  # modified in-place
@@ -403,7 +402,7 @@ def test_file_modified_time_hwm_update_filepath_iterable(tzinfo: timezone | None
     old_file2.exists.return_value = True
     old_file2.is_file.return_value = True
 
-    hwm = empty_hwm.copy()
+    hwm = empty_hwm.model_copy()
     updated_hwm = hwm.update([old_file1, old_file2])
     assert updated_hwm.value == value.astimezone()
     assert updated_hwm is hwm  # modified in-place
@@ -489,11 +488,11 @@ def test_file_modified_time_hwm_serialization():
     expected = {
         "type": "file_modification_time",
         "name": "file_mtime",
-        "value": "2025-01-01T11:22:33.456789+00:00",
+        "value": "2025-01-01T11:22:33.456789Z",
         "entity": "/some/path",
         "expression": "some",
         "description": "some description",
-        "modified_time": modified_time.isoformat(),
+        "modified_time": modified_time.isoformat().replace("+00:00", "Z"),
     }
 
     serialized = hwm.serialize()
@@ -508,7 +507,7 @@ def test_file_modified_time_hwm_serialization():
         "entity": None,
         "expression": None,
         "description": "",
-        "modified_time": modified_time.isoformat(),
+        "modified_time": modified_time.isoformat().replace("+00:00", "Z"),
     }
 
     empty_hwm_serialized = empty_hwm.serialize()

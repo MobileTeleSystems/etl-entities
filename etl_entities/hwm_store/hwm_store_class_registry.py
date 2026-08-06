@@ -1,10 +1,13 @@
-# SPDX-FileCopyrightText: 2021-2025 MTS PJSC
+# SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
-from typing import ClassVar, Collection, TypeVar
+from typing import TYPE_CHECKING, ClassVar, TypeVar
 
 from etl_entities.hwm_store.base_hwm_store import BaseHWMStore
+
+if TYPE_CHECKING:
+    from collections.abc import Collection
 
 T = TypeVar("T", bound=BaseHWMStore)
 
@@ -38,7 +41,8 @@ class HWMStoreClassRegistry:
 
         result = cls._mapping.get(alias)
         if not result:
-            raise KeyError(f"Unknown HWM Store type {alias!r}")
+            msg = f"Unknown HWM Store type {alias!r}"
+            raise KeyError(msg)
 
         return result
 

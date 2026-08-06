@@ -1,4 +1,4 @@
-# SPDX-FileCopyrightText: 2021-2025 MTS PJSC
+# SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
@@ -29,8 +29,8 @@ class BaseHWMStore(BaseModel, ABC):
         >>> HWMStoreStackManager.get_current()
         DefaultHWMStore()
         """
-        # hack to avoid circular imports
-        from etl_entities.hwm_store.hwm_store_stack_manager import HWMStoreStackManager
+        # avoid circular imports
+        from etl_entities.hwm_store.hwm_store_stack_manager import HWMStoreStackManager  # noqa: PLC0415
 
         log.debug("|%s| Entered stack at level %d", self.__class__.__name__, HWMStoreStackManager.get_current_level())
         HWMStoreStackManager.push(self)
@@ -39,7 +39,7 @@ class BaseHWMStore(BaseModel, ABC):
         return self
 
     def __exit__(self, _exc_type, _exc_value, _traceback):
-        from etl_entities.hwm_store.hwm_store_stack_manager import HWMStoreStackManager
+        from etl_entities.hwm_store.hwm_store_stack_manager import HWMStoreStackManager  # noqa: PLC0415
 
         log.debug(
             "|%s| Exiting stack at level %d",
@@ -100,7 +100,7 @@ class BaseHWMStore(BaseModel, ABC):
 
     def _log_parameters(self) -> None:
         log.info("Using %s as HWM Store", self.__class__.__name__)
-        options = self.dict(by_alias=True, exclude_none=True)
+        options = self.model_dump(exclude_none=True, warnings=False)
 
         if options:
             log.info("|%s| Using options:", self.__class__.__name__)

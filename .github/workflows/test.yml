@@ -13,67 +13,55 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  DEFAULT_PYTHON: '3.13'
+  DEFAULT_PYTHON: '3.14'
+  MIN_COVERAGE: 96
+
+permissions:
+  contents: write
+  checks: write
+  pull-requests: write
 
 jobs:
   tests:
-    name: Run tests (Python ${{ matrix.python-version }}, Pydantic ${{ matrix.pydantic-version }}, ${{ matrix.os }})
-    runs-on: ${{ matrix.os }}
+    name: Run tests (Python ${{ matrix.python-version }})
+    runs-on: ubuntu-latest
+
     strategy:
       fail-fast: false
       matrix:
         include:
-          - os: ubuntu-latest
-            python-version: '3.13'
-            pydantic-version: '2'
-          - os: ubuntu-22.04
-            python-version: '3.7'
-            pydantic-version: '1'
+          - python-version: '3.14'
+          - python-version: '3.10'
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           fetch-depth: 0
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Cache pip
-        uses: actions/cache@v4
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
         with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-python-${{ matrix.python-version }}-pydantic-${{ matrix.pydantic-version }}-tests-${{ hashFiles('requirements*.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-python-${{ matrix.python-version }}-pydantic-${{ matrix.pydantic-version }}-tests-${{ hashFiles('requirements*.txt') }}
-            ${{ runner.os }}-python-${{ matrix.python-version }}-pydantic-${{ matrix.pydantic-version }}-tests-
-            ${{ runner.os }}-python
-            ${{ runner.os }}-
-
-      - name: Upgrade pip
-        run: python -m pip install --upgrade pip setuptools wheel
-
-      - name: Install dependencies
-        run: pip install -I -r requirements.txt -r requirements-test.txt "pydantic==${{ matrix.pydantic-version }}.*"
-
-      - name: Build package
-        run: |
-          python setup.py --version
-          python setup.py bdist_wheel sdist
+          activate-environment: 'true'
+          enable-cache: 'false'
+      # no uv cache here because fresh install takes about 1 second
 
       - name: Run tests
         run: |
           mkdir reports/ || echo "Directory exists"
-          pip install -e . --no-build-isolation
-          # run both tests ad doctests
-          ./run_tests.sh etl_entities/hwm tests
+          make test-ci \
+            PYTEST_ARGS="--junitxml=reports/junit/python${{ matrix.python-version }}.xml"
 
       - name: Upload coverage results
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
+        if: success() || failure()
         with:
-          name: coverage-python-${{ matrix.python-version }}-pydantic-${{ matrix.pydantic-version }}-os-${{ matrix.os }}
+          name: coverage-python-${{ matrix.python-version }}
           path: reports/*
           # https://github.com/actions/upload-artifact/issues/602
           include-hidden-files: true
@@ -81,51 +69,76 @@ jobs:
   all_done:
     name: Tests done
     runs-on: ubuntu-latest
+
+    permissions:
+      contents: write
+      checks: write
+      pull-requests: write
+
+    if: success() || failure()
     needs: [tests]
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Python ${{ env.DEFAULT_PYTHON }}
-        uses: actions/setup-python@v5
-        with:
-          python-version: ${{ env.DEFAULT_PYTHON }}
-
-      - name: Cache pip
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/pip
-          key: ${{ runner.os }}-python-${{ env.DEFAULT_PYTHON }}-coverage-${{ hashFiles('requirements*.txt') }}
-          restore-keys: |
-            ${{ runner.os }}-python-${{ env.DEFAULT_PYTHON }}-coverage-${{ hashFiles('requirements*.txt') }}
-            ${{ runner.os }}-python-${{ env.DEFAULT_PYTHON }}-coverage-
-            ${{ runner.os }}-python
-            ${{ runner.os }}-
-
-      - name: Upgrade pip
-        run: python -m pip install --upgrade pip setuptools wheel
-
-      - name: Install dependencies
-        run: pip install -I -r requirements-test.txt
+        uses: actions/checkout@v7
 
       - name: Download all coverage reports
-        uses: actions/download-artifact@v4
+        uses: actions/download-artifact@v8
         with:
           path: reports/
           pattern: coverage-*
           merge-multiple: true
 
-      - name: Generate coverate reports
-        run: ./combine_coverage.sh
-
-      - name: Check coverage
-        uses: codecov/codecov-action@v5
+      - name: Show test results
+        uses: mikepenz/action-junit-report@v6
         with:
-          token: ${{ secrets.CODECOV_TOKEN }}
-          file: ./reports/coverage.xml
-          fail_ci_if_error: true
-          plugin: noop
+          report_paths: reports/junit/*.xml
+
+      - name: Set up Python ${{ env.DEFAULT_PYTHON }}
+        uses: actions/setup-python@v7
+        with:
+          python-version: ${{ env.DEFAULT_PYTHON }}
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v7
+        with:
+          activate-environment: 'true'
+          enable-cache: 'false'
+
+      # no uv cache here because fresh install takes about 1 second
+
+      - name: Generate coverate reports
+        run: |
+          mkdir reports/ || echo "Directory exists"
+          uv run --group test coverage combine
+          uv run --group test coverage xml -o reports/coverage.xml
+
+      - name: Coverage comment
+        id: coverage
+        uses: MishaKav/pytest-coverage-comment@v1.10.1
+        with:
+          pytest-xml-coverage-path: ./reports/coverage.xml
+          default-branch: develop
+          xml-skip-covered: true
+          report-only-changed-files: true
+          hide-comment: ${{ github.event_name != 'pull_request' }}
+
+      - name: Dynamic Badges
+        uses: schneegans/dynamic-badges-action@v1.9.0
+        if: github.repository == 'MTSWebServices/etl-entities' && github.event_name == 'push'
+        with:
+          auth: ${{ secrets.AUTOMERGE_TOKEN }}
+          gistID: 03e73a82ecc4709934540ce8201cc3b4
+          filename: etl-entities_badge.json
+          label: Coverage
+          message: ${{ steps.coverage.outputs.coverage }}
+          color: ${{ steps.coverage.outputs.color }}
+
+      - name: Fail if coverage too low
+        if: ${{ steps.coverage.outputs.coverage < env.MIN_COVERAGE }}
+        run: |
+          echo "Coverage is below ${{ env.MIN_COVERAGE }}%!"
+          exit 1
 
       - name: All done
         run: echo 1

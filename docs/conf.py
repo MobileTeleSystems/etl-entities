@@ -25,8 +25,8 @@ sys.path.insert(0, os.fspath(PROJECT_ROOT_DIR))
 # -- Project information -----------------------------------------------------
 
 project = "etl-entities"
-copyright = "2021-2025 MTS PJSC"
-author = "DataOps.ETL"
+copyright = "2021-present MTS PJSC"
+author = "MWS Data Bridge"
 
 # The version info for the project you're documenting, acts as replacement for
 # |version| and |release|, also used in various other places throughout the
@@ -34,7 +34,9 @@ author = "DataOps.ETL"
 #
 # The short X.Y version.
 
-ver = Version.parse(subprocess.check_output("python ../setup.py --version", shell=True, text=True).strip())
+VERSION_FILE = PROJECT_ROOT_DIR / "etl_entities" / "VERSION"
+ver = Version.parse(VERSION_FILE.read_text())
+
 version = ver.base_version
 # The full version, including alpha/beta/rc tags.
 release = ver.public

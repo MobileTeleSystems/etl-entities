@@ -1,13 +1,8 @@
-# SPDX-FileCopyrightText: 2021-2025 MTS PJSC
+# SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
-from typing import Dict
-
-try:
-    from pydantic.v1 import PrivateAttr
-except (ImportError, AttributeError):
-    from pydantic import PrivateAttr  # type: ignore[no-redef, assignment]
+from pydantic import ConfigDict, PrivateAttr
 
 from etl_entities.hwm import HWM
 from etl_entities.hwm.hwm_type_registry import HWMTypeRegistry
@@ -43,10 +38,9 @@ class MemoryHWMStore(BaseHWMStore):
     >>> hwm_store.get_hwm("long_unique_name") # not found again
     """
 
-    _data: Dict[str, dict] = PrivateAttr(default_factory=dict)
+    _data: dict[str, dict] = PrivateAttr(default_factory=dict)
 
-    class Config:  # noqa: WPS431
-        extra = "forbid"
+    model_config = ConfigDict(extra="forbid")
 
     def get_hwm(self, name: str) -> HWM | None:
         if name not in self._data:

@@ -1,16 +1,11 @@
-# SPDX-FileCopyrightText: 2021-2025 MTS PJSC
+# SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 from __future__ import annotations
 
 from datetime import date
-from typing import Optional
 
-try:
-    from pydantic.v1 import validator
-    from pydantic.v1.validators import strict_str_validator
-except (ImportError, AttributeError):
-    from pydantic import validator  # type: ignore[no-redef, assignment]
-    from pydantic.validators import strict_str_validator  # type: ignore[no-redef, assignment]
+from pydantic import field_validator
+from pydantic_core import PydanticCustomError
 
 from etl_entities.hwm.column.column_hwm import ColumnHWM
 from etl_entities.hwm.hwm_type_registry import register_hwm_type
@@ -62,19 +57,19 @@ class ColumnDateHWM(ColumnHWM[date]):
         )
     """
 
-    value: Optional[date] = None
+    value: date | None = None
 
-    @validator("value", pre=True)
-    def _validate_value(cls, value):  # noqa: N805
+    @field_validator("value", mode="before")
+    @classmethod
+    def _validate_value(cls, value):
         # we need to deserialize values, as pydantic parses fields in unexpected way:
         # https://docs.pydantic.dev/latest/api/standard_library_types/#datetimedatetime
         if isinstance(value, int):
-            raise ValueError("Cannot convert integer to date")
+            raise PydanticCustomError("datetime_parsing", "Cannot convert integer to date", {"value": value})  # noqa: EM101
 
         if isinstance(value, str):
-            result = strict_str_validator(value).strip()
-            if result.lower() == "null":
+            if value.lower() == "null":
                 return None
-            return date.fromisoformat(result)
+            return date.fromisoformat(value)
 
         return value

@@ -27,9 +27,9 @@ ETL Entities
 .. |CI Status| image:: https://github.com/MTSWebServices/etl-entities/workflows/Tests/badge.svg
     :alt: Github Actions - latest CI build status
     :target: https://github.com/MTSWebServices/etl-entities/actions
-.. |Test Coverage| image:: https://codecov.io/gh/MTSWebServices/etl-entities/branch/develop/graph/badge.svg?token=RIO8URKNZJ
-    :alt: Test coverage - percent
-    :target: https://codecov.io/gh/MTSWebServices/etl-entities
+.. |Test Coverage| image:: https://img.shields.io/endpoint?url=https://gist.githubusercontent.com/
+    MTSOnGithub/03e73a82ecc4709934540ce8201cc3b4/raw/etl-entities_badge.json
+    :target: https://github.com/MTSWebServices/etl-entities/actions
 .. |pre-commit.ci Status| image:: https://results.pre-commit.ci/badge/github/MTSWebServices/etl-entities/develop.svg
     :alt: pre-commit.ci - status
     :target: https://results.pre-commit.ci/latest/github/MTSWebServices/etl-entities/develop

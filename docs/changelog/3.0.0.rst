@@ -1,0 +1,21 @@
+3.0.0 (2026-08-06)
+==================
+
+Breaking Changes
+----------------
+
+- Drop support for Python 3.7-3.9. Minimal supported Python version is 3.10
+- Drop Pydantic v1 support
+
+- Drop deprecated classes:
+    * old HWMs
+    * Process
+    * ProcessStackManager
+    * Source
+
+- Drop ``etl_entities.instance`` module with classes:
+    * Cluster
+    * Host
+    * GenericPath
+    * AbsolutePath
+    * RelativePath

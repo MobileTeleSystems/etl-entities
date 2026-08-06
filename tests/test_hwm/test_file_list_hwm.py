@@ -5,16 +5,14 @@ from pathlib import PosixPath, PurePosixPath
 import pytest
 
 from etl_entities.hwm import FileListHWM
-from etl_entities.instance import AbsolutePath, RelativePath
 
 
 @pytest.mark.parametrize(
-    "input_file, result_file",
+    ("input_file", "result_file"),
     [
-        ("/absolute/path", AbsolutePath("/absolute/path")),
-        (PurePosixPath("/absolute/path"), AbsolutePath("/absolute/path")),
-        (PosixPath("/absolute/path"), AbsolutePath("/absolute/path")),
-        (AbsolutePath("/absolute/path"), AbsolutePath("/absolute/path")),
+        ("/absolute/path", PurePosixPath("/absolute/path")),
+        (PurePosixPath("/absolute/path"), PurePosixPath("/absolute/path")),
+        (PosixPath("/absolute/path"), PurePosixPath("/absolute/path")),
     ],
 )
 def test_file_list_hwm_valid_input(input_file, result_file):
@@ -44,7 +42,7 @@ def test_file_list_hwm_valid_input(input_file, result_file):
     assert hwm.name == name
     assert hwm.value == frozenset((result_file,))
     assert hwm.description == "my hwm"
-    assert hwm.entity == AbsolutePath("/absolute")
+    assert hwm.entity == PurePosixPath("/absolute")
     assert hwm.expression == "something"
     assert hwm.modified_time == modified_time
 
@@ -100,49 +98,49 @@ def test_file_list_hwm_wrong_input(invalid_file):
 def test_file_list_hwm_set_value():
     file1 = "/some/path/file.py"
     file2 = PurePosixPath("/some/path/file.txt")
-    file3 = AbsolutePath("/some/path/file.csv")
+    file3 = PurePosixPath("/some/path/file.csv")
     value = [file1, file2, file2, file3]
     name = "file_list"
 
     hwm = FileListHWM(name=name)
 
-    hwm1 = hwm.copy()
+    hwm1 = hwm.model_copy()
     hwm1.set_value(value)
-    assert hwm1.value == frozenset((AbsolutePath(file1), AbsolutePath(file2), AbsolutePath(file3)))
+    assert hwm1.value == frozenset((PurePosixPath(file1), PurePosixPath(file2), PurePosixPath(file3)))
     assert hwm1.modified_time > hwm.modified_time
 
-    hwm2 = hwm.copy()
+    hwm2 = hwm.model_copy()
     hwm2.set_value(file1)
-    assert hwm2.value == frozenset((AbsolutePath(file1),))
+    assert hwm2.value == frozenset((PurePosixPath(file1),))
     assert hwm2.modified_time > hwm.modified_time
 
-    hwm3 = hwm.copy()
+    hwm3 = hwm.model_copy()
     hwm3.set_value(file2)
-    assert hwm3.value == frozenset((AbsolutePath(file2),))
+    assert hwm3.value == frozenset((PurePosixPath(file2),))
     assert hwm3.modified_time > hwm.modified_time
 
-    hwm4 = hwm.copy()
+    hwm4 = hwm.model_copy()
     hwm4.set_value(file3)
-    assert hwm4.value == frozenset((AbsolutePath(file3),))
+    assert hwm4.value == frozenset((PurePosixPath(file3),))
     assert hwm4.modified_time > hwm.modified_time
 
     hwm5 = FileListHWM(name=name, directory="/some/path")
     hwm5.set_value(hwm1.value)
-    assert hwm5.value == frozenset((AbsolutePath(file1), AbsolutePath(file2), AbsolutePath(file3)))
+    assert hwm5.value == frozenset((PurePosixPath(file1), PurePosixPath(file2), PurePosixPath(file3)))
     assert hwm5.modified_time > hwm.modified_time
 
     with pytest.raises(ValueError):
         hwm.set_value("relative/path")
 
+    hwm_with_directory = FileListHWM(name=name, directory="/another/path")
     with pytest.raises(ValueError):
-        hwm_with_directory = FileListHWM(name=name, directory="/another/path")
         hwm_with_directory.set_value(file1)
 
 
 def test_file_list_hwm_frozen():
     file1 = "/some/path/file.py"
     file2 = PurePosixPath("/some/path/file.txt")
-    file3 = AbsolutePath("/some/path/file.csv")
+    file3 = PurePosixPath("/some/path/file.csv")
     value = [file1, file2, file3]
     name = "file_list"
     modified_time = datetime.now() - timedelta(days=5)
@@ -151,7 +149,7 @@ def test_file_list_hwm_frozen():
 
     for attr in ("value", "entity", "expression", "description", "modified_time"):
         for item in (1, "abc", None, file1, file2, file3, value, modified_time):
-            with pytest.raises(TypeError):
+            with pytest.raises(ValueError, match="Instance is frozen"):
                 setattr(hwm, attr, item)
 
 
@@ -161,13 +159,13 @@ def test_file_list_hwm_compare():
 
     file1 = "/some/path/file.py"
     file2 = PurePosixPath("/some/path/file.txt")
-    file3 = AbsolutePath("/another.csv")
+    file3 = PurePosixPath("/another.csv")
 
     value1 = [file1, file2]
     value3 = [file2, file3]
 
-    folder1 = AbsolutePath("/some/path")
-    folder2 = AbsolutePath("/another/path")
+    folder1 = PurePosixPath("/some/path")
+    folder2 = PurePosixPath("/another/path")
 
     hwm1 = FileListHWM(name=name1, value=value1)
     hwm2 = FileListHWM(name=name2, value=value1)
@@ -207,8 +205,8 @@ def test_file_list_hwm_covers():
 
     file1 = "/some/path/file.py"
     file2 = PurePosixPath("/some/path/file.txt")
-    file3 = AbsolutePath("/some/path/file.orc")
-    file4 = RelativePath("unknown.orc")
+    file3 = PurePosixPath("/some/path/file.orc")
+    file4 = PurePosixPath("unknown.orc")
 
     empty_hwm = FileListHWM(name=name)
 
@@ -230,7 +228,7 @@ def test_file_list_hwm_add():
 
     file1 = "/some/path/file.py"
     file2 = PurePosixPath("/some/path/file.txt")
-    file3 = AbsolutePath("/some/path/file.orc")
+    file3 = PurePosixPath("/some/path/file.orc")
 
     value1 = [file1, file2]
     value2 = [file1, file2, file3]
@@ -239,7 +237,7 @@ def test_file_list_hwm_add():
     hwm2 = FileListHWM(name=name, value=value2)
 
     # empty value -> do nothing
-    hwm = hwm1.copy()
+    hwm = hwm1.model_copy()
     hwm3 = hwm + []
     hwm4 = hwm + {}
 
@@ -254,7 +252,7 @@ def test_file_list_hwm_add():
     assert hwm4.modified_time == hwm1.modified_time
 
     # value already known -> do nothing
-    hwm = hwm1.copy()
+    hwm = hwm1.model_copy()
     hwm5 = hwm + file1
     hwm6 = hwm + [file1]
     hwm7 = hwm + {file1}
@@ -275,7 +273,7 @@ def test_file_list_hwm_add():
     assert hwm7.modified_time == hwm1.modified_time
 
     # if something has been changed, update modified_time
-    hwm = hwm1.copy()
+    hwm = hwm1.model_copy()
     hwm8 = hwm + file3
     hwm9 = hwm + [file3]
     hwm10 = hwm + {file3}
@@ -295,8 +293,8 @@ def test_file_list_hwm_add():
     assert hwm10 is not hwm  # a copy is returned
     assert hwm10.modified_time > hwm2.modified_time
 
-    hwm1 = hwm1.copy()
-    hwm2 = hwm2.copy()
+    hwm1 = hwm1.model_copy()
+    hwm2 = hwm2.model_copy()
 
     hwm11 = hwm1 + hwm2.value
     hwm12 = hwm2 + hwm1.value
@@ -317,7 +315,7 @@ def test_file_list_hwm_sub():
 
     file1 = "/some/path/file.py"
     file2 = PurePosixPath("/some/path/file.txt")
-    file3 = AbsolutePath("/some/path/file.orc")
+    file3 = PurePosixPath("/some/path/file.orc")
 
     value1 = [file1]
     value2 = [file1, file2]
@@ -326,7 +324,7 @@ def test_file_list_hwm_sub():
     hwm2 = FileListHWM(name=name, value=value2)
 
     # empty value -> do nothing
-    hwm = hwm2.copy()
+    hwm = hwm2.model_copy()
     hwm3 = hwm - []
     hwm4 = hwm - {}
 
@@ -339,7 +337,7 @@ def test_file_list_hwm_sub():
     assert hwm4.modified_time == hwm2.modified_time
 
     # value is unknown -> do nothing
-    hwm = hwm2.copy()
+    hwm = hwm2.model_copy()
     hwm5 = hwm - file3
     hwm6 = hwm - [file3]
     hwm7 = hwm - {file3}
@@ -357,7 +355,7 @@ def test_file_list_hwm_sub():
     assert hwm7.modified_time == hwm2.modified_time
 
     # if something has been changed, update modified_time
-    hwm = hwm2.copy()
+    hwm = hwm2.model_copy()
     hwm8 = hwm - file2
     hwm9 = hwm - [file2]
     hwm10 = hwm - {file2}
@@ -387,9 +385,9 @@ def test_file_list_hwm_contains():
 
     file1 = "/some/path/file.py"
     file2 = PurePosixPath("/some/path/file.txt")
-    file3 = AbsolutePath("/some/path/file.orc")
+    file3 = PurePosixPath("/some/path/file.orc")
     file4 = "unknown.orc"
-    file5 = RelativePath("unknown.orc")
+    file5 = PurePosixPath("unknown.orc")
 
     empty_hwm = FileListHWM(name=name)
 
@@ -424,7 +422,7 @@ def test_file_list_hwm_update():
 
     file1 = "/some/path/file.py"
     file2 = "/some/path/file.txt"
-    file3 = AbsolutePath("/some/path/file.orc")
+    file3 = PurePosixPath("/some/path/file.orc")
 
     value1 = [file1, file2]
     value2 = [file1, file2, file3]
@@ -433,10 +431,10 @@ def test_file_list_hwm_update():
     hwm2 = FileListHWM(name=name, value=value2)
 
     # empty value -> do nothing
-    old_hwm3 = hwm1.copy()
+    old_hwm3 = hwm1.model_copy()
     hwm3 = old_hwm3.update([])
 
-    old_hwm4 = hwm1.copy()
+    old_hwm4 = hwm1.model_copy()
     hwm4 = old_hwm4.update({})
 
     assert hwm3 == hwm1
@@ -448,13 +446,13 @@ def test_file_list_hwm_update():
     assert hwm4.modified_time == hwm1.modified_time
 
     # value already known -> do nothing
-    old_hwm5 = hwm1.copy()
+    old_hwm5 = hwm1.model_copy()
     hwm5 = old_hwm5.update(file1)
 
-    old_hwm6 = hwm1.copy()
+    old_hwm6 = hwm1.model_copy()
     hwm6 = old_hwm6.update([file1])
 
-    old_hwm7 = hwm1.copy()
+    old_hwm7 = hwm1.model_copy()
     hwm7 = old_hwm7.update({file1})
 
     assert hwm5 == hwm1
@@ -469,13 +467,13 @@ def test_file_list_hwm_update():
     assert hwm7 is old_hwm7  # old object is returned
     assert hwm7.modified_time == hwm1.modified_time
 
-    old_hwm8 = hwm1.copy()
+    old_hwm8 = hwm1.model_copy()
     hwm8 = old_hwm8.update(file3)
 
-    old_hwm9 = hwm1.copy()
+    old_hwm9 = hwm1.model_copy()
     hwm9 = old_hwm9.update([file3])
 
-    old_hwm10 = hwm1.copy()
+    old_hwm10 = hwm1.model_copy()
     hwm10 = old_hwm10.update({file3})
 
     # if something has been changed, update modified_time
@@ -494,7 +492,7 @@ def test_file_list_hwm_update():
     assert hwm10 is old_hwm10  # in-place replacement
     assert hwm10.modified_time > hwm2.modified_time
 
-    old_hwm11 = hwm1.copy()
+    old_hwm11 = hwm1.model_copy()
     hwm11 = old_hwm11.update(hwm2.value)
 
     assert hwm11 == hwm2
@@ -549,9 +547,9 @@ def test_file_list_hwm_serialization():
 
 def test_file_list_hwm_reset():
     value = [
-        AbsolutePath("/some/path/file.orc"),
-        AbsolutePath("/some/path/file.py"),
-        AbsolutePath("/some/path/file.txt"),
+        PurePosixPath("/some/path/file.orc"),
+        PurePosixPath("/some/path/file.py"),
+        PurePosixPath("/some/path/file.txt"),
     ]
     hwm = FileListHWM(
         name="file_list",
