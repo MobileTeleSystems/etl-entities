@@ -3,8 +3,7 @@
 from __future__ import annotations
 
 import os
-from collections.abc import Iterable
-from typing import TypeVar
+from typing import TYPE_CHECKING, TypeVar
 
 from pydantic import Field, ValidationInfo, field_validator
 from typing_extensions import Self
@@ -12,6 +11,9 @@ from typing_extensions import Self
 from etl_entities.hwm import FileHWM
 from etl_entities.hwm.file.absolute_path import AbsolutePath, parse_absolute_path
 from etl_entities.hwm.hwm_type_registry import register_hwm_type
+
+if TYPE_CHECKING:
+    from collections.abc import Iterable
 
 FileListType = frozenset[AbsolutePath]
 FileListHWMType = TypeVar("FileListHWMType", bound="FileListHWM")
@@ -237,21 +239,18 @@ class FileListHWM(FileHWM[FileListType]):
     @classmethod
     def _validate_value(cls, value, info: ValidationInfo):
         directory = info.data.get("entity")
-        if isinstance(value, (os.PathLike, str)):
-            return cls._deserialize_value([value], directory)
-
-        if isinstance(value, Iterable):
-            return cls._deserialize_value(value, directory)
-
-        return value
+        return cls._deserialize_value(value, directory)
 
     @classmethod
     def _deserialize_value(
         cls,
-        value: Iterable[str | os.PathLike],
+        value: Iterable[str | os.PathLike] | str | os.PathLike,
         directory: str | os.PathLike | None,
     ) -> frozenset[AbsolutePath]:
         data = []
+
+        if isinstance(value, (os.PathLike, str)):
+            value = [value]
 
         for raw in value:
             item = parse_absolute_path(raw)
@@ -263,3 +262,6 @@ class FileListHWM(FileHWM[FileListType]):
             data.append(item)
 
         return frozenset(data)
+
+    def _check_new_value(self, value):
+        return self._deserialize_value(value, self.entity)
