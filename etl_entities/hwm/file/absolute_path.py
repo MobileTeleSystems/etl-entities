@@ -4,13 +4,11 @@
 
 from __future__ import annotations
 
+import os
 from pathlib import PurePosixPath
-from typing import TYPE_CHECKING, Annotated
+from typing import Annotated
 
 from pydantic import AfterValidator, TypeAdapter
-
-if TYPE_CHECKING:
-    import os
 
 
 def validate(path: PurePosixPath):
@@ -26,6 +24,6 @@ AbsolutePathAdapter = TypeAdapter(AbsolutePath)
 
 def parse_absolute_path(path: str | os.PathLike) -> AbsolutePath:
     try:
-        return AbsolutePathAdapter.validate_python(path)
+        return AbsolutePathAdapter.validate_python(os.fspath(path))
     except TypeError as e:
         raise ValueError(*e.args) from e
