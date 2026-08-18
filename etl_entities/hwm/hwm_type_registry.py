@@ -2,8 +2,6 @@
 # SPDX-License-Identifier: Apache-2.0
 from typing import TYPE_CHECKING, ClassVar
 
-from bidict import bidict
-
 if TYPE_CHECKING:
     from etl_entities.hwm.hwm import HWM
 
@@ -11,7 +9,8 @@ if TYPE_CHECKING:
 class HWMTypeRegistry:
     """Registry class for HWM types"""
 
-    _mapping: ClassVar[bidict[str, type["HWM"]]] = bidict()
+    _name_to_type: ClassVar[dict[str, type["HWM"]]] = {}
+    _type_to_name: ClassVar[dict[type["HWM"], str]] = {}
 
     @classmethod
     def get(cls, type_name: str) -> type["HWM"]:
@@ -37,7 +36,7 @@ class HWMTypeRegistry:
         KeyError: "Unknown HWM type 'unknown'"
         """
 
-        result = cls._mapping.get(type_name)
+        result = cls._name_to_type.get(type_name)
         if not result:
             msg = f"Unknown HWM type {type_name!r}"
             raise KeyError(msg)
@@ -69,7 +68,7 @@ class HWMTypeRegistry:
         KeyError: "You should register 'UnknownHWM' class using @register_hwm_type decorator"
         """
 
-        result = cls._mapping.inverse.get(klass)
+        result = cls._type_to_name.get(klass)
         if not result:
             msg = f"You should register {klass.__qualname__!r} class using @register_hwm_type decorator"
             raise KeyError(msg)
@@ -100,7 +99,8 @@ class HWMTypeRegistry:
         <class 'etl_entities.hwm.hwm_type_registry.MyHWM'>
         """
 
-        cls._mapping[type_name] = klass
+        cls._name_to_type[type_name] = klass
+        cls._type_to_name[klass] = type_name
 
     @classmethod
     def parse(cls, inp: dict) -> "HWM":
