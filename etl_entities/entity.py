@@ -1,9 +1,6 @@
 # SPDX-FileCopyrightText: 2021-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 # isort: skip_file
-
-from __future__ import annotations
-
 from pydantic import BaseModel as PydanticBaseModel, ConfigDict
 
 

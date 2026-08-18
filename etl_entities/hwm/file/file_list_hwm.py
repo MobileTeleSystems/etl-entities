@@ -1,7 +1,5 @@
 # SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
-from __future__ import annotations
-
 import os
 from typing import TYPE_CHECKING, TypeVar
 
@@ -86,7 +84,7 @@ class FileListHWM(FileHWM[FileListType]):
 
         return value in self
 
-    def update(self, value: str | os.PathLike | Iterable[str | os.PathLike]) -> Self:
+    def update(self, value: "str | os.PathLike | Iterable[str | os.PathLike]") -> Self:
         """Updates current HWM value with some implementation-specific logic, and return HWM.
 
         .. note::
@@ -144,7 +142,7 @@ class FileListHWM(FileHWM[FileListType]):
         """
         return self.set_value(frozenset())
 
-    def __add__(self, value: str | os.PathLike | Iterable[str | os.PathLike]) -> Self:
+    def __add__(self, value: "str | os.PathLike | Iterable[str | os.PathLike]") -> Self:
         """Adds path or paths to HWM value, and return copy of HWM
 
         Parameters
@@ -175,7 +173,7 @@ class FileListHWM(FileHWM[FileListType]):
 
         return self
 
-    def __sub__(self, value: str | os.PathLike | Iterable[str | os.PathLike]) -> Self:
+    def __sub__(self, value: "str | os.PathLike | Iterable[str | os.PathLike]") -> Self:
         """Remove path or paths from HWM value, and return copy of HWM
 
         Parameters
@@ -244,7 +242,7 @@ class FileListHWM(FileHWM[FileListType]):
     @classmethod
     def _deserialize_value(
         cls,
-        value: Iterable[str | os.PathLike] | str | os.PathLike,
+        value: "Iterable[str | os.PathLike] | str | os.PathLike",
         directory: str | os.PathLike | None,
     ) -> frozenset[AbsolutePath]:
         data = []
