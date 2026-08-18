@@ -561,7 +561,7 @@ dependencies = [
     { name = "frozendict", marker = "python_full_version < '3.15'" },
     { name = "importlib-metadata" },
     { name = "pydantic" },
-    { name = "typing-extensions" },
+    { name = "typing-extensions", marker = "python_full_version < '3.11'" },
 ]
 
 [package.dev-dependencies]
@@ -593,7 +593,7 @@ requires-dist = [
     { name = "frozendict", marker = "python_full_version < '3.15'" },
     { name = "importlib-metadata", specifier = ">=3.6.0" },
     { name = "pydantic", specifier = ">=2,<3" },
-    { name = "typing-extensions", specifier = ">=4.5.0" },
+    { name = "typing-extensions", marker = "python_full_version < '3.11'", specifier = ">=4.5.0" },
 ]
 
 [package.metadata.requires-dev]

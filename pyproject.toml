@@ -34,7 +34,7 @@ dependencies = [
     "frozendict; python_version < '3.15'",
     "importlib_metadata>=3.6.0",
     "pydantic>=2,<3",
-    "typing-extensions>=4.5.0",
+    "typing-extensions>=4.5.0; python_version < '3.11'",
 ]
 dynamic = ["version"]
 

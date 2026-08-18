@@ -1,15 +1,20 @@
 # SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
+import sys
 from abc import abstractmethod
 from copy import deepcopy
 from datetime import datetime
 from typing import Any, Generic, TypeVar
 
 from pydantic import ConfigDict, Field
-from typing_extensions import Self
 
 from etl_entities.entity import BaseModel
 from etl_entities.hwm.hwm_type_registry import HWMTypeRegistry
+
+if sys.version_info < (3, 11):
+    from typing_extensions import Self
+else:
+    from typing import Self
 
 ValueType = TypeVar("ValueType")
 HWMType = TypeVar("HWMType", bound="HWM")

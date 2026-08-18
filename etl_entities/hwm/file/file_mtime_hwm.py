@@ -1,14 +1,19 @@
 # SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
+import sys
 from collections.abc import Iterable
 from datetime import datetime
-from typing import TypeVar
+from typing import Protocol, TypeVar, runtime_checkable
 
 from pydantic import field_validator
-from typing_extensions import Protocol, Self, runtime_checkable
 
 from etl_entities.hwm import FileHWM
 from etl_entities.hwm.hwm_type_registry import register_hwm_type
+
+if sys.version_info < (3, 11):
+    from typing_extensions import Self
+else:
+    from typing import Self
 
 FileModifiedTimeHWMType = TypeVar("FileModifiedTimeHWMType", bound="FileModifiedTimeHWM")
 

@@ -1,11 +1,16 @@
 # SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
+import sys
 from typing import Generic, TypeVar
 
 from pydantic import Field
-from typing_extensions import Self
 
 from etl_entities.hwm.hwm import HWM
+
+if sys.version_info < (3, 11):
+    from typing_extensions import Self
+else:
+    from typing import Self
 
 ColumnValueType = TypeVar("ColumnValueType")
 ColumnHWMType = TypeVar("ColumnHWMType", bound="ColumnHWM")

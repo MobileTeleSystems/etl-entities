@@ -4,10 +4,14 @@ import sys
 from collections.abc import Mapping
 
 from pydantic import field_validator
-from typing_extensions import Self
 
 from etl_entities.hwm.hwm_type_registry import HWMTypeRegistry, register_hwm_type
 from etl_entities.hwm.key_value.key_value_hwm import KeyValueHWM
+
+if sys.version_info < (3, 11):
+    from typing_extensions import Self
+else:
+    from typing import Self
 
 if sys.version_info < (3, 15):
     from frozendict import frozendict
