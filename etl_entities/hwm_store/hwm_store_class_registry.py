@@ -1,7 +1,5 @@
 # SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
-from __future__ import annotations
-
 from typing import TYPE_CHECKING, ClassVar, TypeVar
 
 from etl_entities.hwm_store.base_hwm_store import BaseHWMStore
@@ -89,7 +87,7 @@ class HWMStoreClassRegistry:
         cls._default = klass
 
     @classmethod
-    def aliases(cls) -> Collection[str]:
+    def aliases(cls) -> "Collection[str]":
         """Returl all known HWM store aliases, like ``memory`` or ``yaml``"""
         return cls._mapping.keys()
 

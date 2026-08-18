@@ -1,7 +1,5 @@
 # SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
-from __future__ import annotations
-
 from pydantic import ConfigDict, PrivateAttr
 
 from etl_entities.hwm import HWM

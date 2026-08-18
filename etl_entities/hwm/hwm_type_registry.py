@@ -1,7 +1,5 @@
 # SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
-from __future__ import annotations
-
 from typing import TYPE_CHECKING, ClassVar
 
 from bidict import bidict
@@ -13,10 +11,10 @@ if TYPE_CHECKING:
 class HWMTypeRegistry:
     """Registry class for HWM types"""
 
-    _mapping: ClassVar[bidict[str, type[HWM]]] = bidict()
+    _mapping: ClassVar[bidict[str, type["HWM"]]] = bidict()
 
     @classmethod
-    def get(cls, type_name: str) -> type[HWM]:
+    def get(cls, type_name: str) -> type["HWM"]:
         """Get HWM class by type name
 
         Parameters
@@ -47,7 +45,7 @@ class HWMTypeRegistry:
         return result
 
     @classmethod
-    def get_key(cls, klass: type[HWM]) -> str:
+    def get_key(cls, klass: type["HWM"]) -> str:
         """Get HWM type name for a class
 
         Parameters
@@ -79,7 +77,7 @@ class HWMTypeRegistry:
         return result
 
     @classmethod
-    def add(cls, type_name: str, klass: type[HWM]) -> None:
+    def add(cls, type_name: str, klass: type["HWM"]) -> None:
         """Add mapping ``HWM class`` -> ``type name`` to registry
 
         Parameters
@@ -105,7 +103,7 @@ class HWMTypeRegistry:
         cls._mapping[type_name] = klass
 
     @classmethod
-    def parse(cls, inp: dict) -> HWM:
+    def parse(cls, inp: dict) -> "HWM":
         """Parse HWM from dict representation
 
         Returns

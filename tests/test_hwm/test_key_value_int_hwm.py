@@ -1,10 +1,13 @@
 import secrets
+import sys
 from datetime import datetime, timedelta
 
 import pytest
-from frozendict import frozendict
 
 from etl_entities.hwm import KeyValueIntHWM
+
+if sys.version_info < (3, 15):
+    from frozendict import frozendict
 
 
 @pytest.mark.parametrize(

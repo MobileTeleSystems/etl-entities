@@ -1,15 +1,16 @@
 # SPDX-FileCopyrightText: 2024-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
-from __future__ import annotations
-
+import sys
 from collections.abc import Mapping
 
-from frozendict import frozendict
 from pydantic import field_validator
 from typing_extensions import Self
 
 from etl_entities.hwm.hwm_type_registry import HWMTypeRegistry, register_hwm_type
 from etl_entities.hwm.key_value.key_value_hwm import KeyValueHWM
+
+if sys.version_info < (3, 15):
+    from frozendict import frozendict
 
 
 @register_hwm_type("key_value_int")

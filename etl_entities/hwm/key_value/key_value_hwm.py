@@ -1,14 +1,15 @@
 # SPDX-FileCopyrightText: 2024-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
-from __future__ import annotations
-
+import sys
 from typing import Generic, TypeVar
 
-from frozendict import frozendict
 from pydantic import Field, field_validator
 from typing_extensions import Self
 
 from etl_entities.hwm.hwm import HWM
+
+if sys.version_info < (3, 15):
+    from frozendict import frozendict
 
 KeyValueHWMValueType = TypeVar("KeyValueHWMValueType")
 KeyValueHWMKeyType = TypeVar("KeyValueHWMKeyType")
