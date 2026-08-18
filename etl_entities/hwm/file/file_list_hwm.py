@@ -1,14 +1,19 @@
 # SPDX-FileCopyrightText: 2023-present MTS PJSC
 # SPDX-License-Identifier: Apache-2.0
 import os
+import sys
 from typing import TYPE_CHECKING, TypeVar
 
 from pydantic import Field, ValidationInfo, field_validator
-from typing_extensions import Self
 
 from etl_entities.hwm import FileHWM
 from etl_entities.hwm.file.absolute_path import AbsolutePath, parse_absolute_path
 from etl_entities.hwm.hwm_type_registry import register_hwm_type
+
+if sys.version_info < (3, 11):
+    from typing_extensions import Self
+else:
+    from typing import Self
 
 if TYPE_CHECKING:
     from collections.abc import Iterable
