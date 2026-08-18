@@ -1,0 +1,8 @@
+3.0.4 (2026-08-18)
+==================
+
+Improvements
+------------
+
+* Make ``typing_extensions`` dependency optional on Python 3.11+
+* Drop ``bidict`` dependency
