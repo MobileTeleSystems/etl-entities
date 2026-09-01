@@ -61,19 +61,19 @@ exclude = ["docs", "tests"]
 
 [dependency-groups]
 test = [
-    "coverage~=7.15.3",
+    "coverage>=7.15.3,<7.17.0",
     "omegaconf~=2.3.1",
     "pytest~=9.1.1",
 ]
 dev = [
     "mypy~=2.3.0",
-    "prek~=0.4.12",
+    "prek>=0.4.12,<0.6.0",
     "ruff~=0.16.1",
 ]
 docs = [
     "furo~=2025.12.19",
     "numpydoc~=1.10.0",
-    "packaging~=25.0",
+    "packaging>=25,<27",
     # sphinx-toolbox doesn't support Sphinx 9 yet
     "sphinx~=8.2.3",
     "sphinx-copybutton~=0.5.2",
